@@ -1,0 +1,4 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont","/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Fonts/HUDFont.xnb","FontDescriptionProcessor","SpriteFontContent",2015,267295,0.378883
+"/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TextFont.spritefont","/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Fonts/TextFont.xnb","FontDescriptionProcessor","SpriteFontContent",2018,136223,0.034255
+"/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont","/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Fonts/TitleFont.xnb","FontDescriptionProcessor","SpriteFontContent",2010,267295,0.040439

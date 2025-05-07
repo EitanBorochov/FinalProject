@@ -26,6 +26,13 @@ public class Game1 : Game
     SpriteFont HUDFont;
     SpriteFont textFont;
     
+    // Storing timer for day night cycle
+    Timer dayNightCycle = new Timer(10000, true);
+    
+    // Storing sky color modifier, sky aplha color, and dark sky color overlay
+    int skyModif = 1;
+    Color nightColor = Color.MidnightBlue;
+    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -61,9 +68,6 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         // TODO: Add your update logic here
 
         base.Update(gameTime);
@@ -81,5 +85,20 @@ public class Game1 : Game
         _spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+
+    private void DayNightCycle()
+    {
+        if (nightColor.A > 0 && nightColor.A < 1)
+        {
+            nightColor.A -= (byte)skyModif;
+
+            if (dayNightCycle.IsFinished())
+            {
+                skyModif *= -1;
+                
+                dayNightCycle.ResetTimer(true);
+            }
+        }
     }
 }
