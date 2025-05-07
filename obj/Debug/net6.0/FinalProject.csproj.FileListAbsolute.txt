@@ -28,3 +28,4 @@
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Fonts/HUDFont.xnb
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Fonts/TextFont.xnb
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Fonts/TitleFont.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Backgrounds/PixelNightSky.xnb

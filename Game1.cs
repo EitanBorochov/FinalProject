@@ -5,6 +5,7 @@
 // Modification Date: May 7th 2025
 // Description: Main file that handles the central logic for the game
 
+using System;
 using GameUtility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -29,9 +30,16 @@ public class Game1 : Game
     // Storing timer for day night cycle
     Timer dayNightCycle = new Timer(10000, true);
     
-    // Storing sky color modifier, sky aplha color, and dark sky color overlay
-    int skyModif = 1;
-    Color nightColor = Color.MidnightBlue;
+    // Storing background night sky texture and rectangle
+    Texture2D nightBGImg;
+    Rectangle nightBGRec;
+    
+    // Storing night sky color multiplier, incrase and decrease constants, and multiplier modifier
+    float skyOpacity = 0f;
+    const int POSITIVE = 1;
+    const int NEGATIVE = -1;
+    int skyMultiplier;
+    
     
     public Game1()
     {
@@ -64,22 +72,29 @@ public class Game1 : Game
         titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
         HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
         textFont = Content.Load<SpriteFont>("Fonts/TextFont");
+        
+        // Loading night background texture and rectangle
+        nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
+        nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
     }
 
     protected override void Update(GameTime gameTime)
     {
-        // TODO: Add your update logic here
+        // Updating day night cycle
+        dayNightCycle.Update(gameTime.ElapsedGameTime.TotalMilliseconds);
+        DayNightCycle();
 
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.RoyalBlue);
 
         // Initializing sprite drawing batch
         _spriteBatch.Begin();
-        
+
+        _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
         
         // Finish sprite batch
         _spriteBatch.End();
@@ -89,16 +104,25 @@ public class Game1 : Game
 
     private void DayNightCycle()
     {
-        if (nightColor.A > 0 && nightColor.A < 1)
+        // Checking if the cycle is over
+        if (dayNightCycle.IsFinished())
         {
-            nightColor.A -= (byte)skyModif;
-
-            if (dayNightCycle.IsFinished())
+            // Flipping the sky multiplier to either turn the sky on or off
+            if (skyOpacity == 0)
             {
-                skyModif *= -1;
-                
-                dayNightCycle.ResetTimer(true);
+                skyMultiplier = POSITIVE;
             }
+            else if (skyOpacity == 1)
+            {
+                skyMultiplier = NEGATIVE;
+            }
+            
+            dayNightCycle.ResetTimer(true);
         }
+
+        // Updating the sky opacity and clamping it
+        skyOpacity += skyMultiplier * 0.01f;
+        skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
+        
     }
 }

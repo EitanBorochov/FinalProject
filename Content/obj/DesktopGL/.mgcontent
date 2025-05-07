@@ -7,8 +7,10 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TextFont.spritefont</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/PixelNightSky.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
