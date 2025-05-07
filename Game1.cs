@@ -1,4 +1,11 @@
-﻿using GameUtility;
+﻿// Author: Eitan Borochov
+// File Name: Game1.cs
+// Project Name: FinalProject
+// Creation Date: May 6th 2025
+// Modification Date: May 7th 2025
+// Description: Main file that handles the central logic for the game
+
+using GameUtility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,6 +17,15 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    // Storing screen dimensions
+    int screenWidth;
+    int screenHeight;
+    
+    // Storing sprite Fonts
+    SpriteFont titleFont;
+    SpriteFont HUDFont;
+    SpriteFont textFont;
+    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -19,7 +35,16 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
+        // Attempting to set screen dimensions to 1600x1000
+        _graphics.PreferredBackBufferWidth = 1600;
+        _graphics.PreferredBackBufferHeight = 1000;
+        
+        // Applying the screen dimensions changes
+        _graphics.ApplyChanges();
+
+        // Storing the resultant dimensions to determine the drawable space
+        screenWidth = _graphics.GraphicsDevice.Viewport.Width;
+        screenHeight = _graphics.GraphicsDevice.Viewport.Height;
 
         base.Initialize();
     }
@@ -28,7 +53,10 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // TODO: use this.Content to load your game content here
+        // Loading sprite fonts
+        titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
+        HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
+        textFont = Content.Load<SpriteFont>("Fonts/TextFont");
     }
 
     protected override void Update(GameTime gameTime)
@@ -45,7 +73,12 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        // TODO: Add your drawing code here
+        // Initializing sprite drawing batch
+        _spriteBatch.Begin();
+        
+        
+        // Finish sprite batch
+        _spriteBatch.End();
 
         base.Draw(gameTime);
     }
