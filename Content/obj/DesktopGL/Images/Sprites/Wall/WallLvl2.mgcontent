@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/PixelNightSky.png</SourceFile>
-  <SourceTime>2025-05-07T16:47:47.8568667-04:00</SourceTime>
-  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Backgrounds/PixelNightSky.xnb</DestFile>
-  <DestTime>2025-05-09T20:24:45.2707084-04:00</DestTime>
+  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Wall/WallLvl2.png</SourceFile>
+  <SourceTime>2025-05-09T08:38:25.88204-04:00</SourceTime>
+  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/Wall/WallLvl2.xnb</DestFile>
+  <DestTime>2025-05-09T20:24:45.3934433-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

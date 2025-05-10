@@ -8,8 +8,24 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TextFont.spritefont</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/PixelNightSky.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Archer/ArcherTowerLvl1.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Archer/ArcherTowerLvl2.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Archer/ArcherTowerLvl3.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Archer/Arrow.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Brick.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/KingTower.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Wall/WallLvl1.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Wall/WallLvl2.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

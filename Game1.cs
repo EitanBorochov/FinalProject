@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 7th 2025
+// Modification Date: May 9th 2025
 // Description: Main file that handles the central logic for the game
 
 using System;
@@ -21,14 +21,29 @@ public class Game1 : Game
     // Storing screen dimensions
     int screenWidth;
     int screenHeight;
+
+    #region Game State Variables
+    // Storing constant variable constants for game states
+    const byte MENU = 0;
+    const byte GAMEPLAY = 1;
+    const byte PAUSE = 2;
+    const byte SETTINGS = 3;
+    const byte TUTORIAL = 4;
+    const byte ENDGAME = 5;
+    
+    // Storing current game state
+    byte gameState = GAMEPLAY;
+
+    #endregion
     
     // Storing sprite Fonts
     SpriteFont titleFont;
     SpriteFont HUDFont;
     SpriteFont textFont;
-    
+
+    #region Day Night Cycle Variables
     // Storing timer for day night cycle
-    Timer dayNightCycle = new Timer(10000, true);
+    Timer dayNightCycle = new Timer(5000, true);
     
     // Storing background night sky texture and rectangle
     Texture2D nightBGImg;
@@ -39,6 +54,8 @@ public class Game1 : Game
     const int POSITIVE = 1;
     const int NEGATIVE = -1;
     int skyMultiplier;
+
+    #endregion
     
     
     public Game1()
@@ -76,13 +93,41 @@ public class Game1 : Game
         // Loading night background texture and rectangle
         nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
         nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
+        
+        KingTower tower = new KingTower(nightBGImg, nightBGRec.Location.ToVector2(), 2, 4, 4, 4, 4, 4);
     }
 
     protected override void Update(GameTime gameTime)
     {
-        // Updating day night cycle
-        dayNightCycle.Update(gameTime.ElapsedGameTime.TotalMilliseconds);
-        DayNightCycle();
+        switch (gameState)
+        {
+            case MENU:
+                
+                
+                break;
+            
+            case GAMEPLAY:
+                // Casting night sky every day night cycle
+                DayNightCycle(gameTime);
+                
+                break;
+            
+            case PAUSE:
+                
+                break;
+            
+            case SETTINGS:
+                
+                break;
+            
+            case TUTORIAL:
+                
+                break;
+            
+            case ENDGAME:
+                
+                break;
+        }
 
         base.Update(gameTime);
     }
@@ -93,8 +138,37 @@ public class Game1 : Game
 
         // Initializing sprite drawing batch
         _spriteBatch.Begin();
-
-        _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
+        
+        // Drawing game based on game state
+        switch (gameState)
+        {
+            case MENU:
+                
+                
+                break;
+            
+            case GAMEPLAY:
+                // Drawing night sky overlay
+                _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
+                
+                break;
+            
+            case PAUSE:
+                
+                break;
+            
+            case SETTINGS:
+                
+                break;
+            
+            case TUTORIAL:
+                
+                break;
+            
+            case ENDGAME:
+                
+                break;
+        }
         
         // Finish sprite batch
         _spriteBatch.End();
@@ -102,8 +176,11 @@ public class Game1 : Game
         base.Draw(gameTime);
     }
 
-    private void DayNightCycle()
+    private void DayNightCycle(GameTime gameTime)
     {
+        // Updating day night cycle timer
+        dayNightCycle.Update(gameTime.ElapsedGameTime.TotalMilliseconds);
+        
         // Checking if the cycle is over
         if (dayNightCycle.IsFinished())
         {
@@ -117,6 +194,7 @@ public class Game1 : Game
                 skyMultiplier = NEGATIVE;
             }
             
+            // Restarting the timer
             dayNightCycle.ResetTimer(true);
         }
 
