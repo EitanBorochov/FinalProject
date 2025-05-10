@@ -46,7 +46,7 @@ public class Game1 : Game
     Timer dayNightCycle = new Timer(5000, true);
     
     // Storing background night sky texture and rectangle
-    Texture2D nightBGImg;
+    public Texture2D nightBGImg;
     Rectangle nightBGRec;
     
     // Storing night sky color multiplier, incrase and decrease constants, and multiplier modifier
@@ -54,6 +54,10 @@ public class Game1 : Game
     const int POSITIVE = 1;
     const int NEGATIVE = -1;
     int skyMultiplier;
+    
+    // Storing king tower and its image
+    private Texture2D kingTowerImg;
+    private KingTower kingTower;
 
     #endregion
     
@@ -94,7 +98,11 @@ public class Game1 : Game
         nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
         nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
         
-        KingTower tower = new KingTower(nightBGImg, nightBGRec.Location.ToVector2(), 2, 4, 4, 4, 4, 4);
+        // Loading king tower image
+        kingTowerImg = Content.Load<Texture2D>("Images/Sprites/KingTower");
+        
+        // Loading king tower
+        kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, kingTowerImg.Height, 266, 100);
     }
 
     protected override void Update(GameTime gameTime)
@@ -150,6 +158,9 @@ public class Game1 : Game
             case GAMEPLAY:
                 // Drawing night sky overlay
                 _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
+                
+                // Drawing king tower
+                kingTower.Draw(_spriteBatch);
                 
                 break;
             
