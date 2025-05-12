@@ -35,11 +35,19 @@ public class Game1 : Game
     byte gameState = GAMEPLAY;
 
     #endregion
-    
+
+    #region UI Variables
+
     // Storing sprite Fonts
     SpriteFont titleFont;
     SpriteFont HUDFont;
     SpriteFont textFont;
+    
+    // Storing background image and rec for menu
+    Texture2D bgImg;
+    Rectangle bgRec;
+
+    #endregion
 
     #region Day Night Cycle Variables
     // Storing timer for day night cycle
@@ -56,7 +64,9 @@ public class Game1 : Game
     int skyMultiplier;
 
     #endregion
-    
+
+    #region Gameplay Variables
+
     // Storing platform image and class
     Platform platform;
     Texture2D platformImg;
@@ -64,7 +74,8 @@ public class Game1 : Game
     // Storing king tower and its image
     private Texture2D kingTowerImg;
     private Tower kingTower;
-    
+
+    #endregion
     
     
     public Game1()
@@ -104,11 +115,11 @@ public class Game1 : Game
         nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
         
         // Loading platform and its texture
-        platformImg = Content.Load<Texture2D>("Images/Sprites/Brick");
+        platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
         platform = new Platform(platformImg, screenWidth, screenHeight);
         
         // Loading king tower & image
-        kingTowerImg = Content.Load<Texture2D>("Images/Sprites/KingTower");
+        kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
         kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, kingTowerImg.Height, 266, 100);
     }
 
