@@ -54,12 +54,17 @@ public class Game1 : Game
     const int POSITIVE = 1;
     const int NEGATIVE = -1;
     int skyMultiplier;
+
+    #endregion
+    
+    // Storing platform image and class
+    Platform platform;
+    Texture2D platformImg;
     
     // Storing king tower and its image
     private Texture2D kingTowerImg;
-    private KingTower kingTower;
-
-    #endregion
+    private Tower kingTower;
+    
     
     
     public Game1()
@@ -98,11 +103,13 @@ public class Game1 : Game
         nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
         nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
         
-        // Loading king tower image
-        kingTowerImg = Content.Load<Texture2D>("Images/Sprites/KingTower");
+        // Loading platform and its texture
+        platformImg = Content.Load<Texture2D>("Images/Sprites/Brick");
+        platform = new Platform(platformImg, screenWidth, screenHeight);
         
-        // Loading king tower
-        kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, kingTowerImg.Height, 266, 100);
+        // Loading king tower & image
+        kingTowerImg = Content.Load<Texture2D>("Images/Sprites/KingTower");
+        kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, kingTowerImg.Height, 266, 100);
     }
 
     protected override void Update(GameTime gameTime)
@@ -161,6 +168,9 @@ public class Game1 : Game
                 
                 // Drawing king tower
                 kingTower.Draw(_spriteBatch);
+                
+                // Drawing platform
+                platform.Draw(_spriteBatch);
                 
                 break;
             

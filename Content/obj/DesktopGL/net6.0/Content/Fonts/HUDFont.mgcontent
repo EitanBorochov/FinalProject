@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</SourceFile>
-  <SourceTime>2025-05-09T22:50:13.9645647-04:00</SourceTime>
-  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Fonts/HUDFont.xnb</DestFile>
-  <DestTime>2025-05-09T23:23:49.0762049-04:00</DestTime>
+  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</SourceFile>
+  <SourceTime>2025-05-07T09:03:03.5944503-04:00</SourceTime>
+  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Fonts/HUDFont.xnb</DestFile>
+  <DestTime>2025-05-09T23:31:31.3021594-04:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>
