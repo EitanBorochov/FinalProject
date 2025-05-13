@@ -21,6 +21,10 @@ public class Game1 : Game
     // Storing screen dimensions
     int screenWidth;
     int screenHeight;
+    
+    // Storing mouse input
+    private MouseState mouse;
+    private MouseState prevMouse;
 
     #region Game State Variables
     // Storing constant variable constants for game states
@@ -32,7 +36,7 @@ public class Game1 : Game
     const byte ENDGAME = 5;
     
     // Storing current game state
-    byte gameState = GAMEPLAY;
+    byte gameState = MENU;
 
     #endregion
 
@@ -46,10 +50,31 @@ public class Game1 : Game
     // Storing background image and rec for menu
     Texture2D bgImg;
     Rectangle bgRec;
-
+    
+    // Storing all button images
+    private Texture2D level1Img;
+    private Texture2D level2Img;
+    private Texture2D settingsImg;
+    private Texture2D tutorialBtnImg;
+    
+    // Storing all buttons
+    private Button level1Button;
+    private Button level2Button;
+    private Button settingsButton;
+    private Button tutorialButton;
+    
     #endregion
 
-    #region Day Night Cycle Variables
+    #region Gameplay Variables
+
+    // Storing platform image and class
+    Platform platform;
+    Texture2D platformImg;
+    
+    // Storing king tower and its image
+    private Texture2D kingTowerImg;
+    private Tower kingTower;
+    
     // Storing timer for day night cycle
     Timer dayNightCycle = new Timer(5000, true);
     
@@ -65,17 +90,7 @@ public class Game1 : Game
 
     #endregion
 
-    #region Gameplay Variables
-
-    // Storing platform image and class
-    Platform platform;
-    Texture2D platformImg;
     
-    // Storing king tower and its image
-    private Texture2D kingTowerImg;
-    private Tower kingTower;
-
-    #endregion
     
     
     public Game1()
@@ -114,6 +129,10 @@ public class Game1 : Game
         nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
         nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
         
+        // Loading background image and rectangle
+        bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
+        bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
+        
         // Loading platform and its texture
         platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
         platform = new Platform(platformImg, screenWidth, screenHeight);
@@ -122,14 +141,37 @@ public class Game1 : Game
         kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
         kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
                                 kingTowerImg.Height, 266, 100);
+
+        // Loading button images
+        level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
+        level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
+        settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
+        tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
+        
+        // Loading all buttons
+        level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
+                                    level1Img.Width, level1Img.Height, () => gameState = GAMEPLAY);
+        level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
+                                    level2Img.Width, level2Img.Height, () => gameState = GAMEPLAY);
+        settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5, settingsImg.Height / 5, 
+                            () => gameState = SETTINGS);
+        tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5, 50, 
+            tutorialBtnImg.Width / 5, tutorialBtnImg.Height / 5, () => gameState = TUTORIAL);
     }
 
     protected override void Update(GameTime gameTime)
     {
+        // Updating mouse input
+        prevMouse = mouse;
+        mouse = Mouse.GetState();
+        
         switch (gameState)
         {
             case MENU:
-                
+                level1Button.Update(mouse, prevMouse);
+                level2Button.Update(mouse, prevMouse);
+                settingsButton.Update(mouse, prevMouse);
+                tutorialButton.Update(mouse, prevMouse);
                 
                 break;
             
@@ -170,7 +212,14 @@ public class Game1 : Game
         switch (gameState)
         {
             case MENU:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
+                // Drawing buttons
+                level1Button.Draw(_spriteBatch);
+                level2Button.Draw(_spriteBatch);
+                settingsButton.Draw(_spriteBatch);
+                tutorialButton.Draw(_spriteBatch);
                 
                 break;
             
@@ -187,10 +236,14 @@ public class Game1 : Game
                 break;
             
             case PAUSE:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
                 break;
             
             case SETTINGS:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
                 break;
             
@@ -199,6 +252,8 @@ public class Game1 : Game
                 break;
             
             case ENDGAME:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
                 break;
         }
@@ -207,6 +262,28 @@ public class Game1 : Game
         _spriteBatch.End();
 
         base.Draw(gameTime);
+    }
+    
+    // The function uses screen width and text/image width to center the image horizontally
+    private float WidthCenter(float spriteWidth)
+    {
+        float center;
+
+        // Calculating center by averaging the 2 widths
+        center = (screenWidth - spriteWidth) / 2f;
+
+        return center;
+    }
+    
+    // The function uses screen height and text/image height to center the image vertically
+    private float HeightCenter(float spriteHeight)
+    {
+        float center;
+
+        // Calculating center by averaging the 2 heights
+        center = (screenHeight - spriteHeight) / 2f;
+
+        return center;
     }
 
     private void DayNightCycle(GameTime gameTime)
@@ -236,4 +313,15 @@ public class Game1 : Game
         skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
         
     }
+
+    #region ButtonActions
+
+    public void Level1ButtonAction()
+    {
+        gameState = GAMEPLAY;
+    }
+
+    #endregion
+    
+    
 }

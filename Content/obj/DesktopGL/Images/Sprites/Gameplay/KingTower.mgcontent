@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/KingTower.png</SourceFile>
-  <SourceTime>2025-05-09T20:23:25.7505047-04:00</SourceTime>
-  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/Gameplay/KingTower.xnb</DestFile>
-  <DestTime>2025-05-13T12:11:04.5675221-04:00</DestTime>
+  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/KingTower.png</SourceFile>
+  <SourceTime>2025-05-13T16:06:23.9741839-04:00</SourceTime>
+  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/Gameplay/KingTower.xnb</DestFile>
+  <DestTime>2025-05-13T16:39:10.6077533-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
