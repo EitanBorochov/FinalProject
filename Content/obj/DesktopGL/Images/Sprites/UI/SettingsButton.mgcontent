@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/SettingsButton.png</SourceFile>
-  <SourceTime>2025-05-12T14:26:13.2603429-04:00</SourceTime>
+  <SourceTime>2025-05-13T12:08:23.5199985-04:00</SourceTime>
   <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/UI/SettingsButton.xnb</DestFile>
-  <DestTime>2025-05-12T14:31:27.98981-04:00</DestTime>
+  <DestTime>2025-05-13T12:11:04.7158355-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

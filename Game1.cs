@@ -120,7 +120,8 @@ public class Game1 : Game
         
         // Loading king tower & image
         kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
-        kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, kingTowerImg.Height, 266, 100);
+        kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
+                                kingTowerImg.Height, 266, 100);
     }
 
     protected override void Update(GameTime gameTime)

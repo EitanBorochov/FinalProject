@@ -154,7 +154,7 @@
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/Wall/WallLvl2.png
 
-#begin Images/Sprites/UI/PlayButton.png
+#begin Images/Sprites/UI/HomeButton.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -164,9 +164,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/UI/PlayButton.png
+/build:Images/Sprites/UI/HomeButton.png
 
-#begin Images/Sprites/UI/PlayPressed.png
+#begin Images/Sprites/UI/Level1Button.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -176,7 +176,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/UI/PlayPressed.png
+/build:Images/Sprites/UI/Level1Button.png
+
+#begin Images/Sprites/UI/Level2Button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Sprites/UI/Level2Button.png
 
 #begin Images/Sprites/UI/ResumeButton.png
 /importer:TextureImporter
@@ -190,18 +202,6 @@
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/UI/ResumeButton.png
 
-#begin Images/Sprites/UI/ResumePressed.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/UI/ResumePressed.png
-
 #begin Images/Sprites/UI/SettingsButton.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -213,18 +213,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/UI/SettingsButton.png
-
-#begin Images/Sprites/UI/SettingsPressed.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/UI/SettingsPressed.png
 
 #begin Images/Sprites/UI/TutorialButton.png
 /importer:TextureImporter
