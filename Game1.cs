@@ -313,15 +313,7 @@ public class Game1 : Game
         skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
         
     }
-
-    #region ButtonActions
-
-    public void Level1ButtonAction()
-    {
-        gameState = GAMEPLAY;
-    }
-
-    #endregion
+    
     
     
 }
