@@ -116,6 +116,18 @@ public class Tower
             return false;
         }
     }
+    
+    // Translate object
+    public void TranslateTo(Vector2 position)
+    {
+        // Translating hitbox
+        hitbox.X = (int)position.X;
+        hitbox.Y = (int)position.Y;
+        
+        // Updating display rec to match
+        displayRec.X = hitbox.Center.X - displayRec.Width / 2; 
+        displayRec.Y = hitbox.Bottom - displayRec.Height; 
+    }
 
     #endregion
 }

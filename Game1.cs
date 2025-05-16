@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 9th 2025
+// Modification Date: May 16th 2025
 // Description: Main file that handles the central logic for the game
 
 using System;
@@ -29,11 +29,12 @@ public class Game1 : Game
     #region Game State Variables
     // Storing constant variable constants for game states
     const byte MENU = 0;
-    const byte GAMEPLAY = 1;
-    const byte PAUSE = 2;
-    const byte SETTINGS = 3;
-    const byte TUTORIAL = 4;
-    const byte ENDGAME = 5;
+    const byte LEVEL_1 = 1;
+    const byte LEVEL_2 = 2;
+    const byte PAUSE = 3;
+    const byte SETTINGS = 4;
+    const byte TUTORIAL = 5;
+    const byte ENDGAME = 6;
     
     // Storing current game state
     byte gameState = MENU;
@@ -63,6 +64,10 @@ public class Game1 : Game
     private Button settingsButton;
     private Button tutorialButton;
     
+    // Storing title image and rectangle
+    private Texture2D titleImg;
+    Rectangle titleRec;
+    
     #endregion
 
     #region Gameplay Variables
@@ -74,6 +79,10 @@ public class Game1 : Game
     // Storing king tower and its image
     private Texture2D kingTowerImg;
     private Tower kingTower;
+    
+    // Storing the two king tower locaations for each level
+    Vector2 lvl1KingPos;
+    Vector2 lvl2KingPos;
     
     // Storing timer for day night cycle
     Timer dayNightCycle = new Timer(5000, true);
@@ -89,9 +98,6 @@ public class Game1 : Game
     int skyMultiplier;
 
     #endregion
-
-    
-    
     
     public Game1()
     {
@@ -137,10 +143,14 @@ public class Game1 : Game
         platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
         platform = new Platform(platformImg, screenWidth, screenHeight);
         
-        // Loading king tower & image
+        // Loading king tower, position, & image
         kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
         kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
                                 kingTowerImg.Height, 266, 100);
+        lvl1KingPos = new Vector2(screenWidth - kingTower.GetHitbox().Width, 
+                                    platform.GetPlatformRec().Top - kingTower.GetHitbox().Y);
+        lvl2KingPos = new Vector2(WidthCenter(kingTower.GetHitbox().X),
+                                    platform.GetPlatformRec().Top - kingTower.GetHitbox().Y);
 
         // Loading button images
         level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
@@ -150,13 +160,17 @@ public class Game1 : Game
         
         // Loading all buttons
         level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
-                                    level1Img.Width, level1Img.Height, () => gameState = GAMEPLAY);
+                                    level1Img.Width, level1Img.Height, Level1Button);
         level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
-                                    level2Img.Width, level2Img.Height, () => gameState = GAMEPLAY);
+                                    level2Img.Width, level2Img.Height, () => gameState = LEVEL_2);
         settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5, settingsImg.Height / 5, 
                             () => gameState = SETTINGS);
         tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5, 50, 
             tutorialBtnImg.Width / 5, tutorialBtnImg.Height / 5, () => gameState = TUTORIAL);
+        
+        // Loading title image and rectangle
+        titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
+        titleRec = new Rectangle((int)WidthCenter(titleImg.Width), 150, titleImg.Width, titleImg.Height);
     }
 
     protected override void Update(GameTime gameTime)
@@ -175,10 +189,13 @@ public class Game1 : Game
                 
                 break;
             
-            case GAMEPLAY:
+            case LEVEL_1:
                 // Casting night sky every day night cycle
                 DayNightCycle(gameTime);
                 
+                break;
+            
+            case LEVEL_2:
                 break;
             
             case PAUSE:
@@ -215,6 +232,9 @@ public class Game1 : Game
                 // Drawing background
                 _spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
+                // Draw title
+                _spriteBatch.Draw(titleImg, titleRec, Color.White);
+                
                 // Drawing buttons
                 level1Button.Draw(_spriteBatch);
                 level2Button.Draw(_spriteBatch);
@@ -223,7 +243,7 @@ public class Game1 : Game
                 
                 break;
             
-            case GAMEPLAY:
+            case LEVEL_1:
                 // Drawing night sky overlay
                 _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
                 
@@ -233,6 +253,9 @@ public class Game1 : Game
                 // Drawing platform
                 platform.Draw(_spriteBatch);
                 
+                break;
+            
+            case LEVEL_2:
                 break;
             
             case PAUSE:
@@ -313,7 +336,16 @@ public class Game1 : Game
         skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
         
     }
-    
-    
+
+    #region Button Actions
+
+    public void Level1Button()
+    {
+        gameState = LEVEL_1;
+        
+        kingTower.TranslateTo(lvl1KingPos);
+    }
+
+    #endregion
     
 }
