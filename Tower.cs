@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: May 12th 2025
+// Modification Date: May 20th 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;
@@ -101,7 +101,7 @@ public class Tower
     public void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(towerImg, displayRec, Color.White);
-        spriteBatch.Draw(towerImg, hitbox, Color.Red);
+        // spriteBatch.Draw(towerImg, hitbox, Color.Red);
     }
     
     // Returning the state of the tower (dead or alive)

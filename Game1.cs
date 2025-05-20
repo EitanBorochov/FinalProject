@@ -2,8 +2,8 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 16th 2025
-// Description: Main file that handles the central logic for the game
+// Modification Date: May 20th 2025
+// Description: Main driver class for the game
 
 using System;
 using GameUtility;
@@ -99,6 +99,10 @@ public class Game1 : Game
 
     #endregion
     
+    // TESTING: REMOVE LATER
+    private Texture2D zombieWalk;
+    private Zombie zombie;
+    
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -147,10 +151,10 @@ public class Game1 : Game
         kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
         kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
                                 kingTowerImg.Height, 266, 100);
-        lvl1KingPos = new Vector2(screenWidth - kingTower.GetHitbox().Width, 
-                                    platform.GetPlatformRec().Top - kingTower.GetHitbox().Y);
-        lvl2KingPos = new Vector2(WidthCenter(kingTower.GetHitbox().X),
-                                    platform.GetPlatformRec().Top - kingTower.GetHitbox().Y);
+        lvl1KingPos = new Vector2(screenWidth - kingTower.GetDisplayRec().Width / 2f, 
+                                    platform.GetPlatformRec().Y - kingTower.GetHitbox().Height + 10);
+        lvl2KingPos = new Vector2(WidthCenter(kingTower.GetHitbox().Width),
+                                    platform.GetPlatformRec().Y - kingTower.GetHitbox().Height + 10);
 
         // Loading button images
         level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
@@ -162,7 +166,7 @@ public class Game1 : Game
         level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
                                     level1Img.Width, level1Img.Height, Level1Button);
         level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
-                                    level2Img.Width, level2Img.Height, () => gameState = LEVEL_2);
+                                    level2Img.Width, level2Img.Height, Level2Button);
         settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5, settingsImg.Height / 5, 
                             () => gameState = SETTINGS);
         tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5, 50, 
@@ -170,7 +174,8 @@ public class Game1 : Game
         
         // Loading title image and rectangle
         titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
-        titleRec = new Rectangle((int)WidthCenter(titleImg.Width), 150, titleImg.Width, titleImg.Height);
+        titleRec = new Rectangle((int)WidthCenter(titleImg.Width * 0.75f), 10, 
+                                (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
     }
 
     protected override void Update(GameTime gameTime)
@@ -244,18 +249,13 @@ public class Game1 : Game
                 break;
             
             case LEVEL_1:
-                // Drawing night sky overlay
-                _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
-                
-                // Drawing king tower
-                kingTower.Draw(_spriteBatch);
-                
-                // Drawing platform
-                platform.Draw(_spriteBatch);
-                
+                // Drawing game
+                DrawGame();
                 break;
             
             case LEVEL_2:
+                // Drawing game
+                DrawGame();
                 break;
             
             case PAUSE:
@@ -337,13 +337,38 @@ public class Game1 : Game
         
     }
 
+    private void DrawGame()
+    {
+        // Drawing night sky overlay
+        _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
+        
+        // Drawing platform
+        platform.Draw(_spriteBatch);
+                
+        // Drawing king tower
+        kingTower.Draw(_spriteBatch);
+    }
+
     #region Button Actions
 
+    // Action for level 1 button click
     public void Level1Button()
     {
+        // Setting game state to level 1
         gameState = LEVEL_1;
         
+        // Updating king position
         kingTower.TranslateTo(lvl1KingPos);
+    }
+
+    // Action for level 2 button click
+    public void Level2Button()
+    {
+        // Setting game state to level 2
+        gameState = LEVEL_2;
+        
+        // Updating king position
+        kingTower.TranslateTo(lvl2KingPos);
     }
 
     #endregion
