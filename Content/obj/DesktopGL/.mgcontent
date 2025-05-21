@@ -21,8 +21,6 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_2.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_3.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Dead.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Idle.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Run.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Walk.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_1.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_2.png</File>
@@ -47,8 +45,6 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
   </SourceFiles>
   <DestFiles>
-    <File xsi:nil="true" />
-    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

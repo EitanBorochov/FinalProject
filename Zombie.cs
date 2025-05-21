@@ -2,7 +2,7 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: May 20th 2025
+// Modification Date: May 21st 2025
 // Description: Zombie object, handles attacking, translating, etc.
 
 using System;
@@ -15,18 +15,21 @@ namespace FinalProject;
 public class Zombie
 {
     #region Attributes
+    
+    // Storing zombie state for animation logic
+    private const byte WALK = 0;
+    private const byte DEAD = 1;
+    private const byte ATTACK1 = 2;
+    private const byte ATTACK2 = 3;
+    private const byte ATTACK3 = 4;
+
+    private byte zombieState;
 
     // Storing zombie animation sprites
-    private Texture2D walkImg;
-    private Texture2D idleImg;
-    private Texture2D deadImg;
-    private Texture2D[] attackImgs = new Texture2D[3];
+    private Texture2D[] images = new Texture2D[5];
     
     // Storing zombie animations
-    private Animation walkAnim;
-    private Animation idleAnim;
-    private Animation deadAnim;
-    private Animation[] attackAnims = new Animation[3];
+    private Animation[] attackAnims = new Animation[5];
     
     // Storing zombie position
     private Vector2 position;
@@ -45,10 +48,9 @@ public class Zombie
 
     #region Constructor
     // Constructor
-    public Zombie(Texture2D walkImg)
+    public Zombie(Texture2D[] images)
     {
-        this.walkImg = walkImg;
-        walkAnim = new Animation(this.walkImg, 8, 1, 8, 0, 0, 1, 500, position, false);
+        
     }
 
     #endregion

@@ -202,30 +202,6 @@
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/WildZombie/Dead.png
 
-#begin Images/Sprites/Gameplay/WildZombie/Idle.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/WildZombie/Idle.png
-
-#begin Images/Sprites/Gameplay/WildZombie/Run.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/WildZombie/Run.png
-
 #begin Images/Sprites/Gameplay/WildZombie/Walk.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -465,18 +441,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/UI/SettingsButton.png
-
-#begin Images/Sprites/UI/Title.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/UI/Title.png
 
 #begin Images/Sprites/UI/Title.png
 /importer:TextureImporter

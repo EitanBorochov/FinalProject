@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 20th 2025
+// Modification Date: May 21st 2025
 // Description: Main driver class for the game
 
 using System;
@@ -72,17 +72,18 @@ public class Game1 : Game
 
     #region Gameplay Variables
 
-    // Storing platform image and class
+    // Storing platform
     Platform platform;
-    Texture2D platformImg;
     
-    // Storing king tower and its image
-    private Texture2D kingTowerImg;
+    // Storing king tower
     private Tower kingTower;
     
     // Storing the two king tower locaations for each level
     Vector2 lvl1KingPos;
     Vector2 lvl2KingPos;
+    
+    // Storing zombies array
+    private Zombie[] zombies = new Zombie[20];
     
     // Storing timer for day night cycle
     Timer dayNightCycle = new Timer(5000, true);
@@ -98,10 +99,6 @@ public class Game1 : Game
     int skyMultiplier;
 
     #endregion
-    
-    // TESTING: REMOVE LATER
-    private Texture2D zombieWalk;
-    private Zombie zombie;
     
     public Game1()
     {
@@ -143,11 +140,13 @@ public class Game1 : Game
         bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
         bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
         
-        // Loading platform and its texture
+        // Loading platform and its texture (defining texture localy as it will be used in the Platform class)
+        Texture2D platformImg;
         platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
         platform = new Platform(platformImg, screenWidth, screenHeight);
         
-        // Loading king tower, position, & image
+        // Loading king tower, position, & image (defining king tower image localy as it will be used in the Tower class)
+        Texture2D kingTowerImg;
         kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
         kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
                                 kingTowerImg.Height, 266, 100);
@@ -176,6 +175,20 @@ public class Game1 : Game
         titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
         titleRec = new Rectangle((int)WidthCenter(titleImg.Width * 0.75f), 10, 
                                 (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
+        
+        // Loading local zombie textures locally
+        Texture2D[] zombieImgs = new Texture2D[5];
+        zombieImgs[0] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Walk");
+        zombieImgs[1] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Dead");
+        zombieImgs[2] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_1");
+        zombieImgs[3] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_2");
+        zombieImgs[4] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_3");
+        
+        // Loading all of the zombies
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i] = new Zombie(zombieImgs);
+        }
     }
 
     protected override void Update(GameTime gameTime)
