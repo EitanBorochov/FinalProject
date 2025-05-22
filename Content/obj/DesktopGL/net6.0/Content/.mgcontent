@@ -17,6 +17,25 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/KingTower.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Wall/WallLvl1.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Wall/WallLvl2.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_1.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_2.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_3.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Dead.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Walk.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_1.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_2.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_3.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Dead.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Idle.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Run.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Walk.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_1.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_2.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_3.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Dead.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Idle.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Run.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Walk.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/HomeButton.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Level1Button.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Level2Button.png</File>
@@ -26,6 +45,25 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 21st 2025
+// Modification Date: May 22nd 2025
 // Description: Main driver class for the game
 
 using System;
@@ -19,8 +19,8 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
 
     // Storing screen dimensions
-    int screenWidth;
-    int screenHeight;
+    private int screenWidth;
+    private int screenHeight;
     
     // Storing mouse input
     private MouseState mouse;
@@ -28,16 +28,16 @@ public class Game1 : Game
 
     #region Game State Variables
     // Storing constant variable constants for game states
-    const byte MENU = 0;
-    const byte LEVEL_1 = 1;
-    const byte LEVEL_2 = 2;
-    const byte PAUSE = 3;
-    const byte SETTINGS = 4;
-    const byte TUTORIAL = 5;
-    const byte ENDGAME = 6;
+    private const byte MENU = 0;
+    private const byte LEVEL_1 = 1;
+    private const byte LEVEL_2 = 2;
+    private const byte PAUSE = 3;
+    private const byte SETTINGS = 4;
+    private const byte TUTORIAL = 5;
+    private const byte ENDGAME = 6;
     
     // Storing current game state
-    byte gameState = MENU;
+    private byte gameState = MENU;
 
     #endregion
 
@@ -72,31 +72,34 @@ public class Game1 : Game
 
     #region Gameplay Variables
 
+    // Storing time passed
+    private float timePassed;
+    
     // Storing platform
-    Platform platform;
+    private Platform platform;
     
     // Storing king tower
     private Tower kingTower;
     
     // Storing the two king tower locaations for each level
-    Vector2 lvl1KingPos;
-    Vector2 lvl2KingPos;
+    private Vector2 lvl1KingPos;
+    private Vector2 lvl2KingPos;
     
     // Storing zombies array
-    private Zombie[] zombies = new Zombie[20];
+    private Zombie[] zombies = new Zombie[5];
     
     // Storing timer for day night cycle
-    Timer dayNightCycle = new Timer(5000, true);
+    private Timer dayNightCycle = new Timer(5000, true);
     
     // Storing background night sky texture and rectangle
     public Texture2D nightBGImg;
-    Rectangle nightBGRec;
+    private Rectangle nightBGRec;
     
     // Storing night sky color multiplier, incrase and decrease constants, and multiplier modifier
-    float skyOpacity = 0f;
-    const int POSITIVE = 1;
-    const int NEGATIVE = -1;
-    int skyMultiplier;
+    private float skyOpacity = 0f;
+    private const int POSITIVE = 1;
+    private const int NEGATIVE = -1;
+    private int skyMultiplier;
 
     #endregion
     
@@ -187,7 +190,7 @@ public class Game1 : Game
         // Loading all of the zombies
         for (int i = 0; i < zombies.Length; i++)
         {
-            zombies[i] = new Zombie(zombieImgs);
+            zombies[i] = new Zombie(zombieImgs, screenWidth, platform.GetPlatformRec().Y);
         }
     }
 
@@ -196,6 +199,9 @@ public class Game1 : Game
         // Updating mouse input
         prevMouse = mouse;
         mouse = Mouse.GetState();
+        
+        // Storing time passed
+        timePassed = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
         
         switch (gameState)
         {
@@ -214,6 +220,10 @@ public class Game1 : Game
                 break;
             
             case LEVEL_2:
+                for (int i = 0; i < zombies.Length; i++)
+                {
+                    zombies[i].Update(gameTime, timePassed);
+                }
                 break;
             
             case PAUSE:
@@ -360,6 +370,12 @@ public class Game1 : Game
                 
         // Drawing king tower
         kingTower.Draw(_spriteBatch);
+        
+        // Drawing zombies
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i].Draw(_spriteBatch);
+        }
     }
 
     #region Button Actions
@@ -382,6 +398,12 @@ public class Game1 : Game
         
         // Updating king position
         kingTower.TranslateTo(lvl2KingPos);
+        
+        // TESTING
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i].Spawn(LEVEL_2);
+        }
     }
 
     #endregion
