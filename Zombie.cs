@@ -53,7 +53,7 @@ public class Zombie
     private int damage = 4;
     
     // Storing zombie moving speed and direction
-    private int speed = 1000;
+    private int speed = 1;
     private int dir = 1;
 
     #endregion
@@ -74,6 +74,7 @@ public class Zombie
             anims[i] = new Animation(images[i], 4, 1, 8, 0, 0, 1, 400, position, 1,false);
         }
 
+        //Loading initial zombie positions
         leftOfScreen = new Vector2(-anims[0].GetDestRec().Width, groundLevel - anims[0].GetDestRec().Height);
         rightOfScreen = new Vector2(screenWidth, groundLevel - anims[0].GetDestRec().Height);
     }
@@ -81,8 +82,23 @@ public class Zombie
     #endregion
     
     #region Getters & Setters
-    
-    
+
+    public Rectangle GetDestRec()
+    {
+        return anims[zombieState].GetDestRec();
+    }
+
+    public byte State
+    {
+        get
+        {
+            return zombieState;
+        }
+        set
+        {
+            zombieState = value;
+        }
+    }
     
     #endregion
 
@@ -125,18 +141,21 @@ public class Zombie
     {
         // Updating timer & Animations
         actionTimer.Update(timePassed);
-        for (int i = 0; i < anims.Length; i++)
-        {
-            anims[i].TranslateTo(position.X, position.Y);
-            anims[i].Update(gameTime);
-        }
+        anims[zombieState].TranslateTo(position.X, position.Y);
+        anims[zombieState].Update(gameTime);
         
         // Translating zombie every time the action timer goes off
         if (actionTimer.IsFinished())
         {
-            // Translating
-            position.X += speed * dir * timePassed / 1000;
+            // Resetting animation
+            anims[zombieState].Activate(true);
             
+            // Translating if state is walking
+            if (zombieState == WALK)
+            {
+                position.X += speed * dir * timePassed;
+            }
+
             // Reactivating timer
             actionTimer.ResetTimer(true);
         }

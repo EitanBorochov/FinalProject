@@ -214,16 +214,11 @@ public class Game1 : Game
                 break;
             
             case LEVEL_1:
-                // Casting night sky every day night cycle
-                DayNightCycle(gameTime);
                 
                 break;
             
             case LEVEL_2:
-                for (int i = 0; i < zombies.Length; i++)
-                {
-                    zombies[i].Update(gameTime, timePassed);
-                }
+                
                 break;
             
             case PAUSE:
@@ -358,6 +353,19 @@ public class Game1 : Game
         skyOpacity += skyMultiplier * 0.01f;
         skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
         
+    }
+
+    // Updating everything that is common to both levels
+    private void UpdateGame(GameTime gameTime)
+    {
+        // Casting night sky every day night cycle
+        DayNightCycle(gameTime);
+        
+        // Updating zombies
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i].Update(gameTime, timePassed);
+        }
     }
 
     private void DrawGame()
