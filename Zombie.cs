@@ -2,7 +2,7 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: May 22nd 2025
+// Modification Date: May 23rd 2025
 // Description: Zombie object, handles attacking, translating, etc.
 
 using System;
@@ -21,7 +21,7 @@ public class Zombie
     
     // Storing zombie state for animation logic
     private const byte WALK = 0;
-    private const byte DEAD = 1;
+    private const byte DYING = 1;
     private const byte ATTACK1 = 2;
     private const byte ATTACK2 = 3;
     private const byte ATTACK3 = 4;
@@ -53,7 +53,7 @@ public class Zombie
     private int damage = 4;
     
     // Storing zombie moving speed and direction
-    private int speed = 1;
+    private float speed = 1.5f;
     private int dir = 1;
 
     #endregion
@@ -67,7 +67,7 @@ public class Zombie
         
         // Creating the animations
         anims[WALK] = new Animation(images[WALK], 4, 2, 8, 0, 0, 1, 500, position, 1, false);
-        anims[DEAD] = new Animation(images[DEAD], 5, 1, 5, 0, 0, 1, 500, position, 1, false);
+        anims[DYING] = new Animation(images[DYING], 5, 1, 5, 0, 0, 1, 500, position, 1, false);
 
         for (int i = ATTACK1; i <= ATTACK3; i++)
         {
@@ -83,11 +83,14 @@ public class Zombie
     
     #region Getters & Setters
 
-    public Rectangle GetDestRec()
+    // Returning rectangle
+    public Rectangle GetRec()
     {
-        return anims[zombieState].GetDestRec();
+        // ** ALL ZOMBIES HAVE SAME REC
+        return anims[WALK].GetDestRec();
     }
 
+    // Returning and setting current zombie state
     public byte State
     {
         get
@@ -97,6 +100,38 @@ public class Zombie
         set
         {
             zombieState = value;
+        }
+    }
+
+    // Returning and setting zombie HP 
+    public int HP
+    {
+        get
+        {
+            return health;
+        }
+        set
+        {
+            health = value;
+        }
+    }
+
+    // Returning zombie damage
+    public int GetDamage()
+    {
+        return damage;
+    }
+    
+    // Returning and setting zombie position
+    public Vector2 Pos
+    {
+        get
+        {
+            return position;
+        }
+        set
+        {
+            position = value;
         }
     }
     
@@ -139,32 +174,92 @@ public class Zombie
     // Zombie logic for each update
     public void Update(GameTime gameTime, float timePassed)
     {
-        // Updating timer & Animations
-        actionTimer.Update(timePassed);
-        anims[zombieState].TranslateTo(position.X, position.Y);
-        anims[zombieState].Update(gameTime);
-        
-        // Translating zombie every time the action timer goes off
-        if (actionTimer.IsFinished())
+        if (zombieState != INACTIVE)
+        {
+            // Updating timer & Animations
+            actionTimer.Update(timePassed);
+            anims[zombieState].Update(gameTime);
+
+            // Zombie Action
+            Action(timePassed);
+
+            // Checking if zombie is dead
+            if (health <= 0)
+            {
+                zombieState = DYING;
+            }
+        }
+    }
+    
+    // Determining zombie action based on state
+    private void Action(float timePassed)
+    {
+        // // Determining
+        if (zombieState == DYING && anims[DYING].IsFinished()) 
+        {
+            // Translating zombie out of screen
+            position.X = -100;
+            position.Y = -100;
+            for (int i = 0; i < zombieState - 1; i++)
+            {
+                anims[i].TranslateTo(position.X, position.Y);
+            }
+            
+            // Deactivating zombie
+            zombieState = INACTIVE;
+        }
+        else if (zombieState == WALK && actionTimer.IsFinished())
         {
             // Resetting animation
             anims[zombieState].Activate(true);
             
-            // Translating if state is walking
-            if (zombieState == WALK)
-            {
-                position.X += speed * dir * timePassed;
-            }
-
+            // Translating zombie position
+            position.X += speed * dir * timePassed;
+            anims[zombieState].TranslateTo(position.X, position.Y);
+            
             // Reactivating timer
             actionTimer.ResetTimer(true);
         }
     }
     
+    // Killing zombie
+    public void KillZombie()
+    {
+        if (zombieState != DYING && zombieState != INACTIVE)
+        {
+            zombieState = DYING;
+            anims[DYING].Activate(true);
+            anims[DYING].TranslateTo(position.X, position.Y);
+        }
+    }
+
+    // Dealing damage to tower
+    public int DealDamage(int towerHP)
+    {
+        if (zombieState != DYING && zombieState != INACTIVE)
+        {
+            zombieState = ATTACK1;
+            anims[zombieState].TranslateTo(position.X, position.Y);
+
+            if (zombieState != INACTIVE && actionTimer.IsFinished())
+            {
+                anims[zombieState].Activate(true);
+                towerHP -= damage;
+                
+                actionTimer.ResetTimer(true);
+            }
+        }
+
+        return towerHP;
+    }
+    
     // Drawing zombie
     public void Draw(SpriteBatch spriteBatch)
     {
-        anims[zombieState].Draw(spriteBatch, Color.White, effect);
+        if (zombieState != INACTIVE)
+        {
+            anims[zombieState].Draw(spriteBatch, Color.White, effect);
+        }
     }
 
     #endregion

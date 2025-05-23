@@ -89,7 +89,7 @@ public class Game1 : Game
     private Zombie[] zombies = new Zombie[5];
     
     // Storing timer for day night cycle
-    private Timer dayNightCycle = new Timer(5000, true);
+    private Timer dayNightCycle = new Timer(20000, true);
     
     // Storing background night sky texture and rectangle
     public Texture2D nightBGImg;
@@ -214,10 +214,14 @@ public class Game1 : Game
                 break;
             
             case LEVEL_1:
+                // Updating game
+                UpdateGame(gameTime);
                 
                 break;
             
             case LEVEL_2:
+                // Updating game
+                UpdateGame(gameTime);
                 
                 break;
             
@@ -304,7 +308,9 @@ public class Game1 : Game
 
         base.Draw(gameTime);
     }
-    
+
+    #region Centers
+
     // The function uses screen width and text/image width to center the image horizontally
     private float WidthCenter(float spriteWidth)
     {
@@ -327,6 +333,8 @@ public class Game1 : Game
         return center;
     }
 
+    #endregion
+
     private void DayNightCycle(GameTime gameTime)
     {
         // Updating day night cycle timer
@@ -343,6 +351,10 @@ public class Game1 : Game
             else if (skyOpacity == 1)
             {
                 skyMultiplier = NEGATIVE;
+                for (int i = 0; i < zombies.Length; i++)
+                {
+                    zombies[i].KillZombie();
+                }
             }
             
             // Restarting the timer
@@ -355,19 +367,37 @@ public class Game1 : Game
         
     }
 
+    private int TowerCollision(Tower tower)
+    {
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            if (tower.GetHitbox().Intersects(zombies[i].GetRec()))
+            {
+                tower.HP = zombies[i].DealDamage(tower.HP);
+            }
+        }
+
+        return tower.HP;
+    }
+
+    #region Game
+
     // Updating everything that is common to both levels
     private void UpdateGame(GameTime gameTime)
     {
         // Casting night sky every day night cycle
         DayNightCycle(gameTime);
         
-        // Updating zombies
+        // Updating zombie
         for (int i = 0; i < zombies.Length; i++)
         {
             zombies[i].Update(gameTime, timePassed);
         }
+
+        kingTower.HP = TowerCollision(kingTower);
     }
 
+    // Drawing everything in both levels
     private void DrawGame()
     {
         // Drawing night sky overlay
@@ -384,7 +414,11 @@ public class Game1 : Game
         {
             zombies[i].Draw(_spriteBatch);
         }
+        
+        _spriteBatch.DrawString(HUDFont, $"{kingTower.HP}", nightBGRec.Location.ToVector2(), Color.White);
     }
+
+    #endregion
 
     #region Button Actions
 
