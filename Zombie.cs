@@ -66,7 +66,7 @@ public class Zombie
         this.images = images;
         
         // Creating the animations
-        anims[WALK] = new Animation(images[WALK], 4, 2, 8, 0, 0, 1, 500, position, 1, false);
+        anims[WALK] = new Animation(images[WALK], 4, 2, 8, 0, 0, 1, 600, position, 1, false);
         anims[DYING] = new Animation(images[DYING], 5, 1, 5, 0, 0, 1, 500, position, 1, false);
 
         for (int i = ATTACK1; i <= ATTACK3; i++)
@@ -238,19 +238,36 @@ public class Zombie
     {
         if (zombieState != DYING && zombieState != INACTIVE)
         {
-            zombieState = ATTACK1;
-            anims[zombieState].TranslateTo(position.X, position.Y);
-
-            if (zombieState != INACTIVE && actionTimer.IsFinished())
+            // Setting zombie state to attack 1 if its not an attack
+            if (zombieState < ATTACK1 || zombieState > ATTACK3)
             {
+                zombieState = ATTACK1;
+            }
+
+            if (actionTimer.IsFinished())
+            {
+                // Randomizing attack variant
+                zombieState = (byte)rng.Next(ATTACK1, ATTACK3 + 1);
+
+                // Translating animation and activating it
+                anims[zombieState].TranslateTo(position.X, position.Y);
                 anims[zombieState].Activate(true);
+
                 towerHP -= damage;
-                
+
                 actionTimer.ResetTimer(true);
             }
         }
 
         return towerHP;
+    }
+
+    public void Walk()
+    {
+        if (zombieState != DYING && zombieState != INACTIVE)
+        {
+            zombieState = WALK;
+        }
     }
     
     // Drawing zombie

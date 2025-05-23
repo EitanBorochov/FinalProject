@@ -353,7 +353,7 @@ public class Game1 : Game
                 skyMultiplier = NEGATIVE;
                 for (int i = 0; i < zombies.Length; i++)
                 {
-                    zombies[i].KillZombie();
+                    // zombies[i].KillZombie();
                 }
             }
             
@@ -375,6 +375,10 @@ public class Game1 : Game
             {
                 tower.HP = zombies[i].DealDamage(tower.HP);
             }
+            else
+            {
+                zombies[i].Walk();
+            }
         }
 
         return tower.HP;
@@ -385,6 +389,9 @@ public class Game1 : Game
     // Updating everything that is common to both levels
     private void UpdateGame(GameTime gameTime)
     {
+        // Updating king tower
+        kingTower.Update();
+        
         // Casting night sky every day night cycle
         DayNightCycle(gameTime);
         

@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: May 20th 2025
+// Modification Date: May 23rd 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;
@@ -25,7 +25,7 @@ public class Tower
     private Rectangle hitbox;
     
     // Storing king tower HP
-    private int towerHP = 1000;
+    private int health = 1000;
 
     #endregion
 
@@ -72,12 +72,12 @@ public class Tower
     // Modifying tower HP property
     public int HP
     {
-        get => this.towerHP;
+        get => this.health;
         set
         {
             if (value >= 0);
             {
-                this.towerHP = value;
+                this.health = value;
             }
         }
     }
@@ -96,18 +96,31 @@ public class Tower
     #endregion
 
     #region Behaviours
+    
+    // Updating tower
+    public void Update()
+    {
+        // Checking if tower is alive of dead
+        if (health <= 0)
+        {
+            TranslateTo(new Vector2(-1000, -1000));
+        }
+    }
 
     // Drawing tower
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(towerImg, displayRec, Color.White);
-        // spriteBatch.Draw(towerImg, hitbox, Color.Red);
+        // Check if tower is alive
+        if (health > 0)
+        {
+            spriteBatch.Draw(towerImg, displayRec, Color.White);
+        }
     }
     
     // Returning the state of the tower (dead or alive)
     public bool IsAlive()
     {
-        if (towerHP > 0)
+        if (health > 0)
         {
             return true;
         }
