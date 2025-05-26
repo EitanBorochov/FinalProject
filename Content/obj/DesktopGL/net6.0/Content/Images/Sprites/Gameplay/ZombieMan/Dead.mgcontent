@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Dead.png</SourceFile>
-  <SourceTime>2022-10-17T16:18:42-04:00</SourceTime>
-  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/ZombieMan/Dead.xnb</DestFile>
-  <DestTime>2025-05-22T09:11:33.6225471-04:00</DestTime>
+  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Dead.png</SourceFile>
+  <SourceTime>2025-05-25T18:19:29.0818361-04:00</SourceTime>
+  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/ZombieMan/Dead.xnb</DestFile>
+  <DestTime>2025-05-25T18:44:21.2868338-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

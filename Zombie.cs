@@ -2,7 +2,7 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: May 23rd 2025
+// Modification Date: May 25th 2025
 // Description: Zombie object, handles attacking, translating, etc.
 
 using System;
@@ -225,36 +225,46 @@ public class Zombie
     // Killing zombie
     public void KillZombie()
     {
+        // Making sure zombie is alive
         if (zombieState != DYING && zombieState != INACTIVE)
         {
+            // Setting state to dying and playing animation
             zombieState = DYING;
             anims[DYING].Activate(true);
             anims[DYING].TranslateTo(position.X, position.Y);
+            
+            // adding one to death count
+            Game1.mobsKilled++;
+            Game1.dispMobsKilled = $"Mobs Killed: {Game1.mobsKilled}";
         }
     }
 
     // Dealing damage to tower
     public int DealDamage(int towerHP)
     {
+        // Making sure zombie is alive
         if (zombieState != DYING && zombieState != INACTIVE)
         {
-            // Setting zombie state to attack 1 if its not an attack
+            // Setting zombie state to attack 1 if it's not an attack
             if (zombieState < ATTACK1 || zombieState > ATTACK3)
             {
                 zombieState = ATTACK1;
             }
 
+            // Attacking when action timer is done
             if (actionTimer.IsFinished())
             {
                 // Randomizing attack variant
                 zombieState = (byte)rng.Next(ATTACK1, ATTACK3 + 1);
 
-                // Translating animation and activating it
+                // Translating animation and activating it 
                 anims[zombieState].TranslateTo(position.X, position.Y);
                 anims[zombieState].Activate(true);
 
+                // Lowering tower HP
                 towerHP -= damage;
 
+                // Resetting action timer
                 actionTimer.ResetTimer(true);
             }
         }
@@ -264,8 +274,10 @@ public class Zombie
 
     public void Walk()
     {
+        // Making sure zombie is alive
         if (zombieState != DYING && zombieState != INACTIVE)
         {
+            // Setting zombie to walk
             zombieState = WALK;
         }
     }

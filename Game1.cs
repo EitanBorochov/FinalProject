@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 22nd 2025
+// Modification Date: May 25th 2025
 // Description: Main driver class for the game
 
 using System;
@@ -44,13 +44,16 @@ public class Game1 : Game
     #region UI Variables
 
     // Storing sprite Fonts
-    SpriteFont titleFont;
-    SpriteFont HUDFont;
-    SpriteFont textFont;
+    private SpriteFont titleFont;
+    private SpriteFont HUDFont;
+    private SpriteFont textFont;
+    
+    // Storing offset constant for drop shadow texts
+    private readonly Vector2 DROP_SHADOW = new Vector2(4, 4);
     
     // Storing background image and rec for menu
-    Texture2D bgImg;
-    Rectangle bgRec;
+    private Texture2D bgImg;
+    private Rectangle bgRec;
     
     // Storing all button images
     private Texture2D level1Img;
@@ -75,6 +78,10 @@ public class Game1 : Game
     // Storing time passed
     private float timePassed;
     
+    // Storing game background image and rectangle
+    private Texture2D gameBgImg;
+    private Rectangle gameBgRec;
+    
     // Storing platform
     private Platform platform;
     
@@ -92,7 +99,7 @@ public class Game1 : Game
     private Timer dayNightCycle = new Timer(20000, true);
     
     // Storing background night sky texture and rectangle
-    public Texture2D nightBGImg;
+    private Texture2D nightBGImg;
     private Rectangle nightBGRec;
     
     // Storing night sky color multiplier, incrase and decrease constants, and multiplier modifier
@@ -100,6 +107,24 @@ public class Game1 : Game
     private const int POSITIVE = 1;
     private const int NEGATIVE = -1;
     private int skyMultiplier;
+
+    #region Sub Region - HUD Variables
+
+    // Storing days survived, string for display, and position vector
+    private int dayCount = 0;
+    private string dispDayCount = "Days Survived: 0";
+    private Vector2 dayCountPos;
+    
+    // Storing zombies killed, string for display, and position vector
+    public static int mobsKilled = 0; // Setting to public so that zombie class will be able to modify it
+    public static string dispMobsKilled = "Mobs Killed: 0";
+    private Vector2 mobsKilledPos;
+    
+    // Storing king hp string display, and position vector
+    private string dispKingHP = "HP: 1000";
+    private Vector2 kingHPPos;
+
+    #endregion
 
     #endregion
     
@@ -143,12 +168,16 @@ public class Game1 : Game
         bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
         bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
         
-        // Loading platform and its texture (defining texture localy as it will be used in the Platform class)
+        // Loading game background
+        gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
+        gameBgRec = new Rectangle(0, 400, screenWidth, screenHeight);
+        
+        // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
         Texture2D platformImg;
         platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
         platform = new Platform(platformImg, screenWidth, screenHeight);
         
-        // Loading king tower, position, & image (defining king tower image localy as it will be used in the Tower class)
+        // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
         Texture2D kingTowerImg;
         kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
         kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
@@ -192,6 +221,11 @@ public class Game1 : Game
         {
             zombies[i] = new Zombie(zombieImgs, screenWidth, platform.GetPlatformRec().Y);
         }
+        
+        // Loading positions of HUD objects
+        dayCountPos = new Vector2(5, 5);
+        mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
+        kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
     }
 
     protected override void Update(GameTime gameTime)
@@ -206,6 +240,7 @@ public class Game1 : Game
         switch (gameState)
         {
             case MENU:
+                // Checking for button clicks
                 level1Button.Update(mouse, prevMouse);
                 level2Button.Update(mouse, prevMouse);
                 settingsButton.Update(mouse, prevMouse);
@@ -309,7 +344,7 @@ public class Game1 : Game
         base.Draw(gameTime);
     }
 
-    #region Centers
+    #region Centers & Drop Shadow
 
     // The function uses screen width and text/image width to center the image horizontally
     private float WidthCenter(float spriteWidth)
@@ -332,6 +367,13 @@ public class Game1 : Game
 
         return center;
     }
+    
+    // Drawing text with drop shadow
+    private void DrawWithShadow(SpriteFont font, string text, Vector2 pos, Color color, Color shadowColor)
+    {
+        _spriteBatch.DrawString(font, text, pos + DROP_SHADOW, shadowColor);
+        _spriteBatch.DrawString(font, text, pos, color);
+    }
 
     #endregion
 
@@ -351,10 +393,16 @@ public class Game1 : Game
             else if (skyOpacity == 1)
             {
                 skyMultiplier = NEGATIVE;
+                
+                // Killing zombies
                 for (int i = 0; i < zombies.Length; i++)
                 {
-                    // zombies[i].KillZombie();
+                    zombies[i].KillZombie();
                 }
+                
+                // Adding 1 to day count
+                dayCount++;
+                dispDayCount = $"Days Survived: {dayCount}";
             }
             
             // Restarting the timer
@@ -369,14 +417,22 @@ public class Game1 : Game
 
     private int TowerCollision(Tower tower)
     {
+        // Checking collision for each zombie
         for (int i = 0; i < zombies.Length; i++)
         {
+            // Checking if rectangles overlap
             if (tower.GetHitbox().Intersects(zombies[i].GetRec()))
             {
+                // Dealing damage to tower
                 tower.HP = zombies[i].DealDamage(tower.HP);
+                
+                // Updating king health display
+                dispKingHP = $"Health: {kingTower.HP}";
+                kingHPPos.X = WidthCenter(HUDFont.MeasureString(dispKingHP).X);
             }
             else
             {
+                // Making sure the zombie walks if the tower is destroyed
                 zombies[i].Walk();
             }
         }
@@ -410,6 +466,9 @@ public class Game1 : Game
         // Drawing night sky overlay
         _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
         
+        // Drawing background
+        _spriteBatch.Draw(gameBgImg, gameBgRec, Color.White);
+        
         // Drawing platform
         platform.Draw(_spriteBatch);
                 
@@ -422,10 +481,19 @@ public class Game1 : Game
             zombies[i].Draw(_spriteBatch);
         }
         
-        _spriteBatch.DrawString(HUDFont, $"{kingTower.HP}", nightBGRec.Location.ToVector2(), Color.White);
+        // Drawing HUD
+        DrawHUD();
     }
 
     #endregion
+
+    private void DrawHUD()
+    {
+        // Drawing day count, kill count, health with offset
+        DrawWithShadow(HUDFont, dispDayCount, dayCountPos, Color.Yellow, Color.Black);
+        DrawWithShadow(HUDFont, dispMobsKilled, mobsKilledPos, Color.IndianRed, Color.Black);
+        DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
+    }
 
     #region Button Actions
 

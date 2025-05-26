@@ -34,6 +34,18 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/TitleFont.spritefont
 
+#begin Images/Backgrounds/GameBackground.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Backgrounds/GameBackground.png
+
 #begin Images/Backgrounds/MenuBackground.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -117,6 +129,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/Brick.png
+
+#begin Images/Sprites/Gameplay/Cannonball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Sprites/Gameplay/Cannonball.png
 
 #begin Images/Sprites/Gameplay/KingTower.png
 /importer:TextureImporter
