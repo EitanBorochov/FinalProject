@@ -262,3 +262,6 @@ C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Ima
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/obj/Debug/net6.0/FinalProject.pdb
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/obj/Debug/net6.0/FinalProject.genruntimeconfig.cache
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/obj/Debug/net6.0/ref/FinalProject.dll
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Backgrounds/GameBackground.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/Gameplay/Cannonball.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/Gameplay/explosion.xnb

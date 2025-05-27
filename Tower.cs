@@ -18,21 +18,24 @@ public class Tower
     #region Attributes
 
     // Storing images of the king tower, king, and cannons
-    private Texture2D towerImg;
+    protected Texture2D towerImg;
     
     // Storing rectangles of the king tower, king, cannons, and hitbox
-    private Rectangle displayRec;
-    private Rectangle hitbox;
+    protected Rectangle displayRec;
+    protected Rectangle hitbox;
     
-    // Storing king tower HP
-    private int health = 1000;
+    // Storing tower HP
+    protected int health;
+    
+    // Storing action timer
+    protected Timer cooldownTimer;
 
     #endregion
 
     #region Constructors
     
     // Setting up constructor
-    public Tower(Texture2D towerImg, Vector2 position, int width, int height, int hitboxWidth, int hitboxHeight)
+    public Tower(Texture2D towerImg, Vector2 position, int width, int height, int hitboxWidth, int hitboxHeight, int health, int cooldownTimerLength)
     {
         // Storing temporary variables for calculations
         int hitboxX;
@@ -50,6 +53,12 @@ public class Tower
 
         // Creating new rectangle for hitbox
         hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
+
+        // Storing king health
+        this.health = health;
+        
+        // Constructing action timer
+        this.cooldownTimer = new Timer(cooldownTimerLength, true);
     }
 
     #endregion
@@ -58,19 +67,19 @@ public class Tower
 
     // Getters:
     // Returns display rectangle
-    public Rectangle GetDisplayRec()
+    public virtual Rectangle GetDisplayRec()
     {
         return displayRec;
     }
     
     // Returns hitbox rectangle
-    public Rectangle GetHitbox()
+    public virtual Rectangle GetHitbox()
     {
         return hitbox;
     }
     
     // Modifying tower HP property
-    public int HP
+    public virtual int HP
     {
         get => this.health;
         set
@@ -83,7 +92,7 @@ public class Tower
     }
     
     // Setting a new image for the object
-    public void SetImage(Texture2D towerImg, int width, int height)
+    public virtual void SetImage(Texture2D towerImg, int width, int height)
     {
         // Updating image
         this.towerImg = towerImg;
@@ -98,27 +107,31 @@ public class Tower
     #region Behaviours
     
     // Updating tower
-    public void Update()
+    public virtual void Update(MouseState mouse, GameTime gameTime)
     {
         // Checking if tower is alive of dead
         if (health <= 0)
         {
             TranslateTo(new Vector2(-1000, -1000));
         }
+        
+        // Updating cooldown timer
+        cooldownTimer.Update(gameTime);
     }
 
     // Drawing tower
-    public void Draw(SpriteBatch spriteBatch)
+    public virtual void Draw(SpriteBatch spriteBatch)
     {
         // Check if tower is alive
         if (health > 0)
         {
+            // Drawing
             spriteBatch.Draw(towerImg, displayRec, Color.White);
         }
     }
     
     // Returning the state of the tower (dead or alive)
-    public bool IsAlive()
+    public virtual bool IsAlive()
     {
         if (health > 0)
         {
@@ -131,7 +144,7 @@ public class Tower
     }
     
     // Translate object
-    public void TranslateTo(Vector2 position)
+    public virtual void TranslateTo(Vector2 position)
     {
         // Translating hitbox
         hitbox.X = (int)position.X;

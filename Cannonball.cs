@@ -15,32 +15,45 @@ namespace FinalProject;
 
 public class Cannonball : Projectile
 {
+    // Storing a constant cannon ball speed
+    public const float LAUNCH_SPEED = 800f;
+    
+    // Storing collision hitbox that is double the size by default
+    private Rectangle hitbox;
+    
     #region Constructor
 
-    public Cannonball(Rectangle rec, Vector2 initialVel, Texture2D image, int damage) : base(rec, initialVel, image)
+    public Cannonball(Rectangle rec, Vector2 mousePos, bool highAngle, Texture2D image, int damage, int hitboxMultiplier) : 
+            base(rec, LAUNCH_SPEED, mousePos, highAngle, image, damage)
     {
-        // Storing damage from tower object (for if there are upgrades and such)
-        this.damage = damage;
+        // Calculating hitbox
+        hitbox = new Rectangle(rec.X - (rec.Width * (hitboxMultiplier - 1) ) / 2, rec.Y, rec.Width * hitboxMultiplier, rec.Height);
     }
 
     #endregion
 
     #region Getters & Setters
 
+    // Returning hitbox
+    public Rectangle GetHitbox()
+    {
+        return hitbox;
+    }
+
+    // Setting hitbox width
+    public void SetHitbox(int hitboxMultiplier)
+    {
+        hitbox.Width = rec.Width * hitboxMultiplier;
+    }
     
-
     #endregion
-
+    
     #region Behaviours
-
+    
     public override void Update(float timePassed)
     {
-        // Call parent update version
         base.Update(timePassed);
-        
-        // Updating rotation angle
-        rotationAngle += 0.2f;
-        
+        hitbox.Location = new Point(rec.X - (hitbox.Width - rec.Width) / 2, rec.Y);
     }
 
     #endregion

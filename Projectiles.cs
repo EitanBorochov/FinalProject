@@ -16,9 +16,6 @@ namespace FinalProject;
 public class Projectile
 {
     #region Attributes
-    
-    // Global constant gravity
-    protected const int GRAVITY = 10;
 
     // Storing rectangle and position
     protected Rectangle rec;
@@ -26,15 +23,12 @@ public class Projectile
     
     // Storing velocity
     protected Vector2 velocity;
-    // protected Vector2 initialVel;
     
     // Storing damage that the projectile deals
     protected int damage;
 
     // Storing image, origin point, and rotation angle
     protected Texture2D image;
-    protected Vector2 origin;
-    protected float rotationAngle;
     
     // // Storing projectile state
     // protected const byte ACTIVE = 0;
@@ -45,11 +39,11 @@ public class Projectile
 
     #region Contructor
 
-    public Projectile(Rectangle rec, Vector2 initialVel, Texture2D image)
+    public Projectile(Rectangle rec, float launchSpeed, Vector2 mousePos, bool highAngle, Texture2D image, int damage)
     {
         // Storing parameters
         this.rec = rec;
-        this.velocity = initialVel;
+        this.velocity = FindLaunchVelocity(rec.Location.ToVector2(), mousePos, highAngle, launchSpeed);
         this.image = image;
         
         // Storing initial position
@@ -57,31 +51,98 @@ public class Projectile
         position.Y = rec.Y;
         
         // Calculating rotation angle *in radians, and origin point 
-        rotationAngle = (float)Math.Atan2(initialVel.Y, initialVel.X);
         Vector2 origin = new Vector2(rec.Width / 2, rec.Height / 2);
+        
+        // Storing damage
+        this.damage = damage;
     }
 
     #endregion
 
     #region Getters & Setters
 
-    
+    public Rectangle GetRec()
+    {
+        return rec;
+    }
+
+    public int GetDamage()
+    {
+        return damage;
+    }
 
     #endregion
-
+    
     #region Behaviours
 
     public virtual void Update(float timePassed)
     {
         // Adding gravity to Y velocity 
-        velocity.Y -= GRAVITY * timePassed;
+        velocity.Y -= Game1.GRAVITY * timePassed;
+        
+        // Translating projectile
+        position.X += velocity.X * timePassed;
+        position.Y += velocity.Y * timePassed;
+
+        rec.X = (int)position.X;
+        rec.Y = (int)position.Y;
     }
 
     // Drawing object
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(image, rec, null, Color.White, rotationAngle, origin, SpriteEffects.None, 0);
+        spriteBatch.Draw(image, rec, Color.White);
     }
+    
+    // Calculating the initial velocity of any projectile
+    private Vector2 FindLaunchVelocity(Vector2 projPos, Vector2 mousePos, bool highAngle, float launchSpeed)
+    { 
+        // Thank you Mr. Lane
+        //Store the calculated launch velocity to hit the given target location
+        Vector2 vel = new Vector2(0,0);
+
+        //Find the difference between the two points
+        Vector2 diff = (mousePos - projPos);
+
+        //Precalculate speed^2 and speed^4 to reduce repeated calculations
+        //This is cheaper than using Math.Pow
+        double speed2 = launchSpeed * launchSpeed;
+        double speed4 = launchSpeed * launchSpeed * launchSpeed * launchSpeed;
+
+        //Precalculate gravity * x to reduce repeated calculations
+        double gx = Game1.GRAVITY * diff.X;
+
+        // Calculate the Discriminant (value under the root): s^4 - G(Gx^2 + 2s^2y)
+        double root = speed4 - Game1.GRAVITY * (Game1.GRAVITY * diff.X * diff.X + 2 * speed2 * diff.Y);
+
+        //Solutions only exist if the root is positive, otherwise do not launch
+        if (root > 0)
+        {
+            //Take the squareroot of the discriminant
+            root = Math.Sqrt(root);
+
+            //Calculate both the high and low angle by finished the quadratic formula for each of +/-
+            //and finally calculate the arctan
+            float projHighAngle = (float)Math.Atan2(speed2 + root, -gx);
+            float projLowAngle = (float)Math.Atan2(speed2 - root, -gx); ;
+
+            if (highAngle)
+            {
+                //Launch at the high angle at a speed measured in pixels/second
+                vel.Y = -(float)(launchSpeed * Math.Sin(projHighAngle));
+                vel.X = (float)(launchSpeed * Math.Cos(projHighAngle));
+            }
+            else
+            {
+                //Launch at the low angle at a speed measured in pixels/second
+                vel.Y = -(float)(launchSpeed * Math.Sin(projLowAngle));
+                vel.X = (float)(launchSpeed * Math.Cos(projLowAngle));
+            }
+        }
+
+        return vel;
+    }
+
 
     #endregion
 }

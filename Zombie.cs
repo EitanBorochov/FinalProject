@@ -186,7 +186,7 @@ public class Zombie
             // Checking if zombie is dead
             if (health <= 0)
             {
-                zombieState = DYING;
+                KillZombie();
             }
         }
     }

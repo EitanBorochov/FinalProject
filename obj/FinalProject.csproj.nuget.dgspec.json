@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/FinalProject.csproj": {}
+    "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/FinalProject.csproj": {}
   },
   "projects": {
-    "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/FinalProject.csproj": {
+    "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/FinalProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/FinalProject.csproj",
+        "projectUniqueName": "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/FinalProject.csproj",
         "projectName": "FinalProject",
-        "projectPath": "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/FinalProject.csproj",
+        "projectPath": "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/FinalProject.csproj",
         "packagesPath": "/Users/eitanborochov/.nuget/packages/",
-        "outputPath": "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/obj/",
+        "outputPath": "/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/eitanborochov/.nuget/NuGet/NuGet.Config"

@@ -19,7 +19,7 @@ public class Game1 : Game
     private SpriteBatch _spriteBatch;
 
     // Storing screen dimensions
-    private int screenWidth;
+    public static int screenWidth;
     private int screenHeight;
     
     // Storing mouse input
@@ -78,6 +78,9 @@ public class Game1 : Game
     // Storing time passed
     private float timePassed;
     
+    // Global constant gravity
+    public const float GRAVITY = -900f;
+    
     // Storing game background image and rectangle
     private Texture2D gameBgImg;
     private Rectangle gameBgRec;
@@ -86,7 +89,7 @@ public class Game1 : Game
     private Platform platform;
     
     // Storing king tower
-    private Tower kingTower;
+    private KingTower kingTower;
     
     // Storing the two king tower locaations for each level
     private Vector2 lvl1KingPos;
@@ -103,10 +106,13 @@ public class Game1 : Game
     private Rectangle nightBGRec;
     
     // Storing night sky color multiplier, incrase and decrease constants, and multiplier modifier
-    private float skyOpacity = 0f;
+    private float skyOpacity = 1f;
     private const int POSITIVE = 1;
     private const int NEGATIVE = -1;
     private int skyMultiplier;
+    
+    // Storing explosion animation
+    private Animation[] explosionAnims;
 
     #region Sub Region - HUD Variables
 
@@ -126,6 +132,13 @@ public class Game1 : Game
 
     #endregion
 
+    #region Sub Region - Projectiles
+
+    // Storing max number of cannonballs
+    private Cannonball[] cannonballs = new Cannonball[4];
+
+    #endregion
+
     #endregion
     
     public Game1()
@@ -134,7 +147,8 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
-
+    
+    #region Monogame methods
     protected override void Initialize()
     {
         // Attempting to set screen dimensions to 1600x1000
@@ -150,200 +164,216 @@ public class Game1 : Game
 
         base.Initialize();
     }
-
+    
     protected override void LoadContent()
-    {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        // Loading sprite fonts
-        titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
-        HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
-        textFont = Content.Load<SpriteFont>("Fonts/TextFont");
-        
-        // Loading night background texture and rectangle
-        nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
-        nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
-        
-        // Loading background image and rectangle
-        bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
-        bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
-        
-        // Loading game background
-        gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
-        gameBgRec = new Rectangle(0, 400, screenWidth, screenHeight);
-        
-        // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
-        Texture2D platformImg;
-        platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
-        platform = new Platform(platformImg, screenWidth, screenHeight);
-        
-        // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
-        Texture2D kingTowerImg;
-        kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
-        kingTower = new Tower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
-                                kingTowerImg.Height, 266, 100);
-        lvl1KingPos = new Vector2(screenWidth - kingTower.GetDisplayRec().Width / 2f, 
-                                    platform.GetPlatformRec().Y - kingTower.GetHitbox().Height + 10);
-        lvl2KingPos = new Vector2(WidthCenter(kingTower.GetHitbox().Width),
-                                    platform.GetPlatformRec().Y - kingTower.GetHitbox().Height + 10);
-
-        // Loading button images
-        level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
-        level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
-        settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
-        tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
-        
-        // Loading all buttons
-        level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
-                                    level1Img.Width, level1Img.Height, Level1Button);
-        level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
-                                    level2Img.Width, level2Img.Height, Level2Button);
-        settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5, settingsImg.Height / 5, 
-                            () => gameState = SETTINGS);
-        tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5, 50, 
-            tutorialBtnImg.Width / 5, tutorialBtnImg.Height / 5, () => gameState = TUTORIAL);
-        
-        // Loading title image and rectangle
-        titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
-        titleRec = new Rectangle((int)WidthCenter(titleImg.Width * 0.75f), 10, 
-                                (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
-        
-        // Loading local zombie textures locally
-        Texture2D[] zombieImgs = new Texture2D[5];
-        zombieImgs[0] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Walk");
-        zombieImgs[1] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Dead");
-        zombieImgs[2] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_1");
-        zombieImgs[3] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_2");
-        zombieImgs[4] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_3");
-        
-        // Loading all of the zombies
-        for (int i = 0; i < zombies.Length; i++)
         {
-            zombies[i] = new Zombie(zombieImgs, screenWidth, platform.GetPlatformRec().Y);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+    
+            // Loading sprite fonts
+            titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
+            HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
+            textFont = Content.Load<SpriteFont>("Fonts/TextFont");
+            
+            // Loading night background texture and rectangle
+            nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
+            nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
+            
+            // Loading background image and rectangle
+            bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
+            bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
+            
+            // Loading game background
+            gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
+            gameBgRec = new Rectangle(0, 400, screenWidth, screenHeight);
+            
+            // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
+            Texture2D platformImg;
+            platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
+            platform = new Platform(platformImg, screenWidth, screenHeight);
+            
+            // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
+            Texture2D kingTowerImg;
+            Texture2D cannonballImg;
+            
+            kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
+            cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
+            
+            kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
+                                    kingTowerImg.Height, 266, 330, 1000, cannonballImg, 4, 750);
+            
+            lvl1KingPos = new Vector2(screenWidth - kingTower.GetDisplayRec().Width / 2f, 
+                                        platform.GetRec().Y - kingTower.GetHitbox().Height + 10);
+            lvl2KingPos = new Vector2(WidthCenter(kingTower.GetHitbox().Width),
+                                        platform.GetRec().Y - kingTower.GetHitbox().Height + 10);
+    
+            // Loading button images
+            level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
+            level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
+            settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
+            tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
+            
+            // Loading all buttons
+            level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
+                                        level1Img.Width, level1Img.Height, Level1Button);
+            level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
+                                        level2Img.Width, level2Img.Height, Level2Button);
+            settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5, settingsImg.Height / 5, 
+                                () => gameState = SETTINGS);
+            tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5, 50, 
+                tutorialBtnImg.Width / 5, tutorialBtnImg.Height / 5, () => gameState = TUTORIAL);
+            
+            // Loading title image and rectangle
+            titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
+            titleRec = new Rectangle((int)WidthCenter(titleImg.Width * 0.75f), 10, 
+                                    (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
+            
+            // Loading local zombie textures locally
+            Texture2D[] zombieImgs = new Texture2D[5];
+            zombieImgs[0] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Walk");
+            zombieImgs[1] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Dead");
+            zombieImgs[2] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_1");
+            zombieImgs[3] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_2");
+            zombieImgs[4] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_3");
+            
+            // Loading all of the zombies
+            for (int i = 0; i < zombies.Length; i++)
+            {
+                zombies[i] = new Zombie(zombieImgs, screenWidth, platform.GetRec().Y);
+            }
+            
+            // Loading positions of HUD objects
+            dayCountPos = new Vector2(5, 5);
+            mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
+            kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
+            
+            // Loading explosion animation and saving local image for each cannon ball
+            Texture2D explosionImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/explosion");
+            
+            explosionAnims = new Animation[cannonballs.Length];
+            for (int i = 0; i < explosionAnims.Length; i++)
+            {
+                explosionAnims[i] = new Animation(explosionImg, 5, 5, 23, 0, -1, 1, 1000, new Vector2(800, 500), false);
+            }
         }
-        
-        // Loading positions of HUD objects
-        dayCountPos = new Vector2(5, 5);
-        mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
-        kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
-    }
-
+    
     protected override void Update(GameTime gameTime)
-    {
-        // Updating mouse input
-        prevMouse = mouse;
-        mouse = Mouse.GetState();
-        
-        // Storing time passed
-        timePassed = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-        
-        switch (gameState)
         {
-            case MENU:
-                // Checking for button clicks
-                level1Button.Update(mouse, prevMouse);
-                level2Button.Update(mouse, prevMouse);
-                settingsButton.Update(mouse, prevMouse);
-                tutorialButton.Update(mouse, prevMouse);
-                
-                break;
+            // Updating mouse input
+            prevMouse = mouse;
+            mouse = Mouse.GetState();
             
-            case LEVEL_1:
-                // Updating game
-                UpdateGame(gameTime);
-                
-                break;
+            // Storing time passed
+            timePassed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             
-            case LEVEL_2:
-                // Updating game
-                UpdateGame(gameTime);
+            switch (gameState)
+            {
+                case MENU:
+                    // Checking for button clicks
+                    level1Button.Update(mouse, prevMouse);
+                    level2Button.Update(mouse, prevMouse);
+                    settingsButton.Update(mouse, prevMouse);
+                    tutorialButton.Update(mouse, prevMouse);
+                    
+                    break;
                 
-                break;
-            
-            case PAUSE:
+                case LEVEL_1:
+                    // Updating game
+                    UpdateGame(gameTime);
+                    
+                    break;
                 
-                break;
-            
-            case SETTINGS:
+                case LEVEL_2:
+                    // Updating game
+                    UpdateGame(gameTime);
+                    
+                    break;
                 
-                break;
-            
-            case TUTORIAL:
+                case PAUSE:
+                    
+                    break;
                 
-                break;
-            
-            case ENDGAME:
+                case SETTINGS:
+                    
+                    break;
                 
-                break;
+                case TUTORIAL:
+                    
+                    break;
+                
+                case ENDGAME:
+                    
+                    break;
+            }
+    
+            base.Update(gameTime);
         }
-
-        base.Update(gameTime);
-    }
-
+    
     protected override void Draw(GameTime gameTime)
-    {
-        GraphicsDevice.Clear(Color.RoyalBlue);
-
-        // Initializing sprite drawing batch
-        _spriteBatch.Begin();
-        
-        // Drawing game based on game state
-        switch (gameState)
         {
-            case MENU:
-                // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
-                
-                // Draw title
-                _spriteBatch.Draw(titleImg, titleRec, Color.White);
-                
-                // Drawing buttons
-                level1Button.Draw(_spriteBatch);
-                level2Button.Draw(_spriteBatch);
-                settingsButton.Draw(_spriteBatch);
-                tutorialButton.Draw(_spriteBatch);
-                
-                break;
+            GraphicsDevice.Clear(Color.RoyalBlue);
+    
+            // Initializing sprite drawing batch
+            _spriteBatch.Begin();
             
-            case LEVEL_1:
-                // Drawing game
-                DrawGame();
-                break;
-            
-            case LEVEL_2:
-                // Drawing game
-                DrawGame();
-                break;
-            
-            case PAUSE:
-                // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+            // Drawing game based on game state
+            switch (gameState)
+            {
+                case MENU:
+                    // Drawing background
+                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    
+                    // Draw title
+                    _spriteBatch.Draw(titleImg, titleRec, Color.White);
+                    
+                    // Drawing buttons
+                    level1Button.Draw(_spriteBatch);
+                    level2Button.Draw(_spriteBatch);
+                    settingsButton.Draw(_spriteBatch);
+                    tutorialButton.Draw(_spriteBatch);
+                    
+                    break;
                 
-                break;
-            
-            case SETTINGS:
-                // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                case LEVEL_1:
+                    // Drawing game
+                    DrawGame();
+                    break;
                 
-                break;
-            
-            case TUTORIAL:
+                case LEVEL_2:
+                    // Drawing game
+                    DrawGame();
+                    break;
                 
-                break;
-            
-            case ENDGAME:
-                // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                case PAUSE:
+                    // Drawing background
+                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    
+                    break;
                 
-                break;
+                case SETTINGS:
+                    // Drawing background
+                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    
+                    break;
+                
+                case TUTORIAL:
+                    
+                    break;
+                
+                case ENDGAME:
+                    // Drawing background
+                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                    
+                    break;
+            }
+            
+            // Finish sprite batch
+            _spriteBatch.End();
+    
+            base.Draw(gameTime);
         }
-        
-        // Finish sprite batch
-        _spriteBatch.End();
 
-        base.Draw(gameTime);
-    }
-
+    #endregion
+    
     #region Centers & Drop Shadow
 
     // The function uses screen width and text/image width to center the image horizontally
@@ -427,7 +457,7 @@ public class Game1 : Game
                 tower.HP = zombies[i].DealDamage(tower.HP);
                 
                 // Updating king health display
-                dispKingHP = $"Health: {kingTower.HP}";
+                dispKingHP = $"HP: {kingTower.HP}";
                 kingHPPos.X = WidthCenter(HUDFont.MeasureString(dispKingHP).X);
             }
             else
@@ -439,22 +469,91 @@ public class Game1 : Game
 
         return tower.HP;
     }
-
+    
+    private void CannonCollision()
+    {
+        // Checking collision for each cannon ball
+        for (int i = 0; i < cannonballs.Length; i++)
+        {
+            // Making sure its not null
+            if (cannonballs[i] != null)
+            {
+                // Detecting collision with platform
+                if (cannonballs[i].GetHitbox().Bottom >= platform.GetRec().Y)
+                {
+                    // Checking if any zombies were hit
+                    for (int j = 0; j < zombies.Length; j++)
+                    {
+                        if (zombies[j].GetRec().Intersects(cannonballs[i].GetHitbox()))
+                        {
+                            // Dealing damage to zombie
+                            zombies[j].HP -= cannonballs[i].GetDamage();
+                        }
+                    } 
+                    // Playing explosion animation
+                    explosionAnims[i].TranslateTo(cannonballs[i].GetRec().X - (explosionAnims[i].GetDestRec().Width - cannonballs[i].GetRec().Width) / 2, 
+                                                cannonballs[i].GetRec().Y - (explosionAnims[i].GetDestRec().Height - cannonballs[i].GetRec().Height) / 2);
+                    explosionAnims[i].Activate(true);
+                    
+                    // Setting to null so it can be reused
+                    cannonballs[i] = null;
+                }
+            }
+        }
+    }
+    
+    private void LaunchCannon()
+    {
+        // Checking for king tower shots only at night time
+        if (skyOpacity == 1)
+        {
+            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+            {
+                // Storing a new cannonball if the current one is null
+                for (int i = 0; i < cannonballs.Length; i++)
+                {
+                    if (cannonballs[i] == null)
+                    {
+                        cannonballs[i] = kingTower.LaunchBall(mouse.Position.ToVector2());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
     #region Game
 
     // Updating everything that is common to both levels
     private void UpdateGame(GameTime gameTime)
     {
-        // Updating king tower
-        kingTower.Update();
+        // Updating king tower and cannon balls
+        kingTower.Update(mouse, gameTime);
+        for (int i = 0; i < cannonballs.Length; i++)
+        {
+            if (cannonballs[i] != null)
+            {
+                cannonballs[i].Update(timePassed);
+            }
+        }
         
+        // Updating explosion animations
+        for (int i = 0; i < explosionAnims.Length; i++)
+        {
+            explosionAnims[i].Update(gameTime);
+        }
+
+        // Checking for clicks to launch cannons and collision
+        LaunchCannon();
+        CannonCollision();
+
         // Casting night sky every day night cycle
         DayNightCycle(gameTime);
         
         // Updating zombie
         for (int i = 0; i < zombies.Length; i++)
         {
-            zombies[i].Update(gameTime, timePassed);
+            zombies[i].Update(gameTime, timePassed * 1000);
         }
 
         kingTower.HP = TowerCollision(kingTower);
@@ -479,6 +578,17 @@ public class Game1 : Game
         for (int i = 0; i < zombies.Length; i++)
         {
             zombies[i].Draw(_spriteBatch);
+        }
+
+        // Drawing cannon balls with their explosions
+        for (int i = 0; i < cannonballs.Length; i++)
+        {
+            if (cannonballs[i] != null)
+            {
+                cannonballs[i].Draw(_spriteBatch);
+            }
+            
+            explosionAnims[i].Draw(_spriteBatch, Color.White);
         }
         
         // Drawing HUD

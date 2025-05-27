@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_1.png</SourceFile>
+  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_1.png</SourceFile>
   <SourceTime>2025-05-27T08:43:53.2617341-04:00</SourceTime>
-  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProjectBackup/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_1.xnb</DestFile>
-  <DestTime>2025-05-27T08:44:15.8669301-04:00</DestTime>
+  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_1.xnb</DestFile>
+  <DestTime>2025-05-27T08:51:38.5653823-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
