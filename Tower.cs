@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: May 23rd 2025
+// Modification Date: May 28th 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;

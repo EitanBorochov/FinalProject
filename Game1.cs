@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 25th 2025
+// Modification Date: May 28th 2025
 // Description: Main driver class for the game
 
 using System;
@@ -88,6 +88,9 @@ public class Game1 : Game
     // Storing platform
     private Platform platform;
     
+    // Storing buildable rectangle area
+    private Rectangle buildableRec;
+    
     // Storing king tower
     private KingTower kingTower;
     
@@ -113,6 +116,9 @@ public class Game1 : Game
     
     // Storing explosion animation
     private Animation[] explosionAnims;
+    
+    // Storing new array of walls
+    private Wall[] walls = new Wall[4];
 
     #region Sub Region - HUD Variables
 
@@ -248,12 +254,18 @@ public class Game1 : Game
             
             // Loading explosion animation and saving local image for each cannon ball
             Texture2D explosionImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/explosion");
-            
             explosionAnims = new Animation[cannonballs.Length];
             for (int i = 0; i < explosionAnims.Length; i++)
             {
                 explosionAnims[i] = new Animation(explosionImg, 5, 5, 23, 0, -1, 1, 1000, new Vector2(800, 500), false);
             }
+            
+            // Loading one wall for testing
+            Texture2D lvl1Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
+            walls[0] = new Wall(lvl1Wall, lvl1Wall, lvl1Wall.Width / 2, lvl1Wall.Height / 2);
+            
+            // Loading buildable rectangle to be on the floor as a preview of where you can build
+            buildableRec = new Rectangle((int)WidthCenter(800), platform.GetRec().Y, 800, platform.GetRec().Height);
         }
     
     protected override void Update(GameTime gameTime)
@@ -406,7 +418,88 @@ public class Game1 : Game
     }
 
     #endregion
+    
+    #region Game
 
+    // Updating everything that is common to both levels
+    private void UpdateGame(GameTime gameTime)
+    {
+        // Updating king tower and cannon balls
+        kingTower.Update(mouse, gameTime);
+        for (int i = 0; i < cannonballs.Length; i++)
+        {
+            if (cannonballs[i] != null)
+            {
+                cannonballs[i].Update(timePassed);
+            }
+        }
+        
+        // Updating wall 0
+        walls[0].Update(mouse, platform.GetRec());
+        
+        // Updating explosion animations
+        for (int i = 0; i < explosionAnims.Length; i++)
+        {
+            explosionAnims[i].Update(gameTime);
+        }
+
+        // Checking for clicks to launch cannons and collision
+        LaunchCannon();
+        CannonCollision();
+
+        // Casting night sky every day night cycle
+        DayNightCycle(gameTime);
+        
+        // Updating zombie
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i].Update(gameTime, timePassed * 1000);
+        }
+
+        kingTower.HP = TowerCollision(kingTower);
+    }
+
+    // Drawing everything in both levels
+    private void DrawGame()
+    {
+        // Drawing night sky overlay
+        _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
+        
+        // Drawing background
+        _spriteBatch.Draw(gameBgImg, gameBgRec, Color.White);
+        
+        // Drawing platform
+        platform.Draw(_spriteBatch);
+                
+        // Drawing king tower
+        kingTower.Draw(_spriteBatch);
+        
+        // Drawing zombies
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i].Draw(_spriteBatch);
+        }
+        
+        // Drawing walls
+        walls[0].Draw(_spriteBatch);
+
+        // Drawing cannon balls with their explosions
+        for (int i = 0; i < cannonballs.Length; i++)
+        {
+            if (cannonballs[i] != null)
+            {
+                cannonballs[i].Draw(_spriteBatch);
+            }
+            
+            explosionAnims[i].Draw(_spriteBatch, Color.White);
+        }
+        
+        // Drawing HUD
+        DrawHUD();
+    }
+
+    #endregion
+        
     private void DayNightCycle(GameTime gameTime)
     {
         // Updating day night cycle timer
@@ -522,80 +615,7 @@ public class Game1 : Game
         }
     }
     
-    #region Game
-
-    // Updating everything that is common to both levels
-    private void UpdateGame(GameTime gameTime)
-    {
-        // Updating king tower and cannon balls
-        kingTower.Update(mouse, gameTime);
-        for (int i = 0; i < cannonballs.Length; i++)
-        {
-            if (cannonballs[i] != null)
-            {
-                cannonballs[i].Update(timePassed);
-            }
-        }
-        
-        // Updating explosion animations
-        for (int i = 0; i < explosionAnims.Length; i++)
-        {
-            explosionAnims[i].Update(gameTime);
-        }
-
-        // Checking for clicks to launch cannons and collision
-        LaunchCannon();
-        CannonCollision();
-
-        // Casting night sky every day night cycle
-        DayNightCycle(gameTime);
-        
-        // Updating zombie
-        for (int i = 0; i < zombies.Length; i++)
-        {
-            zombies[i].Update(gameTime, timePassed * 1000);
-        }
-
-        kingTower.HP = TowerCollision(kingTower);
-    }
-
-    // Drawing everything in both levels
-    private void DrawGame()
-    {
-        // Drawing night sky overlay
-        _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
-        
-        // Drawing background
-        _spriteBatch.Draw(gameBgImg, gameBgRec, Color.White);
-        
-        // Drawing platform
-        platform.Draw(_spriteBatch);
-                
-        // Drawing king tower
-        kingTower.Draw(_spriteBatch);
-        
-        // Drawing zombies
-        for (int i = 0; i < zombies.Length; i++)
-        {
-            zombies[i].Draw(_spriteBatch);
-        }
-
-        // Drawing cannon balls with their explosions
-        for (int i = 0; i < cannonballs.Length; i++)
-        {
-            if (cannonballs[i] != null)
-            {
-                cannonballs[i].Draw(_spriteBatch);
-            }
-            
-            explosionAnims[i].Draw(_spriteBatch, Color.White);
-        }
-        
-        // Drawing HUD
-        DrawHUD();
-    }
-
-    #endregion
+    
 
     private void DrawHUD()
     {
