@@ -25,6 +25,9 @@ public class Game1 : Game
     // Storing mouse input
     private MouseState mouse;
     private MouseState prevMouse;
+    
+    // Storing a single pixel texture to draw a simple solid color
+    private Texture2D pixelImg;
 
     #region Game State Variables
     // Storing constant variable constants for game states
@@ -102,7 +105,7 @@ public class Game1 : Game
     private Zombie[] zombies = new Zombie[5];
     
     // Storing timer for day night cycle
-    private Timer dayNightCycle = new Timer(20000, true);
+    private Timer dayNightCycle = new Timer(200000, true);
     
     // Storing background night sky texture and rectangle
     private Texture2D nightBGImg;
@@ -192,17 +195,16 @@ public class Game1 : Game
             gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
             gameBgRec = new Rectangle(0, 400, screenWidth, screenHeight);
             
+            // Loading single pixel texture
+            pixelImg = new Texture2D(GraphicsDevice, 1, 1);
+            
             // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
-            Texture2D platformImg;
-            platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
+            Texture2D platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
             platform = new Platform(platformImg, screenWidth, screenHeight);
             
             // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
-            Texture2D kingTowerImg;
-            Texture2D cannonballImg;
-            
-            kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
-            cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
+            Texture2D kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
+            Texture2D cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
             
             kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
                                     kingTowerImg.Height, 266, 330, 1000, cannonballImg, 4, 750);
@@ -266,6 +268,7 @@ public class Game1 : Game
             
             // Loading buildable rectangle to be on the floor as a preview of where you can build
             buildableRec = new Rectangle((int)WidthCenter(800), platform.GetRec().Y, 800, platform.GetRec().Height);
+            
         }
     
     protected override void Update(GameTime gameTime)
@@ -434,8 +437,18 @@ public class Game1 : Game
             }
         }
         
-        // Updating wall 0
-        walls[0].Update(mouse, platform.GetRec());
+        // Updating wall 0 and checking for placement
+        if (walls[0] != null)
+            if (walls[0].Update(mouse, prevMouse, platform.GetRec(), buildableRec, ValidPlacement(walls[0].GetRec())))
+            {
+                walls[0] = null;
+            }
+        
+        // Updating zombie
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i].Update(gameTime, timePassed * 1000);
+        }
         
         // Updating explosion animations
         for (int i = 0; i < explosionAnims.Length; i++)
@@ -450,13 +463,11 @@ public class Game1 : Game
         // Casting night sky every day night cycle
         DayNightCycle(gameTime);
         
-        // Updating zombie
-        for (int i = 0; i < zombies.Length; i++)
-        {
-            zombies[i].Update(gameTime, timePassed * 1000);
-        }
+        
 
-        kingTower.HP = TowerCollision(kingTower);
+        kingTower.HP = TowerCollision(kingTower.GetHitbox(), kingTower.HP);
+        if (walls[0] != null)
+            walls[0].HP = TowerCollision(walls[0].GetRec(), walls[0].HP);
     }
 
     // Drawing everything in both levels
@@ -481,7 +492,8 @@ public class Game1 : Game
         }
         
         // Drawing walls
-        walls[0].Draw(_spriteBatch);
+        if (walls[0] != null)
+            walls[0].Draw(_spriteBatch);
 
         // Drawing cannon balls with their explosions
         for (int i = 0; i < cannonballs.Length; i++)
@@ -496,6 +508,9 @@ public class Game1 : Game
         
         // Drawing HUD
         DrawHUD();
+        
+        // Drawing buildable area rectangle as just a single solid color
+        _spriteBatch.Draw(pixelImg, buildableRec, Color.Green * 0.5f);
     }
 
     #endregion
@@ -538,16 +553,16 @@ public class Game1 : Game
         
     }
 
-    private int TowerCollision(Tower tower)
+    private int TowerCollision(Rectangle towerRec, int towerHP)
     {
         // Checking collision for each zombie
         for (int i = 0; i < zombies.Length; i++)
         {
             // Checking if rectangles overlap
-            if (tower.GetHitbox().Intersects(zombies[i].GetRec()))
+            if (towerRec.Intersects(zombies[i].GetRec()))
             {
                 // Dealing damage to tower
-                tower.HP = zombies[i].DealDamage(tower.HP);
+                towerHP = zombies[i].DealDamage(towerHP);
                 
                 // Updating king health display
                 dispKingHP = $"HP: {kingTower.HP}";
@@ -560,7 +575,7 @@ public class Game1 : Game
             }
         }
 
-        return tower.HP;
+        return towerHP;
     }
     
     private void CannonCollision()
@@ -614,8 +629,16 @@ public class Game1 : Game
             }
         }
     }
-    
-    
+
+    private bool ValidPlacement(Rectangle building)
+    {
+        if (building.Intersects(kingTower.GetHitbox()))
+        {
+            return false;
+        }
+
+        return true;
+    }
 
     private void DrawHUD()
     {

@@ -29,6 +29,8 @@ public class Tower
     
     // Storing action timer
     protected Timer cooldownTimer;
+    
+    // Storing bool for if the tower is alive 
 
     #endregion
 

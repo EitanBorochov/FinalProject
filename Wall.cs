@@ -68,7 +68,7 @@ public class Wall
     #region Getters & Setters
 
     // Accessable health quantity
-    public int Health
+    public int HP
     {
         get
         {
@@ -90,12 +90,34 @@ public class Wall
 
     #region Behaviours
 
-    public void Update(MouseState mouse, Rectangle platform)
+    public bool Update(MouseState mouse, MouseState prevMouse, 
+                Rectangle platform, Rectangle buildableRec, bool isValid)
     {
-        // Moving wall around with mouse to chosen location
+        // Storing if current location is valid for placement
+        this.isValid = isValid;
+        
+        PreviewState(mouse, prevMouse, platform, buildableRec);
+
+        if (health <= 0)
+        {
+            state = INACTIVE;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // Allowing player to move the wall around while its in preview
+    private void PreviewState(MouseState mouse, MouseState prevMouse, 
+                Rectangle platform, Rectangle buildableRec)
+    {
         if (state == PREVIEW)
         {
-            // Translating Y position to the mouse
+            #region Translation
+
+            // Translating Y position to the mouse position if its in buildable area
             if (mouse.Position.ToVector2().Y + hitbox.Height < platform.Top)
             {
                 TranslateY(mouse.Position.ToVector2().Y);
@@ -105,14 +127,30 @@ public class Wall
                 TranslateY(platform.Top - hitbox.Height);
             }
             
-            // Translating X position to the mouse
-            if (mouse.Position.ToVector2().Y + hitbox.Height < platform.Top)
+            // Translating X position to the mouse position if its in buildable area
+            if (mouse.Position.ToVector2().X < buildableRec.Right - hitbox.Width
+                && mouse.Position.ToVector2().X > buildableRec.Left)
             {
                 TranslateX(mouse.Position.ToVector2().X);
             }
+            else if (mouse.Position.ToVector2().X >= buildableRec.Right - hitbox.Width)
+            {
+                TranslateX(buildableRec.Right - hitbox.Width);
+            }
             else
             {
-                TranslateX(platform.Top - hitbox.Height);
+                TranslateX(buildableRec.Left);
+            }
+
+            #endregion
+        }
+
+        if (isValid)
+        {
+            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+            {
+                state = PLACED;
+                TranslateY(platform.Top - hitbox.Height);
             }
         }
     }
@@ -154,6 +192,10 @@ public class Wall
                 {
                     spriteBatch.Draw(currentImg, tileRecs[i], Color.Red * 0.8f);
                 }
+            }
+            else if (state == PLACED)
+            {
+                spriteBatch.Draw(currentImg, tileRecs[i], Color.White);
             }
         }
     }
