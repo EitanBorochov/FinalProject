@@ -5,7 +5,7 @@
   <Config />
   <SourceFiles>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</File>
-    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TextFont.spritefont</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/SmallFont.spritefont</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/GameBackground.png</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/MenuBackground.png</File>

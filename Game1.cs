@@ -49,7 +49,7 @@ public class Game1 : Game
     // Storing sprite Fonts
     private SpriteFont titleFont;
     private SpriteFont HUDFont;
-    private SpriteFont textFont;
+    private SpriteFont smallFont;
     
     // Storing offset constant for drop shadow texts
     private readonly Vector2 DROP_SHADOW = new Vector2(4, 4);
@@ -122,6 +122,16 @@ public class Game1 : Game
     
     // Storing new array of walls
     private Wall[] walls = new Wall[4];
+    
+    // Width and height for the tower preview buttons
+    private const int PREVIEW_SIZE = 80;
+    
+    // Level 1 wall preview will act as a preview to select and place a wall and it will act as a button
+    private Button wallLvl1Prev;
+    private Button wallLvl2Prev;
+    
+    // Storing red cross texture to cancel placement
+    private Texture2D redCrossImg;
 
     #region Sub Region - HUD Variables
 
@@ -139,12 +149,10 @@ public class Game1 : Game
     private string dispKingHP = "HP: 1000";
     private Vector2 kingHPPos;
     
-    // Width and height for the tower preview buttons
-    private const int PREVIEW_SIZE = 80;
-    
-    // Level 1 wall preview will act as a preview to select and place a wall and it will act as a button
-    private Button wallLvl1Prev;
-    private Button wallLvl2Prev;
+    // Storing coins, each zombie kill will score a few points to buy more upgrades
+    private static int coins = 200;
+    private string dispCoins = $"${coins}";
+    private Vector2 coinsPos;
 
     #endregion
 
@@ -188,7 +196,7 @@ public class Game1 : Game
             // Loading sprite fonts
             titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
             HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
-            textFont = Content.Load<SpriteFont>("Fonts/TextFont");
+            smallFont = Content.Load<SpriteFont>("Fonts/SmallFont");
             
             // Loading night background texture and rectangle
             nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
@@ -261,6 +269,8 @@ public class Game1 : Game
             dayCountPos = new Vector2(5, 5);
             mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
             kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
+            coinsPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispCoins).X),
+                5 + HUDFont.MeasureString(dispKingHP).Y);
             
             // Loading explosion animation and saving local image for each cannonball
             Texture2D explosionImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/explosion");
@@ -279,6 +289,9 @@ public class Game1 : Game
                 PREVIEW_SIZE, PREVIEW_SIZE, Lvl1WallPrev);
             wallLvl2Prev = new Button(lvl2Wall, wallLvl1Prev.GetRec().X - 5 - PREVIEW_SIZE, 5,
                 PREVIEW_SIZE, PREVIEW_SIZE, Lvl2WallPrev);
+            
+            // Loading red cross texture
+            redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
                 
             // Loading buildable rectangle to be on the floor as a preview of where you can build
             buildableRec = new Rectangle((int)WidthCenter(800), platform.GetRec().Y, 800, platform.GetRec().Height);
@@ -401,6 +414,13 @@ public class Game1 : Game
         }
 
     #endregion
+
+    // Storing coins as a public property of Game1
+    public static int Coins
+    {
+        get => coins;
+        set => coins = value;
+    }
     
     #region Centers & Drop Shadow
 
@@ -456,8 +476,7 @@ public class Game1 : Game
             if (walls[i] != null)
             {
                 // If this statement returns true it means the wall was destroyed
-                if (walls[i].Update(mouse, prevMouse, platform.GetRec(), buildableRec,
-                        ValidPlacement(walls[i].GetRec())))
+                if (walls[i].Update(mouse, buildableRec, ValidPlacement(walls[i].GetRec())))
                 {
                     walls[i] = null;
                 }
@@ -468,12 +487,12 @@ public class Game1 : Game
         wallLvl1Prev.Update(mouse, prevMouse);
         wallLvl2Prev.Update(mouse, prevMouse);
         
-        // Checking for cancel for each wall AFTER button click so it wont reshow preview
+        // Checking for placement
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] != null)
             {
-                walls[i].CheckCancel(mouse, prevMouse);
+                walls[i].CheckPlacement(mouse, prevMouse, platform.GetRec());
             }
         }
         
@@ -498,6 +517,20 @@ public class Game1 : Game
 
         // Checking for zombie collisions
         ZombieCollision();
+        
+        // Updating coins display and centering it
+        dispCoins = $"${coins}";
+        coinsPos.X = WidthCenter(HUDFont.MeasureString(dispCoins).X);
+        
+        // SPAWNING ZOMBIES FOR BETA TESTING
+        if (Keyboard.GetState().IsKeyDown(Keys.K))
+        {
+            // Checking for empty slot
+            for (int i = 0; i < zombies.Length; i++)
+            {
+                zombies[i].Spawn(gameState);
+            }
+        }
     }
 
     // Drawing everything in both levels
@@ -508,10 +541,6 @@ public class Game1 : Game
         
         // Drawing background
         _spriteBatch.Draw(gameBgImg, gameBgRec, Color.White);
-        
-        // Drawing tower preview buttons
-        wallLvl1Prev.Draw(_spriteBatch);
-        wallLvl2Prev.Draw(_spriteBatch);
         
         // Drawing platform
         platform.Draw(_spriteBatch);
@@ -719,13 +748,36 @@ public class Game1 : Game
 
         return true;
     }
-
+    
     private void DrawHUD()
     {
-        // Drawing day count, kill count, health with offset
+        // Drawing day count, kill count, health with offset, and coins
         DrawWithShadow(HUDFont, dispDayCount, dayCountPos, Color.Yellow, Color.Black);
         DrawWithShadow(HUDFont, dispMobsKilled, mobsKilledPos, Color.IndianRed, Color.Black);
         DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
+        DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
+        
+        // Drawing tower preview buttons and cancel options
+        DrawWithPrice(wallLvl1Prev, 100);
+        DrawWithPrice(wallLvl2Prev, 200);
+        for (int i = 0; i < walls.Length; i++)
+        {
+            if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 1)
+            {
+                _spriteBatch.Draw(redCrossImg, wallLvl1Prev.GetRec(), Color.White);
+            }
+            else if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 2)
+            {
+                _spriteBatch.Draw(redCrossImg, wallLvl2Prev.GetRec(), Color.White);
+            }
+        }
+    }
+    
+    // Meant for drawing preview buttons with prices on them
+    private void DrawWithPrice(Button button, int price)
+    {
+        button.Draw(_spriteBatch);
+        _spriteBatch.DrawString(smallFont, $"${price}", button.GetRec().Location.ToVector2(), Color. Gold);
     }
 
     #region Button Actions
@@ -780,17 +832,26 @@ public class Game1 : Game
     public void Lvl1WallPrev()
     {
         // CHECK FOR COINS WHEN MECHANIC ADDED
-        // Checking for an empty slot in null array
+        
+        // Checking if ANY wall is currently being placed
+        for (int i = 0; i < walls.Length; i++)
+        {
+            if (walls[i] != null && !walls[i].IsPlaced())
+            {
+                // Setting the wall to null and ending method
+                walls[i] = null;
+                return;
+            }
+        }
+        
+        // Checking for an empty slot in null array and if there is enough coins to buy
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] == null && PreviewCheck())
             {
                 // Creating a new wall instance to be placed
-                Texture2D lvl1Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
-                Texture2D cross = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
-                walls[i] = new Wall(lvl1Wall, lvl1Wall.Width / 2, lvl1Wall.Height / 2, 400, platform, 
-                    wallLvl1Prev.GetRec(), cross);
-                
+                Texture2D wallImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
+                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 1);
                 break;
             }
         }
@@ -799,17 +860,25 @@ public class Game1 : Game
     public void Lvl2WallPrev()
     {
         // CHECK FOR COINS WHEN MECHANIC ADDED
+        
+        // Checking if ANY wall is currently being placed
+        for (int i = 0; i < walls.Length; i++)
+        {
+            if (walls[i] != null && !walls[i].IsPlaced())
+            {
+                // Setting the wall to null and ending method
+                walls[i] = null;
+                return;
+            }
+        }
         // Checking for an empty slot in null array
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] == null && PreviewCheck())
             {
                 // Creating a new wall instance to be placed
-                Texture2D lvl2Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
-                Texture2D cross = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
-                walls[i] = new Wall(lvl2Wall, lvl2Wall.Width / 2, lvl2Wall.Height / 2, 750, platform, 
-                    wallLvl2Prev.GetRec(), cross);
-                
+                Texture2D wallImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
+                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 2);
                 break;
             }
         }

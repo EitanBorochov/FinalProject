@@ -20,12 +20,12 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/HUDFont.spritefont
 
-#begin Fonts/TextFont.spritefont
+#begin Fonts/SmallFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Fonts/TextFont.spritefont
+/build:Fonts/SmallFont.spritefont
 
 #begin Fonts/TitleFont.spritefont
 /importer:FontDescriptionImporter

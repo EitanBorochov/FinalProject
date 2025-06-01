@@ -25,7 +25,7 @@ public class Wall
     private Rectangle hitbox;
     
     // Storing health
-    private int health = 400;
+    private int health;
     
     // Storing possible states for when its placed or not
     private const byte INACTIVE = 0;
@@ -38,21 +38,22 @@ public class Wall
     // Storing if the preview is in a valid location
     private bool isValid = false;
     
-    // Storing cancel image and rectangle. will be drawn on top of the placement button to cancel placement
-    private Rectangle cancelRec;
-    private Texture2D cancelImg;
-
+    // storing lvl of wall
+    private byte lvl;
+    
+    // Storing price
+    private int price;
+    
     #endregion
 
     #region Constructor
 
-    public Wall(Texture2D img, int tileWidth, int tileHeight, int health, Platform platform, Rectangle cancelRec, Texture2D cancelImg)
+    public Wall(Texture2D img, int tileWidth, int tileHeight, Platform platform, byte lvl)
     {
         // Storing inputted parameters
         this.img = img;
         this.health = health;
-        this.cancelRec = cancelRec;
-        this.cancelImg = cancelImg;
+        this.lvl = lvl;
         
         // Constructing rectangles
         for (int i = 0; i < tileRecs.Length; i++)
@@ -62,8 +63,19 @@ public class Wall
         
         // Loading hitbox
         hitbox = new Rectangle(tileRecs[0].X, tileRecs[0].Y, tileRecs[0].Width, tileRecs.Length * tileRecs[0].Height);
-
         TranslateY(platform.GetRec().Top - hitbox.Height);
+        
+        // Loading health according to level
+        if (lvl == 1)
+        {
+            health = 400;
+            price = 100;
+        }
+        else
+        {
+            health = 850;
+            price = 200;
+        }
     }
 
     #endregion
@@ -73,14 +85,14 @@ public class Wall
     // Accessable health quantity
     public int HP
     {
-        get
-        {
-            return health;
-        }
-        set
-        {
-            health = value;
-        }
+        get => health;
+        set => health = value;
+    }
+
+    public int Price
+    {
+        get => price;
+        set => price = value;
     }
 
     // Returning a rectangle that surrounds all of the tiles
@@ -99,18 +111,22 @@ public class Wall
         return false;
     }
 
+    public byte GetLvl()
+    {
+        return lvl;
+    }
+
     #endregion
 
     #region Behaviours
 
     // Main update method that returns a true or false if the tower is down or not
-    public bool Update(MouseState mouse, MouseState prevMouse, 
-                Rectangle platform, Rectangle buildableRec, bool isValid)
+    public bool Update(MouseState mouse, Rectangle buildableRec, bool isValid)
     {
-        // Storing if current location is valid for placement
+        // Storing if current location is valid for placement by collision
         this.isValid = isValid;
         
-        PreviewState(mouse, prevMouse, platform, buildableRec);
+        PreviewStateTranslation(mouse, buildableRec);
 
         if (health <= 0)
         {
@@ -127,13 +143,10 @@ public class Wall
     }
 
     // Allowing player to move the wall around while its in preview
-    private void PreviewState(MouseState mouse, MouseState prevMouse, 
-                Rectangle platform, Rectangle buildableRec)
+    private void PreviewStateTranslation(MouseState mouse, Rectangle buildableRec)
     {
         if (state == PREVIEW)
         {
-            #region Translation
-            
             // Translating X position to the mouse position if its in buildable area
             if (mouse.Position.ToVector2().X < buildableRec.Right - hitbox.Width
                 && mouse.Position.ToVector2().X > buildableRec.Left)
@@ -148,30 +161,25 @@ public class Wall
             {
                 TranslateX(buildableRec.Left);
             }
-
-            #endregion
-
-            if (isValid)
-            {
-                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
-                {
-                    state = PLACED;
-                    TranslateY(platform.Top - hitbox.Height);
-                }
-            }
         }
     }
 
-    public void CheckCancel(MouseState mouse, MouseState prevMouse)
+    public void CheckPlacement(MouseState mouse, MouseState prevMouse, 
+        Rectangle platform)
     {
         if (state == PREVIEW)
         {
-            // Checking if user cancelled placement
-            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed &&
-                cancelRec.Contains(mouse.Position))
+            if (isValid && Game1.Coins >= price)
             {
-                // Setting state to inactive
-                state = INACTIVE;
+                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+                {
+                    // placing tower
+                    state = PLACED;
+                    TranslateY(platform.Top - hitbox.Height);
+                    
+                    // Taking away coins
+                    Game1.Coins -= price;
+                }
             }
         }
     }
@@ -207,16 +215,14 @@ public class Wall
             if (state == PREVIEW)
             {
                 // Drawing red if invalid and regular if it is valid
-                if (isValid)
-                {
-                    spriteBatch.Draw(img, tileRecs[i], Color.White * 0.8f);
-                }
-                else
+                if (Game1.Coins < price || !isValid)
                 {
                     spriteBatch.Draw(img, tileRecs[i], Color.Red * 0.8f);
                 }
-                
-                spriteBatch.Draw(cancelImg, cancelRec, Color.White);
+                else if (isValid)
+                {
+                    spriteBatch.Draw(img, tileRecs[i], Color.White * 0.8f);
+                }
             }
             // Drawing permenant state
             else if (state == PLACED)

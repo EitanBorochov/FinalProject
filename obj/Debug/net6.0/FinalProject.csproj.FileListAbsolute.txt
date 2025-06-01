@@ -61,7 +61,6 @@ C:/Users/mreit/RiderProjects/FinalProject/obj/Debug/net6.0/FinalProject.pdb
 C:/Users/mreit/RiderProjects/FinalProject/obj/Debug/net6.0/FinalProject.genruntimeconfig.cache
 C:/Users/mreit/RiderProjects/FinalProject/obj/Debug/net6.0/ref/FinalProject.dll
 C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Fonts/HUDFont.xnb
-C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Fonts/TextFont.xnb
 C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Fonts/TitleFont.xnb
 C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Backgrounds/PixelNightSky.xnb
 C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/FinalProject.exe
@@ -270,7 +269,6 @@ C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Ima
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Sprites\UI\ResumePressed.xnb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Sprites\UI\SettingsPressed.xnb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Fonts\HUDFont.xnb
-C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Fonts\TextFont.xnb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Fonts\TitleFont.xnb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Backgrounds\GameBackground.xnb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Backgrounds\MenuBackground.xnb
@@ -339,3 +337,4 @@ C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\obj\Debug\net6.0\FinalProjec
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\obj\Debug\net6.0\FinalProject.genruntimeconfig.cache
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\obj\Debug\net6.0\ref\FinalProject.dll
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Sprites\UI\RedCross.xnb
+C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Fonts\SmallFont.xnb
