@@ -2,7 +2,7 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: May 29th 2025
+// Modification Date: May 31st 2025
 // Description: Zombie object, handles attacking, translating, etc.
 
 using System;
@@ -234,8 +234,7 @@ public class Zombie
             anims[DYING].TranslateTo(position.X, position.Y);
             
             // adding one to death count
-            Game1.mobsKilled++;
-            Game1.dispMobsKilled = $"Mobs Killed: {Game1.mobsKilled}";
+            Game1.IncreaseMobsKilled();
         }
     }
 
@@ -245,10 +244,11 @@ public class Zombie
         // Making sure zombie is alive
         if (zombieState != DYING && zombieState != INACTIVE)
         {
-            // Setting zombie state to attack if it's not an attack
+            // Setting zombie state to attack if it's not an attack and translating it to the position
             if (zombieState < ATTACK1 || zombieState > ATTACK3)
             {
                 zombieState = (byte)rng.Next(ATTACK1, ATTACK3 + 1);
+                anims[zombieState].TranslateTo(position.X, position.Y);
             }
 
             // Attacking when action timer is done

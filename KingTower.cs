@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 27th 2025
-// Modification Date: May 29th 2025
+// Modification Date: May 31st 2025
 // Description: Inhereted tower class for the king tower
 
 using System;
@@ -44,20 +44,24 @@ public class KingTower : Tower
     {
         if (cooldownTimer.IsFinished())
         {
-            if (mousePos.X < Game1.screenWidth / 2)
+            if (mousePos.X < hitbox.Left)
             {
                 // Setting it on top RIGHT of tower
                 projRec.Location = hitbox.Location;
             }
+            else if (mousePos.X > hitbox.Right)
+            {
+                // Setting it to top LEFT of tower
+                projRec.Location = new Point(hitbox.Right, hitbox.Top);
+            }
             else
             {
-                // Setting it on top LEFT of screen
-                projRec.Location = new Point(hitbox.Right, hitbox.Top);
+                return null;
             }
 
             cooldownTimer.ResetTimer(true);
 
-            return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 400);
+            return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 300);
         }
 
         return null;

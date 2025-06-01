@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 28th 2025
-// Modification Date: May 29th 2025
+// Modification Date: May 31st 2025
 // Description: Creates a new wall object which is made of tiles and meant to block the enemy from the damage dealing towers
 
 using System;
@@ -37,16 +37,22 @@ public class Wall
     
     // Storing if the preview is in a valid location
     private bool isValid = false;
+    
+    // Storing cancel image and rectangle. will be drawn on top of the placement button to cancel placement
+    private Rectangle cancelRec;
+    private Texture2D cancelImg;
 
     #endregion
 
     #region Constructor
 
-    public Wall(Texture2D img, int tileWidth, int tileHeight, int health, Platform platform)
+    public Wall(Texture2D img, int tileWidth, int tileHeight, int health, Platform platform, Rectangle cancelRec, Texture2D cancelImg)
     {
         // Storing inputted parameters
         this.img = img;
         this.health = health;
+        this.cancelRec = cancelRec;
+        this.cancelImg = cancelImg;
         
         // Constructing rectangles
         for (int i = 0; i < tileRecs.Length; i++)
@@ -97,6 +103,7 @@ public class Wall
 
     #region Behaviours
 
+    // Main update method that returns a true or false if the tower is down or not
     public bool Update(MouseState mouse, MouseState prevMouse, 
                 Rectangle platform, Rectangle buildableRec, bool isValid)
     {
@@ -108,12 +115,15 @@ public class Wall
         if (health <= 0)
         {
             state = INACTIVE;
+        }
+        
+        // Returning that the tower is down
+        if (state == INACTIVE)
+        {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        
+        return false;
     }
 
     // Allowing player to move the wall around while its in preview
@@ -140,7 +150,7 @@ public class Wall
             }
 
             #endregion
-            
+
             if (isValid)
             {
                 if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
@@ -148,6 +158,20 @@ public class Wall
                     state = PLACED;
                     TranslateY(platform.Top - hitbox.Height);
                 }
+            }
+        }
+    }
+
+    public void CheckCancel(MouseState mouse, MouseState prevMouse)
+    {
+        if (state == PREVIEW)
+        {
+            // Checking if user cancelled placement
+            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed &&
+                cancelRec.Contains(mouse.Position))
+            {
+                // Setting state to inactive
+                state = INACTIVE;
             }
         }
     }
@@ -191,6 +215,8 @@ public class Wall
                 {
                     spriteBatch.Draw(img, tileRecs[i], Color.Red * 0.8f);
                 }
+                
+                spriteBatch.Draw(cancelImg, cancelRec, Color.White);
             }
             // Drawing permenant state
             else if (state == PLACED)

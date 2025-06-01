@@ -131,8 +131,8 @@ public class Game1 : Game
     private Vector2 dayCountPos;
     
     // Storing zombies killed, string for display, and position vector
-    public static int mobsKilled = 0; // Setting to public so that zombie class will be able to modify it
-    public static string dispMobsKilled = "Kills: 0";
+    private static int mobsKilled = 0; // Setting to public so that zombie class will be able to modify it
+    private static string dispMobsKilled = "Kills: 0";
     private Vector2 mobsKilledPos;
     
     // Storing king hp string display, and position vector
@@ -204,6 +204,7 @@ public class Game1 : Game
             
             // Loading single pixel texture
             pixelImg = new Texture2D(GraphicsDevice, 1, 1);
+            pixelImg.SetData(new[] { Color.White });
             
             // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
             Texture2D platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
@@ -250,7 +251,7 @@ public class Game1 : Game
             zombieImgs[3] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_2");
             zombieImgs[4] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_3");
             
-            // Loading all of the zombies
+            // Loading all the zombies
             for (int i = 0; i < zombies.Length; i++)
             {
                 zombies[i] = new Zombie(zombieImgs, screenWidth, platform.GetRec().Y);
@@ -261,7 +262,7 @@ public class Game1 : Game
             mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
             kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
             
-            // Loading explosion animation and saving local image for each cannon ball
+            // Loading explosion animation and saving local image for each cannonball
             Texture2D explosionImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/explosion");
             explosionAnims = new Animation[cannonballs.Length];
             for (int i = 0; i < explosionAnims.Length; i++)
@@ -439,7 +440,7 @@ public class Game1 : Game
     // Updating everything that is common to both levels
     private void UpdateGame(GameTime gameTime)
     {
-        // Updating king tower and cannon balls
+        // Updating king tower and cannonballs
         kingTower.Update(mouse, gameTime);
         for (int i = 0; i < cannonballs.Length; i++)
         {
@@ -463,9 +464,18 @@ public class Game1 : Game
             }
         }
         
-        // Updating tower preview buttons AFTER wall check so the wall wont automatically be placed
+        // Updating tower preview buttons AFTER wall check so the wall won't automatically be placed
         wallLvl1Prev.Update(mouse, prevMouse);
         wallLvl2Prev.Update(mouse, prevMouse);
+        
+        // Checking for cancel for each wall AFTER button click so it wont reshow preview
+        for (int i = 0; i < walls.Length; i++)
+        {
+            if (walls[i] != null)
+            {
+                walls[i].CheckCancel(mouse, prevMouse);
+            }
+        }
         
         // Updating zombie
         for (int i = 0; i < zombies.Length; i++)
@@ -498,6 +508,10 @@ public class Game1 : Game
         
         // Drawing background
         _spriteBatch.Draw(gameBgImg, gameBgRec, Color.White);
+        
+        // Drawing tower preview buttons
+        wallLvl1Prev.Draw(_spriteBatch);
+        wallLvl2Prev.Draw(_spriteBatch);
         
         // Drawing platform
         platform.Draw(_spriteBatch);
@@ -539,6 +553,12 @@ public class Game1 : Game
     }
 
     #endregion
+
+    public static void IncreaseMobsKilled()
+    {
+        mobsKilled++;
+        dispMobsKilled = $"Kills: {mobsKilled}";
+    }
         
     private void DayNightCycle(GameTime gameTime)
     {
@@ -583,6 +603,9 @@ public class Game1 : Game
         // Checking collision with each zombie
         for (int i = 0; i < zombies.Length; i++)
         {
+            // Storing a bool to keep track if the zombie is attacking or not
+            bool isAttacking = false;
+        
             // Checking for king tower
             if (zombies[i].GetRec().Intersects(kingTower.GetHitbox()))
             {
@@ -591,24 +614,30 @@ public class Game1 : Game
                 
                 // Updating king tower HUD:
                 dispKingHP = $"HP: {kingTower.HP}";
+                
+                // Setting attacking to true
+                isAttacking = true;
             }
 
             // Checking for walls
             for (int j = 0; j < walls.Length; j++)
             {
-                // Making sure wall isnt null
-                if (walls[j] != null)
+                // Making sure wall isn't null and it is currently placed
+                if (walls[j] != null && walls[j].IsPlaced())
                 {
                     if (zombies[i].GetRec().Intersects(walls[j].GetRec()))
                     {
                         // Dealing damage to wall
                         walls[j].HP = zombies[i].Attack(walls[j].HP);
+                        
+                        // Setting attacking to true
+                        isAttacking = true;
                     }
                 }
             }
-
-            // If after all of the checks the zombie isnt attacking, proceed
-            if (!zombies[i].IsAttacking())
+            
+            // if the zombie isn't attacking, set it to walk
+            if (!isAttacking)
             {
                 zombies[i].Walk();
             }
@@ -697,10 +726,6 @@ public class Game1 : Game
         DrawWithShadow(HUDFont, dispDayCount, dayCountPos, Color.Yellow, Color.Black);
         DrawWithShadow(HUDFont, dispMobsKilled, mobsKilledPos, Color.IndianRed, Color.Black);
         DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
-        
-        // Drawing tower preview buttons
-        wallLvl1Prev.Draw(_spriteBatch);
-        wallLvl2Prev.Draw(_spriteBatch);
     }
 
     #region Button Actions
@@ -762,7 +787,9 @@ public class Game1 : Game
             {
                 // Creating a new wall instance to be placed
                 Texture2D lvl1Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
-                walls[i] = new Wall(lvl1Wall, lvl1Wall.Width / 2, lvl1Wall.Height / 2, 400, platform);
+                Texture2D cross = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
+                walls[i] = new Wall(lvl1Wall, lvl1Wall.Width / 2, lvl1Wall.Height / 2, 400, platform, 
+                    wallLvl1Prev.GetRec(), cross);
                 
                 break;
             }
@@ -779,7 +806,9 @@ public class Game1 : Game
             {
                 // Creating a new wall instance to be placed
                 Texture2D lvl2Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
-                walls[i] = new Wall(lvl2Wall, lvl2Wall.Width / 2, lvl2Wall.Height / 2, 750, platform);
+                Texture2D cross = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
+                walls[i] = new Wall(lvl2Wall, lvl2Wall.Width / 2, lvl2Wall.Height / 2, 750, platform, 
+                    wallLvl2Prev.GetRec(), cross);
                 
                 break;
             }

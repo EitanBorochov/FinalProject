@@ -4,50 +4,52 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TextFont.spritefont</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/GameBackground.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/MenuBackground.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/PixelNightSky.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl1.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl2.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl3.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/Arrow.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Brick.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Cannonball.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/explosion.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/KingTower.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Wall/WallLvl1.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Wall/WallLvl2.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_1.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_2.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_3.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Dead.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Walk.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_1.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_2.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_3.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Dead.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Idle.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Run.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Walk.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_1.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_2.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_3.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Dead.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Idle.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Run.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Walk.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/HomeButton.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Level1Button.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Level2Button.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/ResumeButton.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/SettingsButton.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Title.png</File>
-    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TextFont.spritefont</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/GameBackground.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/MenuBackground.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/PixelNightSky.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl1.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl2.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl3.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/Arrow.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Brick.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Cannonball.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/explosion.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/KingTower.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Wall/WallLvl1.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Wall/WallLvl2.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_1.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_2.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Attack_3.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Dead.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/WildZombie/Walk.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_1.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_2.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Attack_3.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Dead.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Idle.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Run.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieMan/Walk.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_1.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_2.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Attack_3.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Dead.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Idle.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Run.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/ZombieWoman/Walk.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/HomeButton.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Level1Button.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Level2Button.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/RedCross.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/ResumeButton.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/SettingsButton.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Title.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
