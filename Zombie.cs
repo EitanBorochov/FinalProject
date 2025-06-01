@@ -2,7 +2,7 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: May 25th 2025
+// Modification Date: May 29th 2025
 // Description: Zombie object, handles attacking, translating, etc.
 
 using System;
@@ -240,15 +240,15 @@ public class Zombie
     }
 
     // Dealing damage to tower
-    public int DealDamage(int towerHP)
+    public int Attack(int towerHP)
     {
         // Making sure zombie is alive
         if (zombieState != DYING && zombieState != INACTIVE)
         {
-            // Setting zombie state to attack 1 if it's not an attack
+            // Setting zombie state to attack if it's not an attack
             if (zombieState < ATTACK1 || zombieState > ATTACK3)
             {
-                zombieState = ATTACK1;
+                zombieState = (byte)rng.Next(ATTACK1, ATTACK3 + 1);
             }
 
             // Attacking when action timer is done
@@ -270,6 +270,17 @@ public class Zombie
         }
 
         return towerHP;
+    }
+    
+    // Checking if zombie is attacking for collisions
+    public bool IsAttacking()
+    {
+        if (zombieState == ATTACK1 || zombieState == ATTACK2 || zombieState == ATTACK3)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public void Walk()

@@ -1,8 +1,8 @@
 // Author: Eitan Borochov
 // File Name: Tower.cs
 // Project Name: FinalProject
-// Creation Date: May 9th 2025
-// Modification Date: May 23rd 2025
+// Creation Date: May 28th 2025
+// Modification Date: May 29th 2025
 // Description: Creates a new wall object which is made of tiles and meant to block the enemy from the damage dealing towers
 
 using System;
@@ -18,9 +18,7 @@ public class Wall
     #region Attributes
 
     // Storing tile images for levels 1 and 2, and current level
-    private Texture2D tile1Img;
-    private Texture2D tile2Img;
-    private Texture2D currentImg;
+    private Texture2D img;
     
     // Storing tile rec array and full rectangle
     private Rectangle[] tileRecs = new Rectangle[6];
@@ -44,11 +42,11 @@ public class Wall
 
     #region Constructor
 
-    public Wall(Texture2D tile1Img, Texture2D tile2Img, int tileWidth, int tileHeight)
+    public Wall(Texture2D img, int tileWidth, int tileHeight, int health, Platform platform)
     {
         // Storing inputted parameters
-        this.tile1Img = tile1Img;
-        this.tile2Img = tile2Img;
+        this.img = img;
+        this.health = health;
         
         // Constructing rectangles
         for (int i = 0; i < tileRecs.Length; i++)
@@ -58,9 +56,8 @@ public class Wall
         
         // Loading hitbox
         hitbox = new Rectangle(tileRecs[0].X, tileRecs[0].Y, tileRecs[0].Width, tileRecs.Length * tileRecs[0].Height);
-        
-        // Storing current image as level 1 initially
-        currentImg = this.tile1Img;
+
+        TranslateY(platform.GetRec().Top - hitbox.Height);
     }
 
     #endregion
@@ -84,6 +81,16 @@ public class Wall
     public Rectangle GetRec()
     {
         return hitbox;
+    }
+
+    public bool IsPlaced()
+    {
+        if (state == PLACED)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     #endregion
@@ -116,16 +123,6 @@ public class Wall
         if (state == PREVIEW)
         {
             #region Translation
-
-            // Translating Y position to the mouse position if its in buildable area
-            if (mouse.Position.ToVector2().Y + hitbox.Height < platform.Top)
-            {
-                TranslateY(mouse.Position.ToVector2().Y);
-            }
-            else
-            {
-                TranslateY(platform.Top - hitbox.Height);
-            }
             
             // Translating X position to the mouse position if its in buildable area
             if (mouse.Position.ToVector2().X < buildableRec.Right - hitbox.Width
@@ -143,14 +140,14 @@ public class Wall
             }
 
             #endregion
-        }
-
-        if (isValid)
-        {
-            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+            
+            if (isValid)
             {
-                state = PLACED;
-                TranslateY(platform.Top - hitbox.Height);
+                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+                {
+                    state = PLACED;
+                    TranslateY(platform.Top - hitbox.Height);
+                }
             }
         }
     }
@@ -182,20 +179,23 @@ public class Wall
     {
         for (int i = 0; i < tileRecs.Length; i++)
         {
+            // Drawing transparent preview state
             if (state == PREVIEW)
             {
+                // Drawing red if invalid and regular if it is valid
                 if (isValid)
                 {
-                    spriteBatch.Draw(currentImg, tileRecs[i], Color.White * 0.8f);
+                    spriteBatch.Draw(img, tileRecs[i], Color.White * 0.8f);
                 }
                 else
                 {
-                    spriteBatch.Draw(currentImg, tileRecs[i], Color.Red * 0.8f);
+                    spriteBatch.Draw(img, tileRecs[i], Color.Red * 0.8f);
                 }
             }
+            // Drawing permenant state
             else if (state == PLACED)
             {
-                spriteBatch.Draw(currentImg, tileRecs[i], Color.White);
+                spriteBatch.Draw(img, tileRecs[i], Color.White);
             }
         }
     }

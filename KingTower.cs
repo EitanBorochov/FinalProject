@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 27th 2025
-// Modification Date: May 27th 2025
+// Modification Date: May 29th 2025
 // Description: Inhereted tower class for the king tower
 
 using System;
@@ -57,7 +57,7 @@ public class KingTower : Tower
 
             cooldownTimer.ResetTimer(true);
 
-            return new Cannonball(projRec, mousePos, false, projImg, damage, 5);
+            return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 400);
         }
 
         return null;

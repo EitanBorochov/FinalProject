@@ -39,11 +39,11 @@ public class Projectile
 
     #region Contructor
 
-    public Projectile(Rectangle rec, float launchSpeed, Vector2 mousePos, bool highAngle, Texture2D image, int damage)
+    public Projectile(Rectangle rec, float launchSpeed, Vector2 mousePos, bool highAngle, Texture2D image, int damage, float maxMag)
     {
         // Storing parameters
         this.rec = rec;
-        this.velocity = FindLaunchVelocity(rec.Location.ToVector2(), mousePos, highAngle, launchSpeed);
+        this.velocity = FindLaunchVelocity(rec.Location.ToVector2(), mousePos, highAngle, launchSpeed, maxMag);
         this.image = image;
         
         // Storing initial position
@@ -95,7 +95,7 @@ public class Projectile
     }
     
     // Calculating the initial velocity of any projectile
-    private Vector2 FindLaunchVelocity(Vector2 projPos, Vector2 mousePos, bool highAngle, float launchSpeed)
+    private Vector2 FindLaunchVelocity(Vector2 projPos, Vector2 mousePos, bool highAngle, float launchSpeed, float maxMag)
     { 
         // Thank you Mr. Lane
         //Store the calculated launch velocity to hit the given target location
@@ -111,7 +111,14 @@ public class Projectile
 
         //Precalculate gravity * x to reduce repeated calculations
         double gx = Game1.GRAVITY * diff.X;
-
+        
+        // Clamping diff x and y to the maximum magnitude if the difference excedes the max magnitude
+        if (diff.Length() > maxMag)
+        {
+            diff.X *= maxMag / diff.Length();
+            diff.Y *= maxMag / diff.Length();
+        }
+        
         // Calculate the Discriminant (value under the root): s^4 - G(Gx^2 + 2s^2y)
         double root = speed4 - Game1.GRAVITY * (Game1.GRAVITY * diff.X * diff.X + 2 * speed2 * diff.Y);
 

@@ -23,8 +23,8 @@ public class Cannonball : Projectile
     
     #region Constructor
 
-    public Cannonball(Rectangle rec, Vector2 mousePos, bool highAngle, Texture2D image, int damage, int hitboxMultiplier) : 
-            base(rec, LAUNCH_SPEED, mousePos, highAngle, image, damage)
+    public Cannonball(Rectangle rec, Vector2 mousePos, bool highAngle, Texture2D image, int damage, int hitboxMultiplier, float maxMag) : 
+            base(rec, LAUNCH_SPEED, mousePos, highAngle, image, damage, maxMag)
     {
         // Calculating hitbox
         hitbox = new Rectangle(rec.X - (rec.Width * (hitboxMultiplier - 1) ) / 2, rec.Y, rec.Width * hitboxMultiplier, rec.Height);
