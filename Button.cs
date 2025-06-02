@@ -1,8 +1,8 @@
 // Author: Eitan Borochov
-// File Name: Game1.cs
+// File Name: Button.cs
 // Project Name: FinalProject
 // Creation Date: May 13th 2025
-// Modification Date: May 14th 2025
+// Modification Date: June 2nd, 2025
 // Description: Creates a button object that handles its interactions
 
 using System;
@@ -25,13 +25,13 @@ public class Button
 
     #region Constructor
 
-    public Button(Texture2D buttonImg, int x, int y, int width, int height, Action onClick)
+    public Button(Texture2D buttonImg, float x, float y, float width, float height, Action onClick)
     {
         // Storing what action to do when button is clicked (update)
         this.onClick = onClick;
         
         // Constructing rectangle
-        buttonRec = new Rectangle(x, y, width, height);
+        buttonRec = new Rectangle((int)x, (int)y, (int)width, (int)height);
         
         // Storing image
         this.buttonImg = buttonImg;

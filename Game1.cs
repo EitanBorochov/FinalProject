@@ -126,9 +126,14 @@ public class Game1 : Game
     // Width and height for the tower preview buttons
     private const int PREVIEW_SIZE = 80;
     
-    // Level 1 wall preview will act as a preview to select and place a wall and it will act as a button
+    // Storing buttons to purchase walls
     private Button wallLvl1Prev;
     private Button wallLvl2Prev;
+    
+    // Storing buttons to purchase archer towers
+    private Button archerLvl1Prev;
+    private Button archerLvl2Prev;
+    private Button archerLvl3Prev;
     
     // Storing red cross texture to cancel placement
     private Texture2D redCrossImg;
@@ -158,7 +163,7 @@ public class Game1 : Game
 
     #region Sub Region - Projectiles
 
-    // Storing max number of cannonballs
+    // Storing max number of cannonballs inside array size
     private Cannonball[] cannonballs = new Cannonball[4];
 
     #endregion
@@ -223,7 +228,7 @@ public class Game1 : Game
             Texture2D cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
             
             kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
-                                    kingTowerImg.Height, 266, 330, 1000, cannonballImg, 4, 750);
+                                    kingTowerImg.Height, 266, 330, cannonballImg, 1000);
             
             lvl1KingPos = new Vector2(screenWidth - kingTower.GetDisplayRec().Width / 2f, 
                                         platform.GetRec().Y - kingTower.GetHitbox().Height + 10);
@@ -289,6 +294,21 @@ public class Game1 : Game
                 PREVIEW_SIZE, PREVIEW_SIZE, Lvl1WallPrev);
             wallLvl2Prev = new Button(lvl2Wall, wallLvl1Prev.GetRec().X - 5 - PREVIEW_SIZE, 5,
                 PREVIEW_SIZE, PREVIEW_SIZE, Lvl2WallPrev);
+            
+            // Loading archer tower textures
+            Texture2D lvl1Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl1");
+            Texture2D lvl2Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl2");
+            Texture2D lvl3Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl3");
+            
+            // Loading archer tower buttons using archer tower textures
+            archerLvl1Prev = new Button(lvl1Archer, wallLvl2Prev.GetRec().X - 5 - PREVIEW_SIZE, 5,
+                PREVIEW_SIZE * ((float)lvl1Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, Lvl1WallPrev);
+            
+            archerLvl2Prev = new Button(lvl2Archer, archerLvl1Prev.GetRec().X - 5 - archerLvl1Prev.GetRec().Width, 5,
+                PREVIEW_SIZE * ((float)lvl2Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, Lvl1WallPrev);
+            
+            archerLvl3Prev = new Button(lvl3Archer, archerLvl2Prev.GetRec().X - 5 - archerLvl2Prev.GetRec().Width, 5,
+                PREVIEW_SIZE * ((float)lvl3Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, Lvl1WallPrev);
             
             // Loading red cross texture
             redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
@@ -486,6 +506,9 @@ public class Game1 : Game
         // Updating tower preview buttons AFTER wall check so the wall won't automatically be placed
         wallLvl1Prev.Update(mouse, prevMouse);
         wallLvl2Prev.Update(mouse, prevMouse);
+        archerLvl1Prev.Update(mouse, prevMouse);
+        archerLvl2Prev.Update(mouse, prevMouse);
+        archerLvl3Prev.Update(mouse, prevMouse);
         
         // Checking for placement
         for (int i = 0; i < walls.Length; i++)
@@ -757,9 +780,16 @@ public class Game1 : Game
         DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
         DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
         
-        // Drawing tower preview buttons and cancel options
-        DrawWithPrice(wallLvl1Prev, 100);
-        DrawWithPrice(wallLvl2Prev, 200);
+        // Drawing wall tower preview options
+        DrawWithPrice(wallLvl1Prev, Wall.GetPrice(0));
+        DrawWithPrice(wallLvl2Prev, Wall.GetPrice(1));
+        
+        // Drawing archer tower preview options
+        DrawWithPrice(archerLvl1Prev, ArcherTower.GetPrice(0));
+        DrawWithPrice(archerLvl2Prev, ArcherTower.GetPrice(1));
+        DrawWithPrice(archerLvl3Prev, ArcherTower.GetPrice(2));
+        
+        // Drawing cancel buttons on wall buttons when in preview
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 1)
@@ -851,7 +881,7 @@ public class Game1 : Game
             {
                 // Creating a new wall instance to be placed
                 Texture2D wallImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
-                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 1);
+                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 0);
                 break;
             }
         }
@@ -878,7 +908,7 @@ public class Game1 : Game
             {
                 // Creating a new wall instance to be placed
                 Texture2D wallImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
-                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 2);
+                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 1);
                 break;
             }
         }

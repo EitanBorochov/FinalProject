@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: May 28th 2025
+// Modification Date: June 2nd 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;
@@ -30,14 +30,20 @@ public class Tower
     // Storing action timer
     protected Timer cooldownTimer;
     
-    // Storing bool for if the tower is alive 
+    // Storing projectile image and rectangle
+    protected Texture2D projImg;
+    protected Rectangle projRec;
+    
+    // Storing damage
+    protected int damage;
 
     #endregion
 
     #region Constructors
     
     // Setting up constructor
-    public Tower(Texture2D towerImg, Vector2 position, int width, int height, int hitboxWidth, int hitboxHeight, int health, int cooldownTimerLength)
+    public Tower(Texture2D towerImg, Vector2 position, int width, int height, 
+        int hitboxWidth, int hitboxHeight, Texture2D projectileImg, int cooldownTimerLength)
     {
         // Storing temporary variables for calculations
         int hitboxX;
@@ -61,6 +67,11 @@ public class Tower
         
         // Constructing action timer
         this.cooldownTimer = new Timer(cooldownTimerLength, true);
+        
+        // Loading projectile data
+        this.projImg = projectileImg;
+        projRec = new Rectangle(0, 0, projImg.Width, projImg.Height);
+        this.damage = damage;
     }
 
     #endregion
@@ -84,13 +95,13 @@ public class Tower
     public virtual int HP
     {
         get => this.health;
-        set
-        {
-            if (value >= 0);
-            {
-                this.health = value;
-            }
-        }
+        set => this.health = value;
+    }
+    
+    // Returning damage
+    public virtual int GetDmg()
+    {
+        return damage;
     }
     
     // Setting a new image for the object

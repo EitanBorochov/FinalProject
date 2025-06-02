@@ -1,8 +1,8 @@
 // Author: Eitan Borochov
-// File Name: Tower.cs
+// File Name: KingTower.cs
 // Project Name: FinalProject
 // Creation Date: May 27th 2025
-// Modification Date: May 31st 2025
+// Modification Date: June 2nd 2025
 // Description: Inhereted tower class for the king tower
 
 using System;
@@ -16,23 +16,15 @@ namespace FinalProject;
 
 public class KingTower : Tower
 {
-    // Storing projectile image
-    private Texture2D projImg;
-    private Rectangle projRec;
-    
-    // Storing damage
-    private int damage;
-    
     #region Constructor
 
     public KingTower(Texture2D towerImg, Vector2 position, int width, int height, int hitboxWidth, 
-                    int hitboxHeight, int health, Texture2D projectileImg, int damage, int cooldownLength) : 
-                    base(towerImg, position, width, height, hitboxWidth, hitboxHeight, health, cooldownLength)
+                    int hitboxHeight, Texture2D projectileImg, int cooldownLength) : 
+                    base(towerImg, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLength)
     {
-        this.projImg = projectileImg;
-        projRec = new Rectangle(0, 0, projImg.Width, projImg.Height);
-        this.damage = damage;
-
+        // Storing health and damage
+        health = 1000;
+        damage = 4;
     }
 
     #endregion
@@ -61,12 +53,11 @@ public class KingTower : Tower
 
             cooldownTimer.ResetTimer(true);
 
-            return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 300);
+            return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 350);
         }
 
         return null;
     }
 
     #endregion
-    
 }

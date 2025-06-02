@@ -1,8 +1,8 @@
 // Author: Eitan Borochov
-// File Name: Tower.cs
+// File Name: Wall.cs
 // Project Name: FinalProject
 // Creation Date: May 28th 2025
-// Modification Date: May 31st 2025
+// Modification Date: June 2nd 2025
 // Description: Creates a new wall object which is made of tiles and meant to block the enemy from the damage dealing towers
 
 using System;
@@ -24,9 +24,6 @@ public class Wall
     private Rectangle[] tileRecs = new Rectangle[6];
     private Rectangle hitbox;
     
-    // Storing health
-    private int health;
-    
     // Storing possible states for when its placed or not
     private const byte INACTIVE = 0;
     private const byte PREVIEW = 1;
@@ -38,11 +35,14 @@ public class Wall
     // Storing if the preview is in a valid location
     private bool isValid = false;
     
-    // storing lvl of wall
+    // storing lvl of wall (starting at 0)
     private byte lvl;
     
-    // Storing price
-    private int price;
+    // Storing a price array, the current price will be the price of index lvl
+    private static int[] prices = new[]{100, 200};
+    
+    // Storing health array, the current health will be the health of index lvl
+    private int[] healths = new[]{400, 850};
     
     #endregion
 
@@ -52,7 +52,6 @@ public class Wall
     {
         // Storing inputted parameters
         this.img = img;
-        this.health = health;
         this.lvl = lvl;
         
         // Constructing rectangles
@@ -64,18 +63,6 @@ public class Wall
         // Loading hitbox
         hitbox = new Rectangle(tileRecs[0].X, tileRecs[0].Y, tileRecs[0].Width, tileRecs.Length * tileRecs[0].Height);
         TranslateY(platform.GetRec().Top - hitbox.Height);
-        
-        // Loading health according to level
-        if (lvl == 1)
-        {
-            health = 400;
-            price = 100;
-        }
-        else
-        {
-            health = 850;
-            price = 200;
-        }
     }
 
     #endregion
@@ -85,20 +72,25 @@ public class Wall
     // Accessable health quantity
     public int HP
     {
-        get => health;
-        set => health = value;
+        get => healths[lvl];
+        set => healths[lvl] = value;
     }
 
     public int Price
     {
-        get => price;
-        set => price = value;
+        get => prices[lvl];
+        set => prices[lvl] = value;
     }
 
     // Returning a rectangle that surrounds all of the tiles
     public Rectangle GetRec()
     {
         return hitbox;
+    }
+    
+    public static int GetPrice(int lvl)
+    {
+        return prices[lvl];
     }
 
     public bool IsPlaced()
@@ -128,7 +120,7 @@ public class Wall
         
         PreviewStateTranslation(mouse, buildableRec);
 
-        if (health <= 0)
+        if (healths[lvl] <= 0)
         {
             state = INACTIVE;
         }
@@ -169,7 +161,16 @@ public class Wall
     {
         if (state == PREVIEW)
         {
-            if (isValid && Game1.Coins >= price)
+            // Checking for right click button cancel
+            if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
+            {
+                // Setting state to inactive and ending method
+                state = INACTIVE;
+                return;
+            }
+
+            // Checking if user has enough money and the placement is valid
+            if (isValid && Game1.Coins >= prices[lvl])
             {
                 if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
                 {
@@ -178,7 +179,7 @@ public class Wall
                     TranslateY(platform.Top - hitbox.Height);
                     
                     // Taking away coins
-                    Game1.Coins -= price;
+                    Game1.Coins -= prices[lvl];
                 }
             }
         }
@@ -215,7 +216,7 @@ public class Wall
             if (state == PREVIEW)
             {
                 // Drawing red if invalid and regular if it is valid
-                if (Game1.Coins < price || !isValid)
+                if (Game1.Coins < prices[lvl] || !isValid)
                 {
                     spriteBatch.Draw(img, tileRecs[i], Color.Red * 0.8f);
                 }
