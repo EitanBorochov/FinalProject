@@ -82,7 +82,7 @@ public class Wall
         set => prices[lvl] = value;
     }
 
-    // Returning a rectangle that surrounds all of the tiles
+    // Returning a rectangle that surrounds all the tiles
     public Rectangle GetRec()
     {
         return hitbox;

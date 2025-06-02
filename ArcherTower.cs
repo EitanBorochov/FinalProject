@@ -58,10 +58,144 @@ public class ArcherTower : Tower
     {
         return prices[lvl];
     }
+    
+    public bool IsPlaced()
+    {
+        if (state == PLACED)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public byte Lvl
+    {
+        get => lvl;
+        set => lvl = value;
+    }
 
     #endregion
 
     #region Behaviours
+    
+    // Adding to base update
+    public bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
+    {
+        // Base update:
+        base.Update(mouse, gameTime);
+        
+        // Storing if current location is valid for placement by collision
+        this.isValid = isValid;
+        
+        PreviewStateTranslation(mouse, buildableRec);
+
+        if (healths[lvl] <= 0)
+        {
+            state = INACTIVE;
+        }
+        
+        // Returning that the tower is down
+        if (state == INACTIVE)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // Allowing player to move the wall around while its in preview
+    private void PreviewStateTranslation(MouseState mouse, Rectangle buildableRec)
+    {
+        if (state == PREVIEW)
+        {
+            // Translating X position to the mouse position if its in buildable area
+            if (mouse.Position.ToVector2().X < buildableRec.Right - hitbox.Width
+                && mouse.Position.ToVector2().X > buildableRec.Left)
+            {
+                hitbox.X = (int)mouse.Position.ToVector2().X;
+            }
+            else if (mouse.Position.ToVector2().X >= buildableRec.Right - hitbox.Width)
+            {
+                hitbox.X = buildableRec.Right - hitbox.Width;
+            }
+            else
+            {
+                hitbox.X = buildableRec.Left;
+            }
+            
+            displayRec.Location = hitbox.Location;
+        }
+    }
+
+    public void CheckPlacement(MouseState mouse, MouseState prevMouse,
+        Rectangle platform)
+    {
+        if (state == PREVIEW)
+        {
+            // Checking for right click button cancel
+            if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
+            {
+                // Setting state to inactive and ending method
+                state = INACTIVE;
+                return;
+            }
+
+            // Checking if user has enough money and the placement is valid
+            if (isValid && Game1.Coins >= prices[lvl])
+            {
+                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+                {
+                    // placing tower
+                    state = PLACED;
+                    hitbox.Y = platform.Top - hitbox.Height;
+
+                    // Taking away coins
+                    Game1.Coins -= prices[lvl];
+                }
+            }
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, int buildRecCenter)
+    {
+        // Drawing transparent preview state
+        if (state == PREVIEW)
+        {
+            // Drawing red if invalid and regular if it is valid
+            if (Game1.Coins < prices[lvl] || !isValid)
+            {
+                // Drawing flipped if it's on the left side of the screen
+                if (hitbox.Center.X > buildRecCenter)
+                {
+                    spriteBatch.Draw(towerImg, displayRec, Color.Red * 0.8f);
+                }
+                else
+                {
+                    spriteBatch.Draw(towerImg, displayRec, null, Color.Red * 0.8f, 0, 
+                        Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
+                }
+            }
+            else if (isValid)
+            {
+                // Drawing flipped if it's on the left side of the screen
+                if (hitbox.Center.X > buildRecCenter)
+                {
+                    spriteBatch.Draw(towerImg, displayRec, Color.White * 0.8f);
+                }
+                else
+                {
+                    spriteBatch.Draw(towerImg, displayRec, null, Color.White * 0.8f, 0, 
+                        Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
+                }
+            }
+        }
+        else if (state == PLACED)
+        {
+            // Drawing it regularly if state is placed
+            base.Draw(spriteBatch);
+        }
+    }
 
     // Shooting arrows
     // public Cannonball LaunchBall(Vector2 mousePos)

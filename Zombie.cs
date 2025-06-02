@@ -90,7 +90,12 @@ public class Zombie
     public Rectangle GetRec()
     {
         // ** ALL ZOMBIES HAVE SAME REC
-        return anims[WALK].GetDestRec();
+        if (state < 5)
+        {
+            return anims[state].GetDestRec();
+        }
+
+        return anims[ATTACK3].GetDestRec();
     }
 
     // Returning and setting current zombie state

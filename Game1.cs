@@ -123,6 +123,9 @@ public class Game1 : Game
     // Storing new array of walls
     private Wall[] walls = new Wall[4];
     
+    // Storing an array of archer towers
+    private ArcherTower[] archers = new ArcherTower[4];
+    
     // Width and height for the tower preview buttons
     private const int PREVIEW_SIZE = 80;
     
@@ -230,7 +233,7 @@ public class Game1 : Game
             kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
                                     kingTowerImg.Height, 266, 330, cannonballImg, 1000);
             
-            lvl1KingPos = new Vector2(screenWidth - kingTower.GetDisplayRec().Width / 2f, 
+            lvl1KingPos = new Vector2(screenWidth - kingTower.GetDisplayRec().Width / 2f + 30, 
                                         platform.GetRec().Y - kingTower.GetHitbox().Height + 10);
             lvl2KingPos = new Vector2(WidthCenter(kingTower.GetHitbox().Width),
                                         platform.GetRec().Y - kingTower.GetHitbox().Height + 10);
@@ -291,9 +294,9 @@ public class Game1 : Game
             
             // Loading wall preview buttons using wall textures
             wallLvl1Prev = new Button(lvl1Wall, screenWidth - PREVIEW_SIZE - 5, 5, 
-                PREVIEW_SIZE, PREVIEW_SIZE, Lvl1WallPrev);
+                PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(0));
             wallLvl2Prev = new Button(lvl2Wall, wallLvl1Prev.GetRec().X - 5 - PREVIEW_SIZE, 5,
-                PREVIEW_SIZE, PREVIEW_SIZE, Lvl2WallPrev);
+                PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1));
             
             // Loading archer tower textures
             Texture2D lvl1Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl1");
@@ -302,13 +305,13 @@ public class Game1 : Game
             
             // Loading archer tower buttons using archer tower textures
             archerLvl1Prev = new Button(lvl1Archer, wallLvl2Prev.GetRec().X - 5 - PREVIEW_SIZE, 5,
-                PREVIEW_SIZE * ((float)lvl1Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, Lvl1WallPrev);
+                PREVIEW_SIZE * ((float)lvl1Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(0));
             
             archerLvl2Prev = new Button(lvl2Archer, archerLvl1Prev.GetRec().X - 5 - archerLvl1Prev.GetRec().Width, 5,
-                PREVIEW_SIZE * ((float)lvl2Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, Lvl1WallPrev);
+                PREVIEW_SIZE * ((float)lvl2Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(1));
             
             archerLvl3Prev = new Button(lvl3Archer, archerLvl2Prev.GetRec().X - 5 - archerLvl2Prev.GetRec().Width, 5,
-                PREVIEW_SIZE * ((float)lvl3Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, Lvl1WallPrev);
+                PREVIEW_SIZE * ((float)lvl3Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(2));
             
             // Loading red cross texture
             redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
@@ -503,6 +506,19 @@ public class Game1 : Game
             }
         }
         
+        // Updating walls and checking for placement and collisions
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null)
+            {
+                // If this statement returns true it means the wall was destroyed
+                if (archers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(archers[i].GetHitbox())))
+                {
+                    archers[i] = null;
+                }
+            }
+        }
+        
         // Updating tower preview buttons AFTER wall check so the wall won't automatically be placed
         wallLvl1Prev.Update(mouse, prevMouse);
         wallLvl2Prev.Update(mouse, prevMouse);
@@ -510,12 +526,21 @@ public class Game1 : Game
         archerLvl2Prev.Update(mouse, prevMouse);
         archerLvl3Prev.Update(mouse, prevMouse);
         
-        // Checking for placement
+        // Checking for placement for walls
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] != null)
             {
                 walls[i].CheckPlacement(mouse, prevMouse, platform.GetRec());
+            }
+        }
+        
+        // Checking for placement for archer towers
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null)
+            {
+                archers[i].CheckPlacement(mouse, prevMouse, platform.GetRec());
             }
         }
         
@@ -585,8 +610,17 @@ public class Game1 : Game
                 walls[i].Draw(_spriteBatch);
             }
         }
+        
+        // Drawing archer towers
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null)
+            {
+                archers[i].Draw(_spriteBatch, buildableRec.Center.X);
+            }
+        }
 
-        // Drawing cannon balls with their explosions
+        // Drawing cannonballs with their explosions
         for (int i = 0; i < cannonballs.Length; i++)
         {
             if (cannonballs[i] != null)
@@ -605,7 +639,8 @@ public class Game1 : Game
     }
 
     #endregion
-
+    
+    // Method accessible by zombies to increase points
     public static void IncreaseMobsKilled()
     {
         mobsKilled++;
@@ -688,6 +723,23 @@ public class Game1 : Game
                 }
             }
             
+            // Checking for archer towers
+            for (int j = 0; j < archers.Length; j++)
+            {
+                // Making sure wall isn't null and it is currently placed
+                if (archers[j] != null && archers[j].IsPlaced())
+                {
+                    if (zombies[i].GetRec().Intersects(archers[j].GetHitbox()))
+                    {
+                        // Dealing damage to wall
+                        archers[j].HP = zombies[i].Attack(archers[j].HP);
+                        
+                        // Setting attacking to true
+                        isAttacking = true;
+                    }
+                }
+            }
+            
             // if the zombie isn't attacking, set it to walk
             if (!isAttacking)
             {
@@ -698,10 +750,10 @@ public class Game1 : Game
     
     private void CannonCollision()
     {
-        // Checking collision for each cannon ball
+        // Checking collision for each cannonball
         for (int i = 0; i < cannonballs.Length; i++)
         {
-            // Making sure its not null
+            // Making sure it's not null
             if (cannonballs[i] != null)
             {
                 // Detecting collision with platform
@@ -753,16 +805,30 @@ public class Game1 : Game
 
     private bool ValidPlacement(Rectangle building)
     {
+        // Checking intersection with king tower
         if (building.Intersects(kingTower.GetHitbox()))
         {
             return false;
         }
 
+        // Checking intersection with wall towers
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] != null)
             {
                 if (building.Intersects(walls[i].GetRec()) && walls[i].IsPlaced())
+                {
+                    return false;
+                }
+            }
+        }
+        
+        // Checking intersection with archer towers
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null)
+            {
+                if (building.Intersects(archers[i].GetHitbox()) && archers[i].IsPlaced())
                 {
                     return false;
                 }
@@ -792,13 +858,36 @@ public class Game1 : Game
         // Drawing cancel buttons on wall buttons when in preview
         for (int i = 0; i < walls.Length; i++)
         {
-            if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 1)
+            if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 0)
             {
                 _spriteBatch.Draw(redCrossImg, wallLvl1Prev.GetRec(), Color.White);
             }
-            else if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 2)
+            else if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 1)
             {
                 _spriteBatch.Draw(redCrossImg, wallLvl2Prev.GetRec(), Color.White);
+            }
+        }
+        
+        // Drawing cancel buttons on archer tower buttons when in preview
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null && !archers[i].IsPlaced())
+            {
+                // Drawing depending on the tower preview level
+                switch (archers[i].Lvl)
+                {
+                    case 0:
+                        _spriteBatch.Draw(redCrossImg, archerLvl1Prev.GetRec(), Color.White);
+                        break;
+                    
+                    case 1:
+                        _spriteBatch.Draw(redCrossImg, archerLvl2Prev.GetRec(), Color.White);
+                        break;
+                    
+                    case 2:
+                        _spriteBatch.Draw(redCrossImg, archerLvl3Prev.GetRec(), Color.White);
+                        break;
+                }
             }
         }
     }
@@ -820,6 +909,10 @@ public class Game1 : Game
         
         // Updating king position
         kingTower.TranslateTo(lvl1KingPos);
+        
+        // Modifying buildable rec to be the right third of the screen
+        buildableRec.Width = screenWidth / 3;
+        buildableRec.X = screenWidth - buildableRec.Width;
     }
 
     // Action for level 2 button click
@@ -859,10 +952,8 @@ public class Game1 : Game
         return true;
     }
 
-    public void Lvl1WallPrev()
+    public void WallPrev(byte lvl)
     {
-        // CHECK FOR COINS WHEN MECHANIC ADDED
-        
         // Checking if ANY wall is currently being placed
         for (int i = 0; i < walls.Length; i++)
         {
@@ -874,41 +965,42 @@ public class Game1 : Game
             }
         }
         
-        // Checking for an empty slot in null array and if there is enough coins to buy
-        for (int i = 0; i < walls.Length; i++)
-        {
-            if (walls[i] == null && PreviewCheck())
-            {
-                // Creating a new wall instance to be placed
-                Texture2D wallImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
-                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 0);
-                break;
-            }
-        }
-    }
-
-    public void Lvl2WallPrev()
-    {
-        // CHECK FOR COINS WHEN MECHANIC ADDED
-        
-        // Checking if ANY wall is currently being placed
-        for (int i = 0; i < walls.Length; i++)
-        {
-            if (walls[i] != null && !walls[i].IsPlaced())
-            {
-                // Setting the wall to null and ending method
-                walls[i] = null;
-                return;
-            }
-        }
         // Checking for an empty slot in null array
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] == null && PreviewCheck())
             {
                 // Creating a new wall instance to be placed
-                Texture2D wallImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
-                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, 1);
+                Texture2D wallImg = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Wall/WallLvl{lvl + 1}");
+                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, lvl);
+                break;
+            }
+        }
+    }
+
+    public void ArchPrev(byte lvl)
+    {
+        // Checking if ANY wall is currently being placed
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null && !archers[i].IsPlaced())
+            {
+                // Setting the wall to null and ending method
+                archers[i] = null;
+                return;
+            }
+        }
+        
+        // Checking for an empty slot in null array
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] == null && PreviewCheck())
+            {
+                // Creating a new wall instance to be placed
+                Texture2D img = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Archer/ArcherTowerLvl{lvl + 1}");
+                Texture2D arrowImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/Arrow");
+                archers[i] = new ArcherTower(img, new Vector2(0, platform.GetRec().Top - img.Height / 2 + 5), 
+                                    img.Width / 2, img.Height / 2, img.Width / 2, img.Height / 2, arrowImg, 250, lvl);
                 break;
             }
         }
