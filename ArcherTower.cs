@@ -32,7 +32,8 @@ public class ArcherTower : Tower
     // Storing parallel arrays for damage, price, shooting range, cooldown timer, and health
     // that are dependent on the current lvl (prices is static since it needs to be globally accessible)
     private static int[] prices = {150, 250, 475};
-    private static int[] healths = {250, 400, 650};
+    private int[] healths = {250, 400, 650};
+    private static readonly int[] INITIAL_HEALTHS = {250, 400, 650};
     private static int[] damages = {2, 4, 7};
     private static int[] ranges = { 250, 300, 375 };
     private static int[] cooldownLengths = { 600, 550, 500 };
