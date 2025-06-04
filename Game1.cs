@@ -133,13 +133,10 @@ public class Game1 : Game
     private const int PREVIEW_SIZE = 80;
     
     // Storing buttons to purchase walls
-    private Button wallLvl1Prev;
-    private Button wallLvl2Prev;
+    private Button[] wallPrevs = new Button[2];
     
     // Storing buttons to purchase archer towers
-    private Button archerLvl1Prev;
-    private Button archerLvl2Prev;
-    private Button archerLvl3Prev;
+    private Button[] archerPrevs = new Button[3];
     
     // Storing red cross texture to cancel placement
     private Texture2D redCrossImg;
@@ -204,249 +201,249 @@ public class Game1 : Game
     }
     
     protected override void LoadContent()
+    {
+        _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+        // Loading sprite fonts
+        titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
+        HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
+        smallFont = Content.Load<SpriteFont>("Fonts/SmallFont");
+        
+        // Loading night background texture and rectangle
+        nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
+        nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
+        
+        // Loading background image and rectangle
+        bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
+        bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
+        
+        // Loading game background
+        gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
+        gameBgRec = new Rectangle(0, 400, screenWidth, screenHeight);
+        
+        // Loading single pixel texture
+        pixelImg = new Texture2D(GraphicsDevice, 1, 1);
+        pixelImg.SetData(new[] { Color.White });
+        
+        // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
+        Texture2D platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
+        platform = new Platform(platformImg, screenWidth, screenHeight);
+        
+        // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
+        Texture2D kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
+        Texture2D cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
+        
+        kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
+                                kingTowerImg.Height, 266, 330, cannonballImg, 1000);
+        
+        lvl1KingPos = new Vector2(screenWidth - kingTower.DisplayRec.Width / 2f + 30, 
+                                    platform.Rec.Y - kingTower.Hitbox.Height + 10);
+        lvl2KingPos = new Vector2(WidthCenter(kingTower.Hitbox.Width),
+                                    platform.Rec.Y - kingTower.Hitbox.Height + 10);
+
+        // Loading button images
+        level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
+        level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
+        settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
+        tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
+        
+        // Loading all buttons
+        level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
+                                    level1Img.Width, level1Img.Height, Level1Button);
+        level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
+                                    level2Img.Width, level2Img.Height, Level2Button);
+        settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5f, settingsImg.Height / 5f, 
+                            () => gameState = SETTINGS);
+        tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5f, 50, 
+            tutorialBtnImg.Width / 5f, tutorialBtnImg.Height / 5f, () => gameState = TUTORIAL);
+        
+        // Loading title image and rectangle
+        titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
+        titleRec = new Rectangle((int)WidthCenter(titleImg.Width * 0.75f), 10, 
+                                (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
+        
+        // Loading local zombie textures locally
+        Texture2D[][] zombieImgs = new Texture2D[3][];
+        
+        // Loading all variants
+        for (int i = 0; i < zombieImgs.Length; i++)
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-    
-            // Loading sprite fonts
-            titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
-            HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
-            smallFont = Content.Load<SpriteFont>("Fonts/SmallFont");
-            
-            // Loading night background texture and rectangle
-            nightBGImg = Content.Load<Texture2D>("Images/Backgrounds/PixelNightSky");
-            nightBGRec = new Rectangle(0, 0, nightBGImg.Width * 2, nightBGImg.Height * 2);
-            
-            // Loading background image and rectangle
-            bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
-            bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
-            
-            // Loading game background
-            gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
-            gameBgRec = new Rectangle(0, 400, screenWidth, screenHeight);
-            
-            // Loading single pixel texture
-            pixelImg = new Texture2D(GraphicsDevice, 1, 1);
-            pixelImg.SetData(new[] { Color.White });
-            
-            // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
-            Texture2D platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
-            platform = new Platform(platformImg, screenWidth, screenHeight);
-            
-            // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
-            Texture2D kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
-            Texture2D cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
-            
-            kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
-                                    kingTowerImg.Height, 266, 330, cannonballImg, 1000);
-            
-            lvl1KingPos = new Vector2(screenWidth - kingTower.DisplayRec.Width / 2f + 30, 
-                                        platform.Rec.Y - kingTower.Hitbox.Height + 10);
-            lvl2KingPos = new Vector2(WidthCenter(kingTower.Hitbox.Width),
-                                        platform.Rec.Y - kingTower.Hitbox.Height + 10);
-    
-            // Loading button images
-            level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
-            level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
-            settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
-            tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
-            
-            // Loading all buttons
-            level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
-                                        level1Img.Width, level1Img.Height, Level1Button);
-            level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
-                                        level2Img.Width, level2Img.Height, Level2Button);
-            settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5, settingsImg.Height / 5, 
-                                () => gameState = SETTINGS);
-            tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5, 50, 
-                tutorialBtnImg.Width / 5, tutorialBtnImg.Height / 5, () => gameState = TUTORIAL);
-            
-            // Loading title image and rectangle
-            titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
-            titleRec = new Rectangle((int)WidthCenter(titleImg.Width * 0.75f), 10, 
-                                    (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
-            
-            // Loading local zombie textures locally
-            Texture2D[][] zombieImgs = new Texture2D[3][];
-            
-            // Loading all variants
-            for (int i = 0; i < zombieImgs.Length; i++)
-            {
-                zombieImgs[i] = new Texture2D[5];
-                zombieImgs[i][0] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Walk");
-                zombieImgs[i][1] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Dead"); 
-                zombieImgs[i][2] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_1");
-                zombieImgs[i][3] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_2");
-                zombieImgs[i][4] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_3");
-            }
-            
-            // Loading all the zombies
-            for (int i = 0; i < zombies.Length; i++)
-            {
-                zombies[i] = new Zombie(zombieImgs[rng.Next(0, 3)], screenWidth, platform.Rec.Y);
-            }
-            
-            // Loading positions of HUD objects
-            dayCountPos = new Vector2(5, 5);
-            mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
-            kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
-            coinsPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispCoins).X),
-                5 + HUDFont.MeasureString(dispKingHP).Y);
-            
-            // Loading explosion animation and saving local image for each cannonball
-            Texture2D explosionImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/explosion");
-            explosionAnims = new Animation[cannonballs.Length];
-            for (int i = 0; i < explosionAnims.Length; i++)
-            {
-                explosionAnims[i] = new Animation(explosionImg, 5, 5, 23, 0, -1, 1, 1000, new Vector2(800, 500), false);
-            }
-            
-            // Loading wall textures for buttons
-            Texture2D lvl1Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
-            Texture2D lvl2Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
-            
-            // Loading wall preview buttons using wall textures
-            wallLvl1Prev = new Button(lvl1Wall, screenWidth - PREVIEW_SIZE - 5, 5, 
-                PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(0));
-            wallLvl2Prev = new Button(lvl2Wall, wallLvl1Prev.Rec.X - 5 - PREVIEW_SIZE, 5,
-                PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1));
-            
-            // Loading archer tower textures
-            Texture2D lvl1Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl1");
-            Texture2D lvl2Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl2");
-            Texture2D lvl3Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl3");
-            
-            // Loading archer tower buttons using archer tower textures
-            archerLvl1Prev = new Button(lvl1Archer, wallLvl2Prev.Rec.X - 5 - PREVIEW_SIZE, 5,
-                PREVIEW_SIZE * ((float)lvl1Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(0));
-            
-            archerLvl2Prev = new Button(lvl2Archer, archerLvl1Prev.Rec.X - 5 - archerLvl1Prev.Rec.Width, 5,
-                PREVIEW_SIZE * ((float)lvl2Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(1));
-            
-            archerLvl3Prev = new Button(lvl3Archer, archerLvl2Prev.Rec.X - 5 - archerLvl2Prev.Rec.Width, 5,
-                PREVIEW_SIZE * ((float)lvl3Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(2));
-            
-            // Loading red cross texture
-            redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
-                
-            // Loading buildable rectangle to be on the floor as a preview of where you can build
-            buildableRec = new Rectangle((int)WidthCenter(800), platform.Rec.Y, 800, platform.Rec.Height);
+            zombieImgs[i] = new Texture2D[5];
+            zombieImgs[i][0] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Walk");
+            zombieImgs[i][1] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Dead"); 
+            zombieImgs[i][2] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_1");
+            zombieImgs[i][3] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_2");
+            zombieImgs[i][4] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_3");
         }
+        
+        // Loading all the zombies
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i] = new Zombie(zombieImgs[rng.Next(0, 3)], screenWidth, platform.Rec.Y);
+        }
+        
+        // Loading positions of HUD objects
+        dayCountPos = new Vector2(5, 5);
+        mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
+        kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
+        coinsPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispCoins).X),
+            5 + HUDFont.MeasureString(dispKingHP).Y);
+        
+        // Loading explosion animation and saving local image for each cannonball
+        Texture2D explosionImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/explosion");
+        explosionAnims = new Animation[cannonballs.Length];
+        for (int i = 0; i < explosionAnims.Length; i++)
+        {
+            explosionAnims[i] = new Animation(explosionImg, 5, 5, 23, 0, -1, 1, 1000, new Vector2(800, 500), false);
+        }
+        
+        // Loading wall textures for buttons
+        Texture2D lvl1Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
+        Texture2D lvl2Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
+        
+        // Loading wall preview buttons using wall textures
+        wallPrevs[0] = new Button(lvl1Wall, screenWidth - PREVIEW_SIZE - 5, 5, 
+            PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(0));
+        wallPrevs[1] = new Button(lvl2Wall, wallPrevs[0].Rec.X - 5 - PREVIEW_SIZE, 5,
+            PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1));
+        
+        // Loading archer tower textures
+        Texture2D lvl1Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl1");
+        Texture2D lvl2Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl2");
+        Texture2D lvl3Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl3");
+        
+        // Loading archer tower preview buttons (couldn't do a loop because of the x offset)
+        archerPrevs[0] = new Button(lvl1Archer, wallPrevs[1].Rec.X - 5 - PREVIEW_SIZE, 5,
+            PREVIEW_SIZE * ((float)lvl1Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(0));
+        
+        archerPrevs[1] = new Button(lvl2Archer, archerPrevs[0].Rec.X - 5 - archerPrevs[0].Rec.Width, 5,
+            PREVIEW_SIZE * ((float)lvl2Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(1));
+        
+        archerPrevs[2] = new Button(lvl3Archer, archerPrevs[1].Rec.X - 5 - archerPrevs[1].Rec.Width, 5,
+            PREVIEW_SIZE * ((float)lvl3Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(2));
+        
+        // Loading red cross texture
+        redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
+            
+        // Loading buildable rectangle to be on the floor as a preview of where you can build
+        buildableRec = new Rectangle((int)WidthCenter(800), platform.Rec.Y, 800, platform.Rec.Height);
+    }
     
     protected override void Update(GameTime gameTime)
+    {
+        // Updating mouse input
+        prevMouse = mouse;
+        mouse = Mouse.GetState();
+        
+        // Storing time passed
+        timePassed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        
+        switch (gameState)
         {
-            // Updating mouse input
-            prevMouse = mouse;
-            mouse = Mouse.GetState();
+            case MENU:
+                // Checking for button clicks
+                level1Button.Update(mouse, prevMouse);
+                level2Button.Update(mouse, prevMouse);
+                settingsButton.Update(mouse, prevMouse);
+                tutorialButton.Update(mouse, prevMouse);
+                
+                break;
             
-            // Storing time passed
-            timePassed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            case LEVEL_1:
+                // Updating game
+                UpdateGame(gameTime);
+                
+                break;
             
-            switch (gameState)
-            {
-                case MENU:
-                    // Checking for button clicks
-                    level1Button.Update(mouse, prevMouse);
-                    level2Button.Update(mouse, prevMouse);
-                    settingsButton.Update(mouse, prevMouse);
-                    tutorialButton.Update(mouse, prevMouse);
-                    
-                    break;
+            case LEVEL_2:
+                // Updating game
+                UpdateGame(gameTime);
                 
-                case LEVEL_1:
-                    // Updating game
-                    UpdateGame(gameTime);
-                    
-                    break;
+                break;
+            
+            case PAUSE:
                 
-                case LEVEL_2:
-                    // Updating game
-                    UpdateGame(gameTime);
-                    
-                    break;
+                break;
+            
+            case SETTINGS:
                 
-                case PAUSE:
-                    
-                    break;
+                break;
+            
+            case TUTORIAL:
                 
-                case SETTINGS:
-                    
-                    break;
+                break;
+            
+            case ENDGAME:
                 
-                case TUTORIAL:
-                    
-                    break;
-                
-                case ENDGAME:
-                    
-                    break;
-            }
-    
-            base.Update(gameTime);
+                break;
         }
+
+        base.Update(gameTime);
+    }
     
     protected override void Draw(GameTime gameTime)
+    {
+        GraphicsDevice.Clear(Color.RoyalBlue);
+
+        // Initializing sprite drawing batch
+        _spriteBatch.Begin();
+        
+        // Drawing game based on game state
+        switch (gameState)
         {
-            GraphicsDevice.Clear(Color.RoyalBlue);
-    
-            // Initializing sprite drawing batch
-            _spriteBatch.Begin();
+            case MENU:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                
+                // Draw title
+                _spriteBatch.Draw(titleImg, titleRec, Color.White);
+                
+                // Drawing buttons
+                level1Button.Draw(_spriteBatch);
+                level2Button.Draw(_spriteBatch);
+                settingsButton.Draw(_spriteBatch);
+                tutorialButton.Draw(_spriteBatch);
+                
+                break;
             
-            // Drawing game based on game state
-            switch (gameState)
-            {
-                case MENU:
-                    // Drawing background
-                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
-                    
-                    // Draw title
-                    _spriteBatch.Draw(titleImg, titleRec, Color.White);
-                    
-                    // Drawing buttons
-                    level1Button.Draw(_spriteBatch);
-                    level2Button.Draw(_spriteBatch);
-                    settingsButton.Draw(_spriteBatch);
-                    tutorialButton.Draw(_spriteBatch);
-                    
-                    break;
-                
-                case LEVEL_1:
-                    // Drawing game
-                    DrawGame();
-                    break;
-                
-                case LEVEL_2:
-                    // Drawing game
-                    DrawGame();
-                    break;
-                
-                case PAUSE:
-                    // Drawing background
-                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
-                    
-                    break;
-                
-                case SETTINGS:
-                    // Drawing background
-                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
-                    
-                    break;
-                
-                case TUTORIAL:
-                    
-                    break;
-                
-                case ENDGAME:
-                    // Drawing background
-                    _spriteBatch.Draw(bgImg, bgRec, Color.White);
-                    
-                    break;
-            }
+            case LEVEL_1:
+                // Drawing game
+                DrawGame();
+                break;
             
-            // Finish sprite batch
-            _spriteBatch.End();
-    
-            base.Draw(gameTime);
+            case LEVEL_2:
+                // Drawing game
+                DrawGame();
+                break;
+            
+            case PAUSE:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                
+                break;
+            
+            case SETTINGS:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                
+                break;
+            
+            case TUTORIAL:
+                
+                break;
+            
+            case ENDGAME:
+                // Drawing background
+                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                
+                break;
         }
+        
+        // Finish sprite batch
+        _spriteBatch.End();
+
+        base.Draw(gameTime);
+    }
 
     #endregion
 
@@ -457,6 +454,51 @@ public class Game1 : Game
         set => coins = value;
     }
     
+    // Method accessible by zombies to increase points
+    public static void IncreaseMobsKilled()
+    {
+        mobsKilled++;
+        dispMobsKilled = $"Kills: {mobsKilled}";
+    }
+        
+    private void DayNightCycle(GameTime gameTime)
+    {
+        // Updating day night cycle timer
+        dayNightCycle.Update(gameTime.ElapsedGameTime.TotalMilliseconds);
+        
+        // Checking if the cycle is over
+        if (dayNightCycle.IsFinished())
+        {
+            // Flipping the sky multiplier to either turn the sky on or off
+            if (skyOpacity == 0)
+            {
+                skyMultiplier = POSITIVE;
+            }
+            else if (skyOpacity == 1)
+            {
+                skyMultiplier = NEGATIVE;
+                
+                // Killing zombies
+                for (int i = 0; i < zombies.Length; i++)
+                {
+                    zombies[i].KillZombie();
+                }
+                
+                // Adding 1 to day count
+                dayCount++;
+                dispDayCount = $"Days: {dayCount}";
+            }
+            
+            // Restarting the timer
+            dayNightCycle.ResetTimer(true);
+        }
+
+        // Updating the sky opacity and clamping it
+        skyOpacity += skyMultiplier * 0.01f;
+        skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
+        
+    }
+
     #region Centers & Drop Shadow
 
     // The function uses screen width and text/image width to center the image horizontally
@@ -612,11 +654,11 @@ public class Game1 : Game
         UpdateObjects(gameTime);
         
         // Updating tower preview buttons AFTER preview check so it won't place automatically
-        wallLvl1Prev.Update(mouse, prevMouse);
-        wallLvl2Prev.Update(mouse, prevMouse);
-        archerLvl1Prev.Update(mouse, prevMouse);
-        archerLvl2Prev.Update(mouse, prevMouse);
-        archerLvl3Prev.Update(mouse, prevMouse);
+        wallPrevs[0].Update(mouse, prevMouse);
+        wallPrevs[1].Update(mouse, prevMouse);
+        archerPrevs[0].Update(mouse, prevMouse);
+        archerPrevs[1].Update(mouse, prevMouse);
+        archerPrevs[2].Update(mouse, prevMouse);
         
         // Checking for placement for walls
         for (int i = 0; i < walls.Length; i++)
@@ -714,58 +756,13 @@ public class Game1 : Game
         }
         
         // Drawing HUD
-        DrawHUD();
+        DrawHud();
         
         // Drawing buildable area rectangle as just a single solid color
         _spriteBatch.Draw(pixelImg, buildableRec, Color.Green * 0.5f);
     }
 
     #endregion
-    
-    // Method accessible by zombies to increase points
-    public static void IncreaseMobsKilled()
-    {
-        mobsKilled++;
-        dispMobsKilled = $"Kills: {mobsKilled}";
-    }
-        
-    private void DayNightCycle(GameTime gameTime)
-    {
-        // Updating day night cycle timer
-        dayNightCycle.Update(gameTime.ElapsedGameTime.TotalMilliseconds);
-        
-        // Checking if the cycle is over
-        if (dayNightCycle.IsFinished())
-        {
-            // Flipping the sky multiplier to either turn the sky on or off
-            if (skyOpacity == 0)
-            {
-                skyMultiplier = POSITIVE;
-            }
-            else if (skyOpacity == 1)
-            {
-                skyMultiplier = NEGATIVE;
-                
-                // Killing zombies
-                for (int i = 0; i < zombies.Length; i++)
-                {
-                    zombies[i].KillZombie();
-                }
-                
-                // Adding 1 to day count
-                dayCount++;
-                dispDayCount = $"Days: {dayCount}";
-            }
-            
-            // Restarting the timer
-            dayNightCycle.ResetTimer(true);
-        }
-
-        // Updating the sky opacity and clamping it
-        skyOpacity += skyMultiplier * 0.01f;
-        skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
-        
-    }
 
     #region Collisions
 
@@ -997,7 +994,7 @@ public class Game1 : Game
         return true;
     }
     
-    private void DrawHUD()
+    private void DrawHud()
     {
         // Drawing day count, kill count, health with offset, and coins
         DrawWithShadow(HUDFont, dispDayCount, dayCountPos, Color.Yellow, Color.Black);
@@ -1006,46 +1003,37 @@ public class Game1 : Game
         DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
         
         // Drawing wall tower preview options
-        DrawWithPrice(wallLvl1Prev, Wall.GetPrice(0));
-        DrawWithPrice(wallLvl2Prev, Wall.GetPrice(1));
+        for (int i = 0; i < wallPrevs.Length; i++)
+        {
+            DrawWithPrice(wallPrevs[i], Wall.GetPrice(i));
+        }
         
         // Drawing archer tower preview options
-        DrawWithPrice(archerLvl1Prev, ArcherTower.GetPrice(0));
-        DrawWithPrice(archerLvl2Prev, ArcherTower.GetPrice(1));
-        DrawWithPrice(archerLvl3Prev, ArcherTower.GetPrice(2));
+        for (int i = 0; i < archerPrevs.Length; i++)
+        {
+            DrawWithPrice(archerPrevs[i], ArcherTower.GetPrice(i));
+        }
         
         // Drawing cancel buttons on wall buttons when in preview
-        for (int i = 0; i < walls.Length; i++)
+        foreach (var wall in walls)
         {
-            if (walls[i] != null && !walls[i].IsPlaced() && walls[i].Lvl == 0)
+            for (int j = 0; j < wallPrevs.Length; j++)
             {
-                _spriteBatch.Draw(redCrossImg, wallLvl1Prev.Rec, Color.White);
-            }
-            else if (walls[i] != null && !walls[i].IsPlaced() && walls[i].Lvl == 1)
-            {
-                _spriteBatch.Draw(redCrossImg, wallLvl2Prev.Rec, Color.White);
+                if (wall != null && !wall.IsPlaced() && wall.Lvl == j)
+                {
+                    _spriteBatch.Draw(redCrossImg, wallPrevs[j].Rec, Color.White);
+                }
             }
         }
         
         // Drawing cancel buttons on archer tower buttons when in preview
-        for (int i = 0; i < archers.Length; i++)
+        foreach (var tower in archers)
         {
-            if (archers[i] != null && !archers[i].IsPlaced())
+            for (int j = 0; j < archerPrevs.Length; j++)
             {
-                // Drawing depending on the tower preview level
-                switch (archers[i].Lvl)
+                if (tower != null && !tower.IsPlaced() && tower.Lvl == j)
                 {
-                    case 0:
-                        _spriteBatch.Draw(redCrossImg, archerLvl1Prev.Rec, Color.White);
-                        break;
-                    
-                    case 1:
-                        _spriteBatch.Draw(redCrossImg, archerLvl2Prev.Rec, Color.White);
-                        break;
-                    
-                    case 2:
-                        _spriteBatch.Draw(redCrossImg, archerLvl3Prev.Rec, Color.White);
-                        break;
+                    _spriteBatch.Draw(redCrossImg, wallPrevs[j].Rec, Color.White);
                 }
             }
         }
