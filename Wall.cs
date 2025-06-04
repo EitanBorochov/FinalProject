@@ -2,7 +2,7 @@
 // File Name: Wall.cs
 // Project Name: FinalProject
 // Creation Date: May 28th 2025
-// Modification Date: June 2nd 2025
+// Modification Date: June 4th 2025
 // Description: Creates a new wall object which is made of tiles and meant to block the enemy from the damage dealing towers
 
 using System;
@@ -25,7 +25,6 @@ public class Wall
     private Rectangle hitbox;
     
     // Storing possible states for when its placed or not
-    private const byte INACTIVE = 0;
     private const byte PREVIEW = 1;
     private const byte PLACED = 2;
     
@@ -33,16 +32,16 @@ public class Wall
     private byte state = PREVIEW;
     
     // Storing if the preview is in a valid location
-    private bool isValid = false;
+    private bool isValid;
     
     // storing lvl of wall (starting at 0)
     private byte lvl;
     
     // Storing a price array, the current price will be the price of index lvl
-    private static int[] prices = new[]{100, 200};
+    private static int[] prices = {100, 300};
     
     // Storing health array, the current health will be the health of index lvl
-    private int[] healths = new[]{400, 850};
+    private int[] healths = {400, 850};
     
     #endregion
 
@@ -119,14 +118,9 @@ public class Wall
         this.isValid = isValid;
         
         PreviewStateTranslation(mouse, buildableRec);
-
-        if (healths[lvl] <= 0)
-        {
-            state = INACTIVE;
-        }
         
         // Returning that the tower is down
-        if (state == INACTIVE)
+        if (healths[lvl] <= 0)
         {
             return true;
         }
@@ -164,8 +158,8 @@ public class Wall
             // Checking for right click button cancel
             if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
             {
-                // Setting state to inactive and ending method
-                state = INACTIVE;
+                // Killing tower and ending method
+                healths[lvl] = 0;
                 return;
             }
 

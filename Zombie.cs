@@ -2,7 +2,7 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: May 31st 2025
+// Modification Date: June 4th 2025
 // Description: Zombie object, handles attacking, translating, etc.
 
 using System;
@@ -66,12 +66,12 @@ public class Zombie
         this.images = images;
         
         // Creating the animations
-        anims[WALK] = new Animation(images[WALK], 4, 2, 8, 0, 0, 1, 600, pos, 1, false);
+        anims[WALK] = new Animation(images[WALK], 4, 2, 8, 0, 0, 1, 750, pos, 1, false);
         anims[DYING] = new Animation(images[DYING], 5, 1, 5, 0, 0, 1, 500, pos, 1, false);
 
         for (int i = ATTACK1; i <= ATTACK3; i++)
         {
-            anims[i] = new Animation(images[i], 4, 1, 8, 0, 0, 1, 400, pos, 1,false);
+            anims[i] = new Animation(images[i], 4, 1, 4, 0, 0, 1, 400, pos, 1,false);
         }
 
         //Loading initial zombie poss

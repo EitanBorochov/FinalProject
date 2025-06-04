@@ -238,18 +238,6 @@
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/Zombie1/Dead.png
 
-#begin Images/Sprites/Gameplay/Zombie1/Run.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/Zombie1/Run.png
-
 #begin Images/Sprites/Gameplay/Zombie1/Walk.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -310,30 +298,6 @@
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/Zombie2/Dead.png
 
-#begin Images/Sprites/Gameplay/Zombie2/Idle.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/Zombie2/Idle.png
-
-#begin Images/Sprites/Gameplay/Zombie2/Run.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/Zombie2/Run.png
-
 #begin Images/Sprites/Gameplay/Zombie2/Walk.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -393,30 +357,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/Zombie3/Dead.png
-
-#begin Images/Sprites/Gameplay/Zombie3/Idle.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/Zombie3/Idle.png
-
-#begin Images/Sprites/Gameplay/Zombie3/Run.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/Zombie3/Run.png
 
 #begin Images/Sprites/Gameplay/Zombie3/Walk.png
 /importer:TextureImporter

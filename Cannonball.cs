@@ -15,7 +15,7 @@ namespace FinalProject;
 
 public class Cannonball : Projectile
 {
-    // Storing a constant cannon ball speed
+    // Storing a constant cannonball speed
     public const float LAUNCH_SPEED = 1000f;
     
     // Storing collision hitbox that is double the size by default

@@ -2,7 +2,7 @@
 // File Name: ArcherTower.cs
 // Project Name: FinalProject
 // Creation Date: June 2nd 2025
-// Modification Date: June 2nd 2025
+// Modification Date: June 4th 2025
 // Description: Inhereted tower class specifically for the archer tower
 using System;
 using GameUtility;
@@ -17,7 +17,6 @@ public class ArcherTower : Tower
     #region Attributes
 
     // Storing possible states for when its placed or not
-    private const byte INACTIVE = 0;
     private const byte PREVIEW = 1;
     private const byte PLACED = 2;
     
@@ -30,10 +29,13 @@ public class ArcherTower : Tower
     // storing lvl of tower for upgrades (starting at 0)
     private byte lvl;
     
-    // Storing arrays for damage, price, and health that are dependent on the current lvl (prices is static since it needs to be globally accessible)
-    private static int[] prices = new[]{150, 250, 475};
-    private int[] healths = new []{250, 400, 650};
-    private int[] damages = new []{3, 5, 7};
+    // Storing parallel arrays for damage, price, shooting range, cooldown timer, and health
+    // that are dependent on the current lvl (prices is static since it needs to be globally accessible)
+    private static int[] prices = {150, 250, 475};
+    private static int[] healths = {250, 400, 650};
+    private static int[] damages = {2, 4, 7};
+    private static int[] ranges = { 250, 300, 375 };
+    private static int[] cooldownLengths = { 500, 450, 400 };
 
     #endregion
 
@@ -41,8 +43,8 @@ public class ArcherTower : Tower
 
     // Basic constructor for the main Tower class attributes, with also lvl and price
     public ArcherTower(Texture2D towerImg, Vector2 position, int width, int height, int hitboxWidth, int hitboxHeight, 
-        Texture2D projectileImg, int cooldownLength, byte lvl) : 
-        base(towerImg, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLength)
+        Texture2D projectileImg, byte lvl) : 
+        base(towerImg, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLengths[lvl])
     {
         // Storing parameters
         this.lvl = lvl;
@@ -75,6 +77,11 @@ public class ArcherTower : Tower
         set => lvl = value;
     }
 
+    public int Range
+    {
+        get => ranges[lvl];
+    }
+
     #endregion
 
     #region Behaviours
@@ -89,14 +96,9 @@ public class ArcherTower : Tower
         this.isValid = isValid;
         
         PreviewStateTranslation(mouse, buildableRec);
-
-        if (healths[lvl] <= 0)
-        {
-            state = INACTIVE;
-        }
         
         // Returning that the tower is down
-        if (state == INACTIVE)
+        if (health <= 0)
         {
             return true;
         }
@@ -136,8 +138,8 @@ public class ArcherTower : Tower
             // Checking for right click button cancel
             if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
             {
-                // Setting state to inactive and ending method
-                state = INACTIVE;
+                // Killing tower and ending method
+                health = 0;
                 return;
             }
 
@@ -206,32 +208,27 @@ public class ArcherTower : Tower
     }
 
     // Shooting arrows
-    // public Cannonball LaunchBall(Vector2 mousePos)
-    // {
-    //     if (cooldownTimer.IsFinished())
-    //     {
-    //         if (mousePos.X < hitbox.Left)
-    //         {
-    //             // Setting it on top RIGHT of tower
-    //             projRec.Location = hitbox.Location;
-    //         }
-    //         else if (mousePos.X > hitbox.Right)
-    //         {
-    //             // Setting it to top LEFT of tower
-    //             projRec.Location = new Point(hitbox.Right, hitbox.Top);
-    //         }
-    //         else
-    //         {
-    //             return null;
-    //         }
-    //
-    //         cooldownTimer.ResetTimer(true);
-    //
-    //         return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 350);
-    //     }
-    //
-    //     return null;
-    // }
+    public Arrow ShootArrow(Vector2 nearestTarget)
+    {
+        // Firing arrows every time cooldown timer goes off
+        if (cooldownTimer.IsFinished() && state == PLACED)
+        {
+            // Reactivating timer
+            cooldownTimer.ResetTimer(true);
+            
+            // Checking if nearest target is in range
+            if (nearestTarget != new Vector2(5000, 5000))
+            {
+                // Firing at nearest target:
+                // Setting projectile rectangle location to be top center
+                projRec.Location = new Point(displayRec.Center.X, displayRec.Y);
+                
+                return new Arrow(projRec, nearestTarget, false, projImg, damage, ranges[lvl]);
+            }
+        }
+    
+        return null;
+    }
 
     #endregion
 }

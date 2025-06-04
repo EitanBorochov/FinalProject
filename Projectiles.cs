@@ -2,7 +2,7 @@
 // File Name: Projectiles.cs
 // Project Name: FinalProject
 // Creation Date: May 26th 2025
-// Modification Date: May 26th 2025
+// Modification Date: June 4th 2025
 // Description: Parent class for all projectiles
 
 using System;
@@ -29,11 +29,6 @@ public class Projectile
 
     // Storing image, origin point, and rotation angle
     protected Texture2D image;
-    
-    // // Storing projectile state
-    // protected const byte ACTIVE = 0;
-    // protected const byte INACTIVE = 1;
-    // protected byte state = INACTIVE;
 
     #endregion
 
@@ -49,9 +44,6 @@ public class Projectile
         // Storing initial position
         position.X = rec.X;
         position.Y = rec.Y;
-        
-        // Calculating rotation angle *in radians, and origin point 
-        Vector2 origin = new Vector2(rec.Width / 2, rec.Height / 2);
         
         // Storing damage
         this.damage = damage;
@@ -97,7 +89,7 @@ public class Projectile
     // Calculating the initial velocity of any projectile
     private Vector2 FindLaunchVelocity(Vector2 projPos, Vector2 mousePos, bool highAngle, float launchSpeed, float maxMag)
     { 
-        // Thank you Mr. Lane
+        // Thank you, Mr. Lane
         //Store the calculated launch velocity to hit the given target location
         Vector2 vel = new Vector2(0,0);
 

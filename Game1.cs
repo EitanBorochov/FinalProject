@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: May 29th 2025
+// Modification Date: June 4th 2025
 // Description: Main driver class for the game
 
 using System;
@@ -124,10 +124,10 @@ public class Game1 : Game
     private Animation[] explosionAnims;
     
     // Storing new array of walls
-    private Wall[] walls = new Wall[4];
+    private Wall[] walls = new Wall[10];
     
     // Storing an array of archer towers
-    private ArcherTower[] archers = new ArcherTower[4];
+    private ArcherTower[] archers = new ArcherTower[10];
     
     // Width and height for the tower preview buttons
     private const int PREVIEW_SIZE = 80;
@@ -171,6 +171,9 @@ public class Game1 : Game
 
     // Storing max number of cannonballs inside array size
     private Cannonball[] cannonballs = new Cannonball[4];
+    
+    // Storing max number of arrows inside array size
+    private Arrow[] arrows = new Arrow[20];
 
     #endregion
 
@@ -486,14 +489,37 @@ public class Game1 : Game
     }
 
     #endregion
-    
-    #region Game
 
-    // Updating everything that is common to both levels
-    private void UpdateGame(GameTime gameTime)
+    #region Update objects
+
+    private void UpdateObjects(GameTime gameTime)
     {
-        // Updating king tower and cannonballs
+        // Updating king tower, cannonballs and their explosions
+        UpdateKing(gameTime);
+        UpdateCannonballs();
+        UpdateExplosions(gameTime);
+        
+        // Updating archer towers, checking for placement and collisions, and updating arrows
+        UpdateArchers(gameTime);
+        UpdateArrows();
+        
+        // Updating walls and checking for placement and collisions
+        UpdateWalls();
+        
+        // Updating zombies
+        UpdateZombies(gameTime);
+    }
+
+    private void UpdateKing(GameTime gameTime)
+    {
         kingTower.Update(mouse, gameTime);
+        
+        // Checking for cannon launch
+        LaunchCannon();
+    }
+
+    private void UpdateCannonballs()
+    {
         for (int i = 0; i < cannonballs.Length; i++)
         {
             if (cannonballs[i] != null)
@@ -501,8 +527,48 @@ public class Game1 : Game
                 cannonballs[i].Update(timePassed);
             }
         }
-        
-        // Updating walls and checking for placement and collisions
+    }
+
+    private void UpdateArchers(GameTime gameTime)
+    {
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null)
+            {
+                // If this statement returns true it means the wall was destroyed
+                if (archers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(archers[i].GetHitbox())))
+                {
+                    archers[i] = null;
+                }
+                
+                // Shooting arrows
+                // Finding an empty arrow slot
+                for (int j = 0; j < arrows.Length; j++)
+                {
+                    if (arrows[j] == null)
+                    {
+                        // Creating a new arrow to fire to the closest zombie
+                        arrows[j] = archers[i].ShootArrow(LocateNearestZombie(archers[i].GetHitbox(), archers[i].Range));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void UpdateArrows()
+    {
+        for (int i = 0; i < arrows.Length; i++)
+        {
+            if (arrows[i] != null)
+            {
+                arrows[i].Update(timePassed);
+            }
+        }
+    }
+
+    private void UpdateWalls()
+    {
         for (int i = 0; i < walls.Length; i++)
         {
             if (walls[i] != null)
@@ -514,21 +580,38 @@ public class Game1 : Game
                 }
             }
         }
-        
-        // Updating walls and checking for placement and collisions
-        for (int i = 0; i < archers.Length; i++)
+    }
+
+    private void UpdateZombies(GameTime gameTime)
+    {
+        for (int i = 0; i < zombies.Length; i++)
         {
-            if (archers[i] != null)
-            {
-                // If this statement returns true it means the wall was destroyed
-                if (archers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(archers[i].GetHitbox())))
-                {
-                    archers[i] = null;
-                }
-            }
+            zombies[i].Update(gameTime, timePassed * 1000);
         }
+    }
+
+    private void UpdateExplosions(GameTime gameTime)
+    {
+        for (int i = 0; i < explosionAnims.Length; i++)
+        {
+            explosionAnims[i].Update(gameTime);
+        }
+    }
+
+    #endregion
+    
+    #region Game
+
+    // Updating everything that is common to both levels
+    private void UpdateGame(GameTime gameTime)
+    {
+        // Casting night sky every day night cycle
+        DayNightCycle(gameTime);
         
-        // Updating tower preview buttons AFTER wall check so the wall won't automatically be placed
+        // Updating all objects in game
+        UpdateObjects(gameTime);
+        
+        // Updating tower preview buttons AFTER preview check so it won't place automatically
         wallLvl1Prev.Update(mouse, prevMouse);
         wallLvl2Prev.Update(mouse, prevMouse);
         archerLvl1Prev.Update(mouse, prevMouse);
@@ -553,24 +636,8 @@ public class Game1 : Game
             }
         }
         
-        // Updating zombie
-        for (int i = 0; i < zombies.Length; i++)
-        {
-            zombies[i].Update(gameTime, timePassed * 1000);
-        }
-        
-        // Updating explosion animations
-        for (int i = 0; i < explosionAnims.Length; i++)
-        {
-            explosionAnims[i].Update(gameTime);
-        }
-
-        // Checking for clicks to launch cannons and collision
-        LaunchCannon();
+        // Checking for cannon collisions
         CannonCollision();
-
-        // Casting night sky every day night cycle
-        DayNightCycle(gameTime);
 
         // Checking for zombie collisions
         ZombieCollision();
@@ -638,6 +705,15 @@ public class Game1 : Game
             }
             
             explosionAnims[i].Draw(_spriteBatch, Color.White);
+        }
+        
+        // Drawing arrows
+        for (int i = 0; i < arrows.Length; i++)
+        {
+            if (arrows[i] != null)
+            {
+                arrows[i].Draw(_spriteBatch);
+            }
         }
         
         // Drawing HUD
@@ -768,16 +844,27 @@ public class Game1 : Game
                 // Detecting collision with platform
                 if (cannonballs[i].Hitbox.Bottom >= platform.GetRec().Y)
                 {
-                    cannonballs[i].Hitbox = new Rectangle(cannonballs[i].Hitbox.X, platform.GetRec().Top - cannonballs[i].Hitbox.Height,
+                    cannonballs[i].Hitbox = new Rectangle(cannonballs[i].Hitbox.X, 
+                                                          platform.GetRec().Top - cannonballs[i].Hitbox.Height,
                                                           cannonballs[i].Hitbox.Width, cannonballs[i].Hitbox.Height);
                     
-                    // Checking if any zombies were hit
+                    // Keeping count of how many zombies were hit to max it to 4
+                    int count = 0;
+                    
+                    // Checking if any zombies were hit and damaging all that did (clamping max number of zombies per attack to 4 to balance)
                     for (int j = 0; j < zombies.Length; j++)
                     {
                         if (zombies[j].GetRec().Intersects(cannonballs[i].Hitbox))
                         {
-                            // Dealing damage to zombie
+                            // Dealing damage to zombie and increasing count
                             zombies[j].HP -= cannonballs[i].GetDamage();
+                            count++;
+                        }
+
+                        // Ending if  4 zombies were hit
+                        if (count == 4)
+                        {
+                            break;
                         }
                     } 
                     // Playing explosion animation
@@ -793,10 +880,43 @@ public class Game1 : Game
             }
         }
     }
+
+    private void ArrowCollision()
+    {
+        for (int i = 0; i < arrows.Length; i++)
+        {
+            // TODO: COLLISION
+        }
+    }
+
+    private Vector2 LocateNearestZombie(Rectangle towerRec, float radius)
+    {
+        // Storing nearest distance and current distance
+        Vector2 closestZombie = new Vector2(5000, 5000); // Making sure the closest distance would be updated from the first zombie
+        float currentDist;
+        
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            // Calculating distance between tower and each zombie
+            currentDist = Vector2.Distance(towerRec.Center.ToVector2(), zombies[i].GetRec().Location.ToVector2());
+
+            // Checking if distance is in radius
+            if (currentDist <= radius)
+            {
+                // Checking if the distance is less than the current 
+                if (currentDist < Vector2.Distance(closestZombie, towerRec.Center.ToVector2()))
+                {
+                    closestZombie = zombies[i].GetRec().Location.ToVector2();
+                }
+            }
+        }
+        
+        return closestZombie;
+    }
     
     private void LaunchCannon()
     {
-        // Checking for king tower shots only at night time
+        // Checking for king tower shots only at nighttime
         if (skyOpacity == 1)
         {
             if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
@@ -807,7 +927,6 @@ public class Game1 : Game
                     if (cannonballs[i] == null)
                     {
                         cannonballs[i] = kingTower.LaunchBall(mouse.Position.ToVector2());
-
                         break;
                     }
                 }
@@ -1012,7 +1131,7 @@ public class Game1 : Game
                 Texture2D img = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Archer/ArcherTowerLvl{lvl + 1}");
                 Texture2D arrowImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/Arrow");
                 archers[i] = new ArcherTower(img, new Vector2(0, platform.GetRec().Top - img.Height / 2 + 5), 
-                                    img.Width / 2, img.Height / 2, img.Width / 2, img.Height / 2, arrowImg, 250, lvl);
+                                    img.Width / 2, img.Height / 2, img.Width / 2, img.Height / 2, arrowImg, lvl);
                 break;
             }
         }
