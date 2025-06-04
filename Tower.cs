@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: June 2nd 2025
+// Modification Date: June 4th 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;
@@ -80,15 +80,15 @@ public class Tower
 
     // Getters:
     // Returns display rectangle
-    public virtual Rectangle GetDisplayRec()
+    public virtual Rectangle DisplayRec
     {
-        return displayRec;
+        get => displayRec;
     }
     
     // Returns hitbox rectangle
-    public virtual Rectangle GetHitbox()
+    public virtual Rectangle Hitbox
     {
-        return hitbox;
+        get => hitbox;
     }
     
     // Modifying tower HP property
@@ -99,9 +99,9 @@ public class Tower
     }
     
     // Returning damage
-    public virtual int GetDmg()
+    public virtual int Damage
     {
-        return damage;
+        get => damage;
     }
     
     // Setting a new image for the object

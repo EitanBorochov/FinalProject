@@ -2,7 +2,7 @@
 // File Name: Cannonball.cs
 // Project Name: FinalProject
 // Creation Date: May 26th 2025
-// Modification Date: May 31st 2025
+// Modification Date: June 4th 2025
 // Description: Parent class for all projectiles
 
 using System;
@@ -39,12 +39,6 @@ public class Cannonball : Projectile
     {
         get => hitbox;
         set => hitbox = value;
-    }
-
-    // Setting hitbox width
-    public void SetHitbox(int hitboxMultiplier)
-    {
-        hitbox.Width = rec.Width * hitboxMultiplier;
     }
     
     #endregion

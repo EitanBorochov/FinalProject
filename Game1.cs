@@ -239,10 +239,10 @@ public class Game1 : Game
             kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
                                     kingTowerImg.Height, 266, 330, cannonballImg, 1000);
             
-            lvl1KingPos = new Vector2(screenWidth - kingTower.GetDisplayRec().Width / 2f + 30, 
-                                        platform.GetRec().Y - kingTower.GetHitbox().Height + 10);
-            lvl2KingPos = new Vector2(WidthCenter(kingTower.GetHitbox().Width),
-                                        platform.GetRec().Y - kingTower.GetHitbox().Height + 10);
+            lvl1KingPos = new Vector2(screenWidth - kingTower.DisplayRec.Width / 2f + 30, 
+                                        platform.Rec.Y - kingTower.Hitbox.Height + 10);
+            lvl2KingPos = new Vector2(WidthCenter(kingTower.Hitbox.Width),
+                                        platform.Rec.Y - kingTower.Hitbox.Height + 10);
     
             // Loading button images
             level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
@@ -282,7 +282,7 @@ public class Game1 : Game
             // Loading all the zombies
             for (int i = 0; i < zombies.Length; i++)
             {
-                zombies[i] = new Zombie(zombieImgs[rng.Next(0, 3)], screenWidth, platform.GetRec().Y);
+                zombies[i] = new Zombie(zombieImgs[rng.Next(0, 3)], screenWidth, platform.Rec.Y);
             }
             
             // Loading positions of HUD objects
@@ -307,7 +307,7 @@ public class Game1 : Game
             // Loading wall preview buttons using wall textures
             wallLvl1Prev = new Button(lvl1Wall, screenWidth - PREVIEW_SIZE - 5, 5, 
                 PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(0));
-            wallLvl2Prev = new Button(lvl2Wall, wallLvl1Prev.GetRec().X - 5 - PREVIEW_SIZE, 5,
+            wallLvl2Prev = new Button(lvl2Wall, wallLvl1Prev.Rec.X - 5 - PREVIEW_SIZE, 5,
                 PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1));
             
             // Loading archer tower textures
@@ -316,20 +316,20 @@ public class Game1 : Game
             Texture2D lvl3Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl3");
             
             // Loading archer tower buttons using archer tower textures
-            archerLvl1Prev = new Button(lvl1Archer, wallLvl2Prev.GetRec().X - 5 - PREVIEW_SIZE, 5,
+            archerLvl1Prev = new Button(lvl1Archer, wallLvl2Prev.Rec.X - 5 - PREVIEW_SIZE, 5,
                 PREVIEW_SIZE * ((float)lvl1Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(0));
             
-            archerLvl2Prev = new Button(lvl2Archer, archerLvl1Prev.GetRec().X - 5 - archerLvl1Prev.GetRec().Width, 5,
+            archerLvl2Prev = new Button(lvl2Archer, archerLvl1Prev.Rec.X - 5 - archerLvl1Prev.Rec.Width, 5,
                 PREVIEW_SIZE * ((float)lvl2Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(1));
             
-            archerLvl3Prev = new Button(lvl3Archer, archerLvl2Prev.GetRec().X - 5 - archerLvl2Prev.GetRec().Width, 5,
+            archerLvl3Prev = new Button(lvl3Archer, archerLvl2Prev.Rec.X - 5 - archerLvl2Prev.Rec.Width, 5,
                 PREVIEW_SIZE * ((float)lvl3Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(2));
             
             // Loading red cross texture
             redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
                 
             // Loading buildable rectangle to be on the floor as a preview of where you can build
-            buildableRec = new Rectangle((int)WidthCenter(800), platform.GetRec().Y, 800, platform.GetRec().Height);
+            buildableRec = new Rectangle((int)WidthCenter(800), platform.Rec.Y, 800, platform.Rec.Height);
         }
     
     protected override void Update(GameTime gameTime)
@@ -536,7 +536,7 @@ public class Game1 : Game
             if (archers[i] != null)
             {
                 // If this statement returns true it means the wall was destroyed
-                if (archers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(archers[i].GetHitbox())))
+                if (archers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(archers[i].Hitbox)))
                 {
                     archers[i] = null;
                 }
@@ -548,7 +548,7 @@ public class Game1 : Game
                     if (arrows[j] == null)
                     {
                         // Creating a new arrow to fire to the closest zombie
-                        arrows[j] = archers[i].ShootArrow(LocateNearestZombie(archers[i].GetHitbox(), archers[i].Range));
+                        arrows[j] = archers[i].ShootArrow(LocateNearestZombie(archers[i].Hitbox, archers[i].Range));
                         break;
                     }
                 }
@@ -574,7 +574,7 @@ public class Game1 : Game
             if (walls[i] != null)
             {
                 // If this statement returns true it means the wall was destroyed
-                if (walls[i].Update(mouse, buildableRec, ValidPlacement(walls[i].GetRec())))
+                if (walls[i].Update(mouse, buildableRec, ValidPlacement(walls[i].Hitbox)))
                 {
                     walls[i] = null;
                 }
@@ -623,7 +623,7 @@ public class Game1 : Game
         {
             if (walls[i] != null)
             {
-                walls[i].CheckPlacement(mouse, prevMouse, platform.GetRec());
+                walls[i].CheckPlacement(mouse, prevMouse, platform.Rec);
             }
         }
         
@@ -632,15 +632,12 @@ public class Game1 : Game
         {
             if (archers[i] != null)
             {
-                archers[i].CheckPlacement(mouse, prevMouse, platform.GetRec());
+                archers[i].CheckPlacement(mouse, prevMouse, platform.Rec);
             }
         }
         
-        // Checking for cannon collisions
-        CannonCollision();
-
-        // Checking for zombie collisions
-        ZombieCollision();
+        // Handling all of collisions
+        Collisions();
         
         // Updating coins display and centering it
         dispCoins = $"${coins}";
@@ -769,6 +766,15 @@ public class Game1 : Game
         skyOpacity = MathHelper.Clamp(skyOpacity, 0, 1);
         
     }
+
+    #region Collisions
+
+    private void Collisions()
+    {
+        ZombieCollision();
+        CannonCollision();
+        ArrowCollision();
+    }
     
     private void ZombieCollision()
     {
@@ -779,7 +785,7 @@ public class Game1 : Game
             bool isAttacking = false;
         
             // Checking for king tower
-            if (zombies[i].GetRec().Intersects(kingTower.GetHitbox()))
+            if (zombies[i].Rec.Intersects(kingTower.Hitbox))
             {
                 // Dealing damage to king tower
                 kingTower.HP = zombies[i].Attack(kingTower.HP);
@@ -797,7 +803,7 @@ public class Game1 : Game
                 // Making sure wall isn't null and it is currently placed
                 if (walls[j] != null && walls[j].IsPlaced())
                 {
-                    if (zombies[i].GetRec().Intersects(walls[j].GetRec()))
+                    if (zombies[i].Rec.Intersects(walls[j].Hitbox))
                     {
                         // Dealing damage to wall
                         walls[j].HP = zombies[i].Attack(walls[j].HP);
@@ -814,7 +820,7 @@ public class Game1 : Game
                 // Making sure wall isn't null and it is currently placed
                 if (archers[j] != null && archers[j].IsPlaced())
                 {
-                    if (zombies[i].GetRec().Intersects(archers[j].GetHitbox()))
+                    if (zombies[i].Rec.Intersects(archers[j].Hitbox))
                     {
                         // Dealing damage to wall
                         archers[j].HP = zombies[i].Attack(archers[j].HP);
@@ -842,11 +848,11 @@ public class Game1 : Game
             if (cannonballs[i] != null)
             {
                 // Detecting collision with platform
-                if (cannonballs[i].Hitbox.Bottom >= platform.GetRec().Y)
+                if (cannonballs[i].Hitbox.Bottom >= platform.Rec.Y)
                 {
                     cannonballs[i].Hitbox = new Rectangle(cannonballs[i].Hitbox.X, 
-                                                          platform.GetRec().Top - cannonballs[i].Hitbox.Height,
-                                                          cannonballs[i].Hitbox.Width, cannonballs[i].Hitbox.Height);
+                        platform.Rec.Top - cannonballs[i].Hitbox.Height,
+                        cannonballs[i].Hitbox.Width, cannonballs[i].Hitbox.Height);
                     
                     // Keeping count of how many zombies were hit to max it to 4
                     int count = 0;
@@ -854,10 +860,10 @@ public class Game1 : Game
                     // Checking if any zombies were hit and damaging all that did (clamping max number of zombies per attack to 4 to balance)
                     for (int j = 0; j < zombies.Length; j++)
                     {
-                        if (zombies[j].GetRec().Intersects(cannonballs[i].Hitbox))
+                        if (zombies[j].Rec.Intersects(cannonballs[i].Hitbox))
                         {
                             // Dealing damage to zombie and increasing count
-                            zombies[j].HP -= cannonballs[i].GetDamage();
+                            zombies[j].HP -= cannonballs[i].Damage;
                             count++;
                         }
 
@@ -868,10 +874,10 @@ public class Game1 : Game
                         }
                     } 
                     // Playing explosion animation
-                    explosionAnims[i].TranslateTo(cannonballs[i].GetRec().X - (explosionAnims[i].GetDestRec().Width - 
-                                                                               cannonballs[i].GetRec().Width) / 2, 
-                                                cannonballs[i].GetRec().Y - (explosionAnims[i].GetDestRec().Height - 
-                                                                             cannonballs[i].GetRec().Height) / 2 - 10);
+                    explosionAnims[i].TranslateTo(cannonballs[i].Rec.X - (explosionAnims[i].GetDestRec().Width - 
+                                                                               cannonballs[i].Rec.Width) / 2, 
+                        cannonballs[i].Rec.Y - (explosionAnims[i].GetDestRec().Height - 
+                                                     cannonballs[i].Rec.Height) / 2 - 10);
                     explosionAnims[i].Activate(true);
                     
                     // Setting to null so it can be reused
@@ -885,9 +891,31 @@ public class Game1 : Game
     {
         for (int i = 0; i < arrows.Length; i++)
         {
-            // TODO: COLLISION
+            // Making sure arrow is not null
+            if (arrows[i] != null)
+            {
+                // Checking if the arrow hit any zombie
+                for (int j = 0; j < zombies.Length; j++)
+                {
+                    if (arrows[i].Rec.Intersects(zombies[j].Rec))
+                    {
+                        // Dealing damage to zombie and deleting arrow
+                        zombies[j].HP -= arrows[i].Damage;
+                        arrows[i] = null;
+                        break;
+                    }
+                }
+                
+                // Setting it to null if it hits the ground
+                if (arrows[i] != null && arrows[i].Rec.Bottom >= platform.Rec.Top)
+                {
+                    arrows[i] = null;
+                }
+            }
         }
     }
+
+    #endregion
 
     private Vector2 LocateNearestZombie(Rectangle towerRec, float radius)
     {
@@ -898,7 +926,7 @@ public class Game1 : Game
         for (int i = 0; i < zombies.Length; i++)
         {
             // Calculating distance between tower and each zombie
-            currentDist = Vector2.Distance(towerRec.Center.ToVector2(), zombies[i].GetRec().Location.ToVector2());
+            currentDist = Vector2.Distance(towerRec.Center.ToVector2(), zombies[i].Rec.Location.ToVector2());
 
             // Checking if distance is in radius
             if (currentDist <= radius)
@@ -906,7 +934,7 @@ public class Game1 : Game
                 // Checking if the distance is less than the current 
                 if (currentDist < Vector2.Distance(closestZombie, towerRec.Center.ToVector2()))
                 {
-                    closestZombie = zombies[i].GetRec().Location.ToVector2();
+                    closestZombie = zombies[i].Rec.Location.ToVector2();
                 }
             }
         }
@@ -937,7 +965,7 @@ public class Game1 : Game
     private bool ValidPlacement(Rectangle building)
     {
         // Checking intersection with king tower
-        if (building.Intersects(kingTower.GetHitbox()))
+        if (building.Intersects(kingTower.Hitbox))
         {
             return false;
         }
@@ -947,7 +975,7 @@ public class Game1 : Game
         {
             if (walls[i] != null)
             {
-                if (building.Intersects(walls[i].GetRec()) && walls[i].IsPlaced())
+                if (building.Intersects(walls[i].Hitbox) && walls[i].IsPlaced())
                 {
                     return false;
                 }
@@ -959,7 +987,7 @@ public class Game1 : Game
         {
             if (archers[i] != null)
             {
-                if (building.Intersects(archers[i].GetHitbox()) && archers[i].IsPlaced())
+                if (building.Intersects(archers[i].Hitbox) && archers[i].IsPlaced())
                 {
                     return false;
                 }
@@ -989,13 +1017,13 @@ public class Game1 : Game
         // Drawing cancel buttons on wall buttons when in preview
         for (int i = 0; i < walls.Length; i++)
         {
-            if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 0)
+            if (walls[i] != null && !walls[i].IsPlaced() && walls[i].Lvl == 0)
             {
-                _spriteBatch.Draw(redCrossImg, wallLvl1Prev.GetRec(), Color.White);
+                _spriteBatch.Draw(redCrossImg, wallLvl1Prev.Rec, Color.White);
             }
-            else if (walls[i] != null && !walls[i].IsPlaced() && walls[i].GetLvl() == 1)
+            else if (walls[i] != null && !walls[i].IsPlaced() && walls[i].Lvl == 1)
             {
-                _spriteBatch.Draw(redCrossImg, wallLvl2Prev.GetRec(), Color.White);
+                _spriteBatch.Draw(redCrossImg, wallLvl2Prev.Rec, Color.White);
             }
         }
         
@@ -1008,15 +1036,15 @@ public class Game1 : Game
                 switch (archers[i].Lvl)
                 {
                     case 0:
-                        _spriteBatch.Draw(redCrossImg, archerLvl1Prev.GetRec(), Color.White);
+                        _spriteBatch.Draw(redCrossImg, archerLvl1Prev.Rec, Color.White);
                         break;
                     
                     case 1:
-                        _spriteBatch.Draw(redCrossImg, archerLvl2Prev.GetRec(), Color.White);
+                        _spriteBatch.Draw(redCrossImg, archerLvl2Prev.Rec, Color.White);
                         break;
                     
                     case 2:
-                        _spriteBatch.Draw(redCrossImg, archerLvl3Prev.GetRec(), Color.White);
+                        _spriteBatch.Draw(redCrossImg, archerLvl3Prev.Rec, Color.White);
                         break;
                 }
             }
@@ -1027,7 +1055,7 @@ public class Game1 : Game
     private void DrawWithPrice(Button button, int price)
     {
         button.Draw(_spriteBatch);
-        _spriteBatch.DrawString(smallFont, $"${price}", button.GetRec().Location.ToVector2(), Color. Gold);
+        _spriteBatch.DrawString(smallFont, $"${price}", button.Rec.Location.ToVector2(), Color. Gold);
     }
 
     #region Button Actions
@@ -1103,7 +1131,7 @@ public class Game1 : Game
             {
                 // Creating a new wall instance to be placed
                 Texture2D wallImg = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Wall/WallLvl{lvl + 1}");
-                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform, lvl);
+                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform.Rec, lvl);
                 break;
             }
         }
@@ -1130,7 +1158,7 @@ public class Game1 : Game
                 // Creating a new wall instance to be placed
                 Texture2D img = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Archer/ArcherTowerLvl{lvl + 1}");
                 Texture2D arrowImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/Arrow");
-                archers[i] = new ArcherTower(img, new Vector2(0, platform.GetRec().Top - img.Height / 2 + 5), 
+                archers[i] = new ArcherTower(img, new Vector2(0, platform.Rec.Top - img.Height / 2 + 5), 
                                     img.Width / 2, img.Height / 2, img.Width / 2, img.Height / 2, arrowImg, lvl);
                 break;
             }

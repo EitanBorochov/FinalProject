@@ -24,7 +24,7 @@ public class ArcherTower : Tower
     private byte state = PREVIEW;
     
     // Storing if the preview is in a valid location
-    private bool isValid = false;
+    private bool isValid;
     
     // storing lvl of tower for upgrades (starting at 0)
     private byte lvl;
@@ -35,7 +35,7 @@ public class ArcherTower : Tower
     private static int[] healths = {250, 400, 650};
     private static int[] damages = {2, 4, 7};
     private static int[] ranges = { 250, 300, 375 };
-    private static int[] cooldownLengths = { 500, 450, 400 };
+    private static int[] cooldownLengths = { 600, 550, 500 };
 
     #endregion
 
@@ -56,11 +56,13 @@ public class ArcherTower : Tower
 
     #region Getters & Setters
 
+    // Returns default prices
     public static int GetPrice(int lvl)
     {
         return prices[lvl];
     }
     
+    // Returning if tower is placed or not
     public bool IsPlaced()
     {
         if (state == PLACED)
@@ -71,10 +73,18 @@ public class ArcherTower : Tower
         return false;
     }
 
+    // Allowing modification of tower lvl
     public byte Lvl
     {
         get => lvl;
-        set => lvl = value;
+        set
+        {
+            // Making sure lvl is between 1 and 3
+            if (lvl <= 3 && lvl > 0)
+            {
+                lvl = value;
+            }
+        }
     }
 
     public int Range

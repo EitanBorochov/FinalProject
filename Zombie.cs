@@ -84,15 +84,19 @@ public class Zombie
     #region Getters & Setters
 
     // Returning rectangle
-    public Rectangle GetRec()
+    public Rectangle Rec
     {
-        // Making sure the state is not inactive
-        if (state < 5)
+        get
         {
-            return anims[state].GetDestRec();
-        }
+            // Making sure the state is not inactive
+            if (state < 5)
+            {
+                return anims[state].GetDestRec();
+            }
 
-        return anims[ATTACK3].GetDestRec();
+            // Returning any animation rectangle
+            return anims[ATTACK3].GetDestRec();
+        }
     }
 
     // Returning and setting current zombie state
@@ -124,9 +128,9 @@ public class Zombie
     }
 
     // Returning zombie damage
-    public int GetDamage()
+    public int Damage
     {
-        return damage;
+        get => damage;
     }
     
     // Returning and setting zombie pos
@@ -235,8 +239,8 @@ public class Zombie
         if (state == DYING && anims[DYING].IsFinished()) 
         {
             // Translating zombie out of screen
-            pos.X = -100;
-            pos.Y = -100;
+            pos.X = -1000;
+            pos.Y = -1000;
             for (int i = 0; i < state - 1; i++)
             {
                 anims[i].TranslateTo(pos.X, pos.Y);

@@ -47,7 +47,7 @@ public class Wall
 
     #region Constructor
 
-    public Wall(Texture2D img, int tileWidth, int tileHeight, Platform platform, byte lvl)
+    public Wall(Texture2D img, int tileWidth, int tileHeight, Rectangle platformRec, byte lvl)
     {
         // Storing inputted parameters
         this.img = img;
@@ -61,7 +61,7 @@ public class Wall
         
         // Loading hitbox
         hitbox = new Rectangle(tileRecs[0].X, tileRecs[0].Y, tileRecs[0].Width, tileRecs.Length * tileRecs[0].Height);
-        TranslateY(platform.GetRec().Top - hitbox.Height);
+        TranslateY(platformRec.Top - hitbox.Height);
     }
 
     #endregion
@@ -82,11 +82,12 @@ public class Wall
     }
 
     // Returning a rectangle that surrounds all the tiles
-    public Rectangle GetRec()
+    public Rectangle Hitbox
     {
-        return hitbox;
+        get => hitbox;
     }
     
+    // Returning the default price at each lvl
     public static int GetPrice(int lvl)
     {
         return prices[lvl];
@@ -102,9 +103,9 @@ public class Wall
         return false;
     }
 
-    public byte GetLvl()
+    public byte Lvl
     {
-        return lvl;
+        get => lvl;
     }
 
     #endregion

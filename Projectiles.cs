@@ -53,14 +53,14 @@ public class Projectile
 
     #region Getters & Setters
 
-    public Rectangle GetRec()
+    public Rectangle Rec
     {
-        return rec;
+        get => rec;
     }
 
-    public int GetDamage()
+    public int Damage
     {
-        return damage;
+        get => damage;
     }
 
     #endregion

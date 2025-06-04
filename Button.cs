@@ -2,7 +2,7 @@
 // File Name: Button.cs
 // Project Name: FinalProject
 // Creation Date: May 13th 2025
-// Modification Date: June 2nd, 2025
+// Modification Date: June 4th, 2025
 // Description: Creates a button object that handles its interactions
 
 using System;
@@ -42,9 +42,9 @@ public class Button
     #region Getters & Setters
 
     // Rectangle retriever
-    public Rectangle GetRec()
+    public Rectangle Rec
     {
-        return buttonRec;
+        get => buttonRec;
     }
 
     #endregion

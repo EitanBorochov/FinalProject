@@ -35,10 +35,6 @@ public class Arrow : Projectile
     }
 
     #endregion
-
-    #region Getters & Setters
-    
-    #endregion
     
     #region Behaviours
     

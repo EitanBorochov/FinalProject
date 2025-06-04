@@ -58,9 +58,9 @@ public class Platform
     #region Getters & Setters
 
     // Getting the platform rec for calculations or collisions
-    public Rectangle GetRec()
+    public Rectangle Rec
     {
-        return platformRec;
+        get => platformRec;
     }
 
     #endregion
@@ -77,7 +77,4 @@ public class Platform
     }
 
     #endregion
-
-
-
 }
