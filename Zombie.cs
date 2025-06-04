@@ -14,9 +14,6 @@ namespace FinalProject;
 
 public class Zombie
 {
-    // Storing random number generator
-    private Random rng = new Random();
-    
     #region Attributes
     
     // Storing zombie state for animation logic
@@ -89,7 +86,7 @@ public class Zombie
     // Returning rectangle
     public Rectangle GetRec()
     {
-        // ** ALL ZOMBIES HAVE SAME REC
+        // Making sure the state is not inactive
         if (state < 5)
         {
             return anims[state].GetDestRec();
@@ -184,7 +181,7 @@ public class Zombie
             }
             else if (gameLvl == 2)
             {
-                if (rng.Next(1, 3) == 1)
+                if (Game1.rng.Next(1, 3) == 1)
                 {
                     // Setting position to left of screen
                     pos = leftOfScreen;
@@ -290,7 +287,7 @@ public class Zombie
             // Setting zombie state to attack if it's not an attack and translating it to the pos
             if (state < ATTACK1 || state > ATTACK3)
             {
-                state = (byte)rng.Next(ATTACK1, ATTACK3 + 1);
+                state = (byte)Game1.rng.Next(ATTACK1, ATTACK3 + 1);
                 anims[state].TranslateTo(pos.X, pos.Y);
             }
 
@@ -298,7 +295,7 @@ public class Zombie
             if (actionTimer.IsFinished())
             {
                 // Randomizing attack variant
-                state = (byte)rng.Next(ATTACK1, ATTACK3 + 1);
+                state = (byte)Game1.rng.Next(ATTACK1, ATTACK3 + 1);
 
                 // Translating animation and activating it 
                 anims[state].TranslateTo(pos.X, pos.Y);

@@ -190,7 +190,7 @@
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/Wall/WallLvl2.png
 
-#begin Images/Sprites/Gameplay/WildZombie/Attack_1.png
+#begin Images/Sprites/Gameplay/Zombie1/Attack_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -200,9 +200,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/WildZombie/Attack_1.png
+/build:Images/Sprites/Gameplay/Zombie1/Attack_1.png
 
-#begin Images/Sprites/Gameplay/WildZombie/Attack_2.png
+#begin Images/Sprites/Gameplay/Zombie1/Attack_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -212,9 +212,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/WildZombie/Attack_2.png
+/build:Images/Sprites/Gameplay/Zombie1/Attack_2.png
 
-#begin Images/Sprites/Gameplay/WildZombie/Attack_3.png
+#begin Images/Sprites/Gameplay/Zombie1/Attack_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -224,9 +224,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/WildZombie/Attack_3.png
+/build:Images/Sprites/Gameplay/Zombie1/Attack_3.png
 
-#begin Images/Sprites/Gameplay/WildZombie/Dead.png
+#begin Images/Sprites/Gameplay/Zombie1/Dead.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -236,9 +236,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/WildZombie/Dead.png
+/build:Images/Sprites/Gameplay/Zombie1/Dead.png
 
-#begin Images/Sprites/Gameplay/WildZombie/Walk.png
+#begin Images/Sprites/Gameplay/Zombie1/Run.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -248,9 +248,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/WildZombie/Walk.png
+/build:Images/Sprites/Gameplay/Zombie1/Run.png
 
-#begin Images/Sprites/Gameplay/ZombieMan/Attack_1.png
+#begin Images/Sprites/Gameplay/Zombie1/Walk.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -260,9 +260,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieMan/Attack_1.png
+/build:Images/Sprites/Gameplay/Zombie1/Walk.png
 
-#begin Images/Sprites/Gameplay/ZombieMan/Attack_2.png
+#begin Images/Sprites/Gameplay/Zombie2/Attack_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -272,9 +272,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieMan/Attack_2.png
+/build:Images/Sprites/Gameplay/Zombie2/Attack_1.png
 
-#begin Images/Sprites/Gameplay/ZombieMan/Attack_3.png
+#begin Images/Sprites/Gameplay/Zombie2/Attack_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -284,9 +284,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieMan/Attack_3.png
+/build:Images/Sprites/Gameplay/Zombie2/Attack_2.png
 
-#begin Images/Sprites/Gameplay/ZombieMan/Dead.png
+#begin Images/Sprites/Gameplay/Zombie2/Attack_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -296,9 +296,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieMan/Dead.png
+/build:Images/Sprites/Gameplay/Zombie2/Attack_3.png
 
-#begin Images/Sprites/Gameplay/ZombieMan/Idle.png
+#begin Images/Sprites/Gameplay/Zombie2/Dead.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -308,9 +308,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieMan/Idle.png
+/build:Images/Sprites/Gameplay/Zombie2/Dead.png
 
-#begin Images/Sprites/Gameplay/ZombieMan/Run.png
+#begin Images/Sprites/Gameplay/Zombie2/Idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -320,9 +320,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieMan/Run.png
+/build:Images/Sprites/Gameplay/Zombie2/Idle.png
 
-#begin Images/Sprites/Gameplay/ZombieMan/Walk.png
+#begin Images/Sprites/Gameplay/Zombie2/Run.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -332,9 +332,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieMan/Walk.png
+/build:Images/Sprites/Gameplay/Zombie2/Run.png
 
-#begin Images/Sprites/Gameplay/ZombieWoman/Attack_1.png
+#begin Images/Sprites/Gameplay/Zombie2/Walk.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -344,9 +344,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieWoman/Attack_1.png
+/build:Images/Sprites/Gameplay/Zombie2/Walk.png
 
-#begin Images/Sprites/Gameplay/ZombieWoman/Attack_2.png
+#begin Images/Sprites/Gameplay/Zombie3/Attack_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -356,9 +356,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieWoman/Attack_2.png
+/build:Images/Sprites/Gameplay/Zombie3/Attack_1.png
 
-#begin Images/Sprites/Gameplay/ZombieWoman/Attack_3.png
+#begin Images/Sprites/Gameplay/Zombie3/Attack_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -368,9 +368,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieWoman/Attack_3.png
+/build:Images/Sprites/Gameplay/Zombie3/Attack_2.png
 
-#begin Images/Sprites/Gameplay/ZombieWoman/Dead.png
+#begin Images/Sprites/Gameplay/Zombie3/Attack_3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -380,9 +380,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieWoman/Dead.png
+/build:Images/Sprites/Gameplay/Zombie3/Attack_3.png
 
-#begin Images/Sprites/Gameplay/ZombieWoman/Idle.png
+#begin Images/Sprites/Gameplay/Zombie3/Dead.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -392,9 +392,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieWoman/Idle.png
+/build:Images/Sprites/Gameplay/Zombie3/Dead.png
 
-#begin Images/Sprites/Gameplay/ZombieWoman/Run.png
+#begin Images/Sprites/Gameplay/Zombie3/Idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -404,9 +404,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieWoman/Run.png
+/build:Images/Sprites/Gameplay/Zombie3/Idle.png
 
-#begin Images/Sprites/Gameplay/ZombieWoman/Walk.png
+#begin Images/Sprites/Gameplay/Zombie3/Run.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -416,7 +416,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/Sprites/Gameplay/ZombieWoman/Walk.png
+/build:Images/Sprites/Gameplay/Zombie3/Run.png
+
+#begin Images/Sprites/Gameplay/Zombie3/Walk.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Sprites/Gameplay/Zombie3/Walk.png
 
 #begin Images/Sprites/UI/HomeButton.png
 /importer:TextureImporter

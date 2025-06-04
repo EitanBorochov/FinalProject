@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/SmallFont.spritefont</SourceFile>
-  <SourceTime>2025-05-31T23:51:40.2104169-04:00</SourceTime>
-  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Fonts/SmallFont.xnb</DestFile>
-  <DestTime>2025-05-31T23:51:48.6505037-04:00</DestTime>
+  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/SmallFont.spritefont</SourceFile>
+  <SourceTime>2025-06-02T08:16:43.97189-04:00</SourceTime>
+  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Fonts/SmallFont.xnb</DestFile>
+  <DestTime>2025-06-03T09:01:01.9573993-04:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

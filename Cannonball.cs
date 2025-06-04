@@ -35,9 +35,10 @@ public class Cannonball : Projectile
     #region Getters & Setters
 
     // Returning hitbox
-    public Rectangle GetHitbox()
+    public Rectangle Hitbox
     {
-        return hitbox;
+        get => hitbox;
+        set => hitbox = value;
     }
 
     // Setting hitbox width

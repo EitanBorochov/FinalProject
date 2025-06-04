@@ -17,6 +17,9 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    
+    // Storing random number generator
+    public static Random rng = new Random();
 
     // Storing screen dimensions
     public static int screenWidth;
@@ -158,7 +161,7 @@ public class Game1 : Game
     private Vector2 kingHPPos;
     
     // Storing coins, each zombie kill will score a few points to buy more upgrades
-    private static int coins = 200;
+    private static int coins = 100000;
     private string dispCoins = $"${coins}";
     private Vector2 coinsPos;
 
@@ -260,17 +263,23 @@ public class Game1 : Game
                                     (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
             
             // Loading local zombie textures locally
-            Texture2D[] zombieImgs = new Texture2D[5];
-            zombieImgs[0] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Walk");
-            zombieImgs[1] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Dead");
-            zombieImgs[2] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_1");
-            zombieImgs[3] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_2");
-            zombieImgs[4] = Content.Load<Texture2D>("Images/Sprites/Gameplay/WildZombie/Attack_3");
+            Texture2D[][] zombieImgs = new Texture2D[3][];
+            
+            // Loading all variants
+            for (int i = 0; i < zombieImgs.Length; i++)
+            {
+                zombieImgs[i] = new Texture2D[5];
+                zombieImgs[i][0] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Walk");
+                zombieImgs[i][1] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Dead"); 
+                zombieImgs[i][2] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_1");
+                zombieImgs[i][3] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_2");
+                zombieImgs[i][4] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_3");
+            }
             
             // Loading all the zombies
             for (int i = 0; i < zombies.Length; i++)
             {
-                zombies[i] = new Zombie(zombieImgs, screenWidth, platform.GetRec().Y);
+                zombies[i] = new Zombie(zombieImgs[rng.Next(0, 3)], screenWidth, platform.GetRec().Y);
             }
             
             // Loading positions of HUD objects
@@ -757,12 +766,15 @@ public class Game1 : Game
             if (cannonballs[i] != null)
             {
                 // Detecting collision with platform
-                if (cannonballs[i].GetHitbox().Bottom >= platform.GetRec().Y)
+                if (cannonballs[i].Hitbox.Bottom >= platform.GetRec().Y)
                 {
+                    cannonballs[i].Hitbox = new Rectangle(cannonballs[i].Hitbox.X, platform.GetRec().Top - cannonballs[i].Hitbox.Height,
+                                                          cannonballs[i].Hitbox.Width, cannonballs[i].Hitbox.Height);
+                    
                     // Checking if any zombies were hit
                     for (int j = 0; j < zombies.Length; j++)
                     {
-                        if (zombies[j].GetRec().Intersects(cannonballs[i].GetHitbox()))
+                        if (zombies[j].GetRec().Intersects(cannonballs[i].Hitbox))
                         {
                             // Dealing damage to zombie
                             zombies[j].HP -= cannonballs[i].GetDamage();
@@ -772,7 +784,7 @@ public class Game1 : Game
                     explosionAnims[i].TranslateTo(cannonballs[i].GetRec().X - (explosionAnims[i].GetDestRec().Width - 
                                                                                cannonballs[i].GetRec().Width) / 2, 
                                                 cannonballs[i].GetRec().Y - (explosionAnims[i].GetDestRec().Height - 
-                                                                             cannonballs[i].GetRec().Height) / 2);
+                                                                             cannonballs[i].GetRec().Height) / 2 - 10);
                     explosionAnims[i].Activate(true);
                     
                     // Setting to null so it can be reused

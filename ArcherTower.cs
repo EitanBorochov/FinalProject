@@ -192,8 +192,16 @@ public class ArcherTower : Tower
         }
         else if (state == PLACED)
         {
-            // Drawing it regularly if state is placed
-            base.Draw(spriteBatch);
+            // Drawing flipped if it's on the left side of the screen
+            if (hitbox.Center.X > buildRecCenter)
+            {
+                spriteBatch.Draw(towerImg, displayRec, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(towerImg, displayRec, null, Color.White, 0, 
+                    Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
+            }
         }
     }
 
