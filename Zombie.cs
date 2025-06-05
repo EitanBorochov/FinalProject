@@ -235,7 +235,7 @@ public class Zombie
     // Determining zombie action based on state
     private void Action(float timePassed)
     {
-        // // Determining
+        // Killing zombie if dying animation is done
         if (state == DYING && anims[DYING].IsFinished()) 
         {
             // Translating zombie out of screen

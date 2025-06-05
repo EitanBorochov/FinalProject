@@ -2,7 +2,7 @@
 // File Name: Wall.cs
 // Project Name: FinalProject
 // Creation Date: May 28th 2025
-// Modification Date: June 4th 2025
+// Modification Date: June 5th 2025
 // Description: Creates a new wall object which is made of tiles and meant to block the enemy from the damage dealing towers
 
 using System;
@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace FinalProject;
 
-public class Wall
+public class Wall : Tower
 {
     #region Attributes
 
@@ -21,37 +21,32 @@ public class Wall
     private Texture2D img;
     
     // Storing tile rec array and full rectangle
-    private Rectangle[] tileRecs = new Rectangle[6];
-    private Rectangle hitbox;
-    
-    // Storing possible states for when its placed or not
-    private const byte PREVIEW = 1;
-    private const byte PLACED = 2;
-    
-    // Storing current state
-    private byte state = PREVIEW;
-    
-    // Storing if the preview is in a valid location
-    private bool isValid;
-    
-    // storing lvl of wall (starting at 0)
-    private byte lvl;
+    private Rectangle[] tileRecs;
     
     // Storing a price array, the current price will be the price of index lvl
     private static int[] prices = {100, 300};
     
     // Storing health array, the current health will be the health of index lvl
-    private int[] healths = {400, 850};
+    private int[] healths = {350, 800};
+    private static readonly int[] INITIAL_HEALTHS = {350, 800};
     
     #endregion
 
     #region Constructor
 
-    public Wall(Texture2D img, int tileWidth, int tileHeight, Rectangle platformRec, byte lvl)
+    public Wall(Texture2D img, int tileWidth, int tileHeight, int numTiles, Rectangle platformRec, byte lvl) : 
+        base(img, tileWidth, tileHeight * numTiles)
     {
         // Storing inputted parameters
         this.img = img;
         this.lvl = lvl;
+
+        // Defining tile recs length
+        tileRecs = new Rectangle[numTiles];
+        
+        // Storing health to health of chosen lvl
+        health = healths[lvl];
+        initialHealth = INITIAL_HEALTHS[lvl];
         
         // Constructing rectangles
         for (int i = 0; i < tileRecs.Length; i++)
@@ -67,45 +62,11 @@ public class Wall
     #endregion
 
     #region Getters & Setters
-
-    // Accessable health quantity
-    public int HP
-    {
-        get => healths[lvl];
-        set => healths[lvl] = value;
-    }
-
-    public int Price
-    {
-        get => prices[lvl];
-        set => prices[lvl] = value;
-    }
-
-    // Returning a rectangle that surrounds all the tiles
-    public Rectangle Hitbox
-    {
-        get => hitbox;
-    }
     
     // Returning the default price at each lvl
-    public static int GetPrice(int lvl)
+    public static int GetDefaultPrice(int lvl)
     {
         return prices[lvl];
-    }
-
-    public bool IsPlaced()
-    {
-        if (state == PLACED)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public byte Lvl
-    {
-        get => lvl;
     }
 
     #endregion
@@ -121,7 +82,7 @@ public class Wall
         PreviewStateTranslation(mouse, buildableRec);
         
         // Returning that the tower is down
-        if (healths[lvl] <= 0)
+        if (health <= 0)
         {
             return true;
         }
@@ -203,7 +164,7 @@ public class Wall
         hitbox.X = tileRecs[0].X;
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, Color placedColor)
     {
         for (int i = 0; i < tileRecs.Length; i++)
         {
@@ -223,7 +184,7 @@ public class Wall
             // Drawing permenant state
             else if (state == PLACED)
             {
-                spriteBatch.Draw(img, tileRecs[i], Color.White);
+                spriteBatch.Draw(img, tileRecs[i], placedColor);
             }
         }
     }

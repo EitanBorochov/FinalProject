@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Zombie2/Walk.png</SourceFile>
-  <SourceTime>2025-06-04T13:11:55.0519327-04:00</SourceTime>
-  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/Zombie2/Walk.xnb</DestFile>
-  <DestTime>2025-06-04T13:28:12.6916375-04:00</DestTime>
+  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Zombie2/Walk.png</SourceFile>
+  <SourceTime>2025-06-05T08:14:59.8429551-04:00</SourceTime>
+  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/Zombie2/Walk.xnb</DestFile>
+  <DestTime>2025-06-05T08:15:54.8149878-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

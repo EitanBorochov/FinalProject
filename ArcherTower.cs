@@ -2,7 +2,7 @@
 // File Name: ArcherTower.cs
 // Project Name: FinalProject
 // Creation Date: June 2nd 2025
-// Modification Date: June 4th 2025
+// Modification Date: June 5th 2025
 // Description: Inhereted tower class specifically for the archer tower
 using System;
 using GameUtility;
@@ -15,25 +15,17 @@ namespace FinalProject;
 public class ArcherTower : Tower
 {
     #region Attributes
-
-    // Storing possible states for when its placed or not
-    private const byte PREVIEW = 1;
-    private const byte PLACED = 2;
-    
-    // Storing current state
-    private byte state = PREVIEW;
-    
-    // Storing if the preview is in a valid location
-    private bool isValid;
-    
-    // storing lvl of tower for upgrades (starting at 0)
-    private byte lvl;
     
     // Storing parallel arrays for damage, price, shooting range, cooldown timer, and health
     // that are dependent on the current lvl (prices is static since it needs to be globally accessible)
+    // Prices
     private static int[] prices = {150, 250, 475};
-    private int[] healths = {250, 400, 650};
-    private static readonly int[] INITIAL_HEALTHS = {250, 400, 650};
+    
+    // Healths
+    private int[] healths = {150, 225, 400};
+    private static readonly int[] INITIAL_HEALTHS = {150, 225, 400};
+    
+    // Damage & Attack related
     private static int[] damages = {2, 4, 7};
     private static int[] ranges = { 250, 300, 375 };
     private static int[] cooldownLengths = { 600, 550, 500 };
@@ -50,6 +42,7 @@ public class ArcherTower : Tower
         // Storing parameters
         this.lvl = lvl;
         health = healths[lvl];
+        initialHealth = INITIAL_HEALTHS[lvl];
         damage = damages[lvl];
     }
 
@@ -58,41 +51,16 @@ public class ArcherTower : Tower
     #region Getters & Setters
 
     // Returns default prices
-    public static int GetPrice(int lvl)
+    public static int GetDefaultPrice(int lvl)
     {
         return prices[lvl];
     }
     
-    // Returning if tower is placed or not
-    public bool IsPlaced()
-    {
-        if (state == PLACED)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    // Allowing modification of tower lvl
-    public byte Lvl
-    {
-        get => lvl;
-        set
-        {
-            // Making sure lvl is between 1 and 3
-            if (lvl <= 3 && lvl > 0)
-            {
-                lvl = value;
-            }
-        }
-    }
-
     public int Range
     {
         get => ranges[lvl];
     }
-
+    
     #endregion
 
     #region Behaviours
@@ -170,7 +138,7 @@ public class ArcherTower : Tower
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch, int buildRecCenter)
+    public void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         // Drawing transparent preview state
         if (state == PREVIEW)
@@ -208,11 +176,11 @@ public class ArcherTower : Tower
             // Drawing flipped if it's on the left side of the screen
             if (hitbox.Center.X > buildRecCenter)
             {
-                spriteBatch.Draw(towerImg, displayRec, Color.White);
+                spriteBatch.Draw(towerImg, displayRec, placedColor);
             }
             else
             {
-                spriteBatch.Draw(towerImg, displayRec, null, Color.White, 0, 
+                spriteBatch.Draw(towerImg, displayRec, null, placedColor, 0, 
                     Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
             }
         }

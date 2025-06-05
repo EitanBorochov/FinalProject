@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: June 4th 2025
+// Modification Date: June 5th 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;
@@ -24,8 +24,9 @@ public class Tower
     protected Rectangle displayRec;
     protected Rectangle hitbox;
     
-    // Storing tower HP
+    // Storing tower HP and initial HP
     protected int health;
+    protected int initialHealth;
     
     // Storing action timer
     protected Timer cooldownTimer;
@@ -36,12 +37,28 @@ public class Tower
     
     // Storing damage
     protected int damage;
+    
+    // Storing possible states for when its placed or not
+    protected const byte PREVIEW = 1;
+    protected const byte PLACED = 2;
+    
+    // Storing current state
+    protected byte state = PREVIEW;
+    
+    // Storing if the preview is in a valid location
+    protected bool isValid;
+    
+    // storing lvl of tower for upgrades (starting at 0)
+    protected byte lvl;
+    
+    // Storing tower price
+    protected int price;
 
     #endregion
 
     #region Constructors
     
-    // Setting up constructor
+    // Setting up constructors, one with projectiles and one without
     public Tower(Texture2D towerImg, Vector2 position, int width, int height, 
         int hitboxWidth, int hitboxHeight, Texture2D projectileImg, int cooldownTimerLength)
     {
@@ -61,9 +78,6 @@ public class Tower
 
         // Creating new rectangle for hitbox
         hitbox = new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight);
-
-        // Storing king health
-        this.health = health;
         
         // Constructing action timer
         this.cooldownTimer = new Timer(cooldownTimerLength, true);
@@ -71,7 +85,16 @@ public class Tower
         // Loading projectile data
         this.projImg = projectileImg;
         projRec = new Rectangle(0, 0, projImg.Width, projImg.Height);
-        this.damage = damage;
+    }
+    
+    // Constructor for wall
+    public Tower(Texture2D towerImg, int width, int height)
+    {
+        // Storing the given image in global variable
+        this.towerImg = towerImg;
+        
+        // Constructing hitbox
+        hitbox = new Rectangle(0, 0, width, height);
     }
 
     #endregion
@@ -113,6 +136,44 @@ public class Tower
         // Updating width and height
         displayRec.Width = width;
         displayRec.Height = height;
+    }
+    
+    // Returning price of current tower
+    public int Price
+    {
+        get => price;
+        set => price = value;
+    }
+    
+    // Returning if tower is placed or not
+    public bool IsPlaced()
+    {
+        if (state == PLACED)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Allowing modification of tower lvl
+    public byte Lvl
+    {
+        get => lvl;
+        set
+        {
+            // Making sure lvl is between 1 and 3
+            if (lvl <= 3 && lvl > 0)
+            {
+                lvl = value;
+            }
+        }
+    }
+    
+    // Returning health %
+    public float HPPercentage
+    {
+        get => (float)health / initialHealth;
     }
 
     #endregion

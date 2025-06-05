@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: June 4th 2025
+// Modification Date: June 5th 2025
 // Description: Main driver class for the game
 
 using System;
@@ -129,17 +129,7 @@ public class Game1 : Game
     // Storing an array of archer towers
     private ArcherTower[] archers = new ArcherTower[10];
     
-    // Width and height for the tower preview buttons
-    private const int PREVIEW_SIZE = 80;
     
-    // Storing buttons to purchase walls
-    private Button[] wallPrevs = new Button[2];
-    
-    // Storing buttons to purchase archer towers
-    private Button[] archerPrevs = new Button[3];
-    
-    // Storing red cross texture to cancel placement
-    private Texture2D redCrossImg;
 
     #region Sub Region - HUD Variables
 
@@ -161,7 +151,25 @@ public class Game1 : Game
     private static int coins = 100000;
     private string dispCoins = $"${coins}";
     private Vector2 coinsPos;
-
+    
+    // Width and height for the tower preview buttons
+    private const int PREVIEW_SIZE = 80;
+    
+    // Storing buttons to purchase walls
+    private Button[] wallPrevs = new Button[2];
+    
+    // Storing buttons to purchase archer towers
+    private Button[] archerPrevs = new Button[3];
+    
+    // Storing button to demolish building
+    private Button demolishBuilding; 
+    
+    // Storing demolishing bool (if currently in demolishing or not)
+    private bool demolishing;
+    
+    // Storing red cross texture to cancel placement
+    private Texture2D redCrossImg;
+    
     #endregion
 
     #region Sub Region - Projectiles
@@ -308,19 +316,25 @@ public class Game1 : Game
             PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1));
         
         // Loading archer tower textures
-        Texture2D lvl1Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl1");
-        Texture2D lvl2Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl2");
-        Texture2D lvl3Archer = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl3");
+        Texture2D lvl1ArcherImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl1");
+        Texture2D lvl2ArcherImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl2");
+        Texture2D lvl3ArcherImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl3");
         
         // Loading archer tower preview buttons (couldn't do a loop because of the x offset)
-        archerPrevs[0] = new Button(lvl1Archer, wallPrevs[1].Rec.X - 5 - PREVIEW_SIZE, 5,
-            PREVIEW_SIZE * ((float)lvl1Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(0));
+        archerPrevs[0] = new Button(lvl1ArcherImg, wallPrevs[1].Rec.X - 5 - PREVIEW_SIZE, 5,
+            PREVIEW_SIZE * ((float)lvl1ArcherImg.Width / lvl1ArcherImg.Height), PREVIEW_SIZE, () => ArchPrev(0));
         
-        archerPrevs[1] = new Button(lvl2Archer, archerPrevs[0].Rec.X - 5 - archerPrevs[0].Rec.Width, 5,
-            PREVIEW_SIZE * ((float)lvl2Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(1));
+        archerPrevs[1] = new Button(lvl2ArcherImg, archerPrevs[0].Rec.X - 5 - archerPrevs[0].Rec.Width, 5,
+            PREVIEW_SIZE * ((float)lvl2ArcherImg.Width / lvl2ArcherImg.Height), PREVIEW_SIZE, () => ArchPrev(1));
         
-        archerPrevs[2] = new Button(lvl3Archer, archerPrevs[1].Rec.X - 5 - archerPrevs[1].Rec.Width, 5,
-            PREVIEW_SIZE * ((float)lvl3Archer.Width / lvl1Archer.Height), PREVIEW_SIZE, () => ArchPrev(2));
+        archerPrevs[2] = new Button(lvl3ArcherImg, archerPrevs[1].Rec.X - 5 - archerPrevs[1].Rec.Width, 5,
+            PREVIEW_SIZE * ((float)lvl3ArcherImg.Width / lvl3ArcherImg.Height), PREVIEW_SIZE, () => ArchPrev(2));
+        
+        // Constructing demolish building button and image
+        Texture2D demolishImg = Content.Load<Texture2D>("Images/Sprites/UI/TrashCan");
+        demolishBuilding = new Button(demolishImg, screenWidth - PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height), 
+            wallPrevs[0].Rec.Bottom + 5, PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height), 
+            PREVIEW_SIZE, DemolishButton);
         
         // Loading red cross texture
         redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
@@ -642,7 +656,7 @@ public class Game1 : Game
 
     #endregion
     
-    #region Game
+    #region Game Main Methods
 
     // Updating everything that is common to both levels
     private void UpdateGame(GameTime gameTime)
@@ -659,6 +673,10 @@ public class Game1 : Game
         archerPrevs[0].Update(mouse, prevMouse);
         archerPrevs[1].Update(mouse, prevMouse);
         archerPrevs[2].Update(mouse, prevMouse);
+        
+        // Updating demolish button and checking for demolition
+        demolishBuilding.Update(mouse, prevMouse);
+        Demolition();
         
         // Checking for placement for walls
         for (int i = 0; i < walls.Length; i++)
@@ -722,7 +740,14 @@ public class Game1 : Game
         {
             if (walls[i] != null)
             {
-                walls[i].Draw(_spriteBatch);
+                if (demolishing)
+                {
+                    walls[i].Draw(_spriteBatch, Color.Red);
+                }
+                else
+                {
+                    walls[i].Draw(_spriteBatch, Color.White);
+                }
             }
         }
         
@@ -731,7 +756,14 @@ public class Game1 : Game
         {
             if (archers[i] != null)
             {
-                archers[i].Draw(_spriteBatch, buildableRec.Center.X);
+                if (demolishing)
+                {
+                    archers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.Red);
+                }
+                else
+                {
+                    archers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.White);
+                }
             }
         }
 
@@ -922,16 +954,21 @@ public class Game1 : Game
         
         for (int i = 0; i < zombies.Length; i++)
         {
-            // Calculating distance between tower and each zombie
-            currentDist = Vector2.Distance(towerRec.Center.ToVector2(), zombies[i].Rec.Location.ToVector2());
-
-            // Checking if distance is in radius
-            if (currentDist <= radius)
+            // Making sure zombie isn't dead
+            if (!zombies[i].IsDead())
             {
-                // Checking if the distance is less than the current 
-                if (currentDist < Vector2.Distance(closestZombie, towerRec.Center.ToVector2()))
+                // Calculating distance between tower and each zombie
+                currentDist = Vector2.Distance(towerRec.Center.ToVector2(), zombies[i].Rec.Location.ToVector2());
+
+                // Checking if distance is in radius
+                if (currentDist <= radius)
                 {
-                    closestZombie = zombies[i].Rec.Location.ToVector2();
+                    // Checking if the distance is less than the closest
+                    if (currentDist < Vector2.Distance(closestZombie, towerRec.Center.ToVector2()))
+                    {
+                        // Storing closest zombie's location
+                        closestZombie = zombies[i].Rec.Location.ToVector2();
+                    }
                 }
             }
         }
@@ -941,8 +978,8 @@ public class Game1 : Game
     
     private void LaunchCannon()
     {
-        // Checking for king tower shots only at nighttime
-        if (skyOpacity == 1)
+        // Checking for king tower shots only at nighttime and when other stuff is not in preview
+        if (skyOpacity == 1 && PreviewCheck())
         {
             if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
             {
@@ -1005,35 +1042,38 @@ public class Game1 : Game
         // Drawing wall tower preview options
         for (int i = 0; i < wallPrevs.Length; i++)
         {
-            DrawWithPrice(wallPrevs[i], Wall.GetPrice(i));
+            DrawWithPrice(wallPrevs[i], Wall.GetDefaultPrice(i));
         }
         
         // Drawing archer tower preview options
         for (int i = 0; i < archerPrevs.Length; i++)
         {
-            DrawWithPrice(archerPrevs[i], ArcherTower.GetPrice(i));
+            DrawWithPrice(archerPrevs[i], ArcherTower.GetDefaultPrice(i));
         }
         
+        // Drawing demolish button
+        demolishBuilding.Draw(_spriteBatch);
+        
         // Drawing cancel buttons on wall buttons when in preview
-        foreach (var wall in walls)
+        foreach (Wall wall in walls)
         {
-            for (int j = 0; j < wallPrevs.Length; j++)
+            for (int i = 0; i < wallPrevs.Length; i++)
             {
-                if (wall != null && !wall.IsPlaced() && wall.Lvl == j)
+                if (wall != null && !wall.IsPlaced() && wall.Lvl == i)
                 {
-                    _spriteBatch.Draw(redCrossImg, wallPrevs[j].Rec, Color.White);
+                    _spriteBatch.Draw(redCrossImg, wallPrevs[i].Rec, Color.White);
                 }
             }
         }
         
         // Drawing cancel buttons on archer tower buttons when in preview
-        foreach (var tower in archers)
+        foreach (ArcherTower tower in archers)
         {
-            for (int j = 0; j < archerPrevs.Length; j++)
+            for (int i = 0; i < archerPrevs.Length; i++)
             {
-                if (tower != null && !tower.IsPlaced() && tower.Lvl == j)
+                if (tower != null && !tower.IsPlaced() && tower.Lvl == i)
                 {
-                    _spriteBatch.Draw(redCrossImg, wallPrevs[j].Rec, Color.White);
+                    _spriteBatch.Draw(redCrossImg, archerPrevs[i].Rec, Color.White);
                 }
             }
         }
@@ -1044,6 +1084,48 @@ public class Game1 : Game
     {
         button.Draw(_spriteBatch);
         _spriteBatch.DrawString(smallFont, $"${price}", button.Rec.Location.ToVector2(), Color. Gold);
+    }
+    
+    // Checking for demolition
+    private void Demolition()
+    {
+        // Procceeding if currently demolishing
+        if (demolishing)
+        {
+            // Checking for mouse click
+            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+            {
+                // Looping through walls to see if mouse is on any of them
+                for (int i = 0; i < walls.Length; i++)
+                {
+                    if (walls[i] != null && walls[i].Hitbox.Contains(mouse.Position))
+                    {
+                        // Destroying wall and giving refund
+                        coins += (int)(walls[i].Price * walls[i].HPPercentage);
+                        walls[i] = null;
+                        
+                        // exiting demolishing state and ending method
+                        demolishing = false;
+                        return;
+                    }
+                }
+                
+                // Looping through archer towers to see if mouse is on any of them
+                for (int i = 0; i < archers.Length; i++)
+                {
+                    if (archers[i] != null && archers[i].Hitbox.Contains(mouse.Position))
+                    {
+                        // Destroying wall and giving refund
+                        coins += (int)(archers[i].Price * archers[i].HPPercentage);
+                        archers[i] = null;
+                        
+                        // exiting demolishing state and ending method
+                        demolishing = false;
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     #region Button Actions
@@ -1093,7 +1175,18 @@ public class Game1 : Game
             }
         }
 
-        // TODO: CHECK FOR TOWERS AS WELL
+        // Checking if any archer tower is in preview
+        for (int i = 0; i < archers.Length; i++)
+        {
+            if (archers[i] != null)
+            {
+                // If ANY archer towers is in preview, not valid
+                if (!archers[i].IsPlaced())
+                {
+                    return false;
+                }
+            }
+        }
         
         // If it passed all of them it must be valid
         return true;
@@ -1119,7 +1212,7 @@ public class Game1 : Game
             {
                 // Creating a new wall instance to be placed
                 Texture2D wallImg = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Wall/WallLvl{lvl + 1}");
-                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, platform.Rec, lvl);
+                walls[i] = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, 6, platform.Rec, lvl);
                 break;
             }
         }
@@ -1150,6 +1243,18 @@ public class Game1 : Game
                                     img.Width / 2, img.Height / 2, img.Width / 2, img.Height / 2, arrowImg, lvl);
                 break;
             }
+        }
+    }
+
+    public void DemolishButton()
+    {
+        if (!demolishing)
+        {
+            demolishing = true;
+        }
+        else
+        {
+            demolishing = false;
         }
     }
 

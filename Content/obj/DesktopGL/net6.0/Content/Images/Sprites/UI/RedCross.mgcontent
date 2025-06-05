@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/RedCross.png</SourceFile>
-  <SourceTime>2025-05-31T21:08:26.8458201-04:00</SourceTime>
-  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/UI/RedCross.xnb</DestFile>
-  <DestTime>2025-06-04T12:47:21.4149193-04:00</DestTime>
+  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/RedCross.png</SourceFile>
+  <SourceTime>2025-06-02T08:16:43.9724274-04:00</SourceTime>
+  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/UI/RedCross.xnb</DestFile>
+  <DestTime>2025-06-05T08:15:54.9099349-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
