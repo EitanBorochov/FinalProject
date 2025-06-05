@@ -30,7 +30,15 @@ public class KingTower : Tower
     #endregion
 
     #region Behaviours
-    
+
+    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
+    {
+        // Updating cooldown timer
+        cooldownTimer.Update(gameTime);
+        
+        return base.Update(gameTime, mouse, buildableRec, isValid);
+    }
+
     // Launching cannon ball
     public Cannonball LaunchBall(Vector2 mousePos)
     {

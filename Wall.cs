@@ -74,20 +74,14 @@ public class Wall : Tower
     #region Behaviours
 
     // Main update method that returns a true or false if the tower is down or not
-    public bool Update(MouseState mouse, Rectangle buildableRec, bool isValid)
+    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
     {
         // Storing if current location is valid for placement by collision
         this.isValid = isValid;
         
         PreviewStateTranslation(mouse, buildableRec);
-        
-        // Returning that the tower is down
-        if (health <= 0)
-        {
-            return true;
-        }
-        
-        return false;
+
+        return base.Update(gameTime, mouse, buildableRec, isValid);
     }
 
     // Allowing player to move the wall around while its in preview
@@ -112,7 +106,7 @@ public class Wall : Tower
         }
     }
 
-    public void CheckPlacement(MouseState mouse, MouseState prevMouse, 
+    public override void CheckPlacement(MouseState mouse, MouseState prevMouse, 
         Rectangle platform)
     {
         if (state == PREVIEW)
@@ -164,7 +158,7 @@ public class Wall : Tower
         hitbox.X = tileRecs[0].X;
     }
 
-    public void Draw(SpriteBatch spriteBatch, Color placedColor)
+    public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         for (int i = 0; i < tileRecs.Length; i++)
         {

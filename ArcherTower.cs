@@ -66,23 +66,17 @@ public class ArcherTower : Tower
     #region Behaviours
     
     // Adding to base update
-    public bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
+    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
     {
-        // Base update:
-        base.Update(mouse, gameTime);
-        
         // Storing if current location is valid for placement by collision
         this.isValid = isValid;
         
         PreviewStateTranslation(mouse, buildableRec);
         
-        // Returning that the tower is down
-        if (health <= 0)
-        {
-            return true;
-        }
-        
-        return false;
+        // Updating timer
+        cooldownTimer.Update(gameTime);
+
+        return base.Update(gameTime, mouse, buildableRec, isValid);
     }
     
     // Allowing player to move the wall around while its in preview
@@ -109,7 +103,7 @@ public class ArcherTower : Tower
         }
     }
 
-    public void CheckPlacement(MouseState mouse, MouseState prevMouse,
+    public override void CheckPlacement(MouseState mouse, MouseState prevMouse,
         Rectangle platform)
     {
         if (state == PREVIEW)
@@ -138,7 +132,7 @@ public class ArcherTower : Tower
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
+    public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         // Drawing transparent preview state
         if (state == PREVIEW)

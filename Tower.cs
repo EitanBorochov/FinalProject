@@ -181,7 +181,7 @@ public class Tower
     #region Behaviours
     
     // Updating tower
-    public virtual void Update(MouseState mouse, GameTime gameTime)
+    public virtual bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
     {
         // Checking if tower is alive of dead
         if (health <= 0)
@@ -189,20 +189,29 @@ public class Tower
             TranslateTo(new Vector2(-1000, -1000));
         }
         
-        // Updating cooldown timer
-        cooldownTimer.Update(gameTime);
+        // Returning that the tower is down
+        if (health <= 0)
+        {
+            return true;
+        }
+        
+        return false;
     }
 
     // Drawing tower
-    public virtual void Draw(SpriteBatch spriteBatch)
+    public virtual void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         // Check if tower is alive
         if (health > 0)
         {
             // Drawing
-            spriteBatch.Draw(towerImg, displayRec, Color.White);
+            spriteBatch.Draw(towerImg, displayRec, placedColor);
         }
     }
+    
+    public virtual void CheckPlacement(MouseState mouse, MouseState prevMouse,
+        Rectangle platform) 
+    {}
     
     // Returning the state of the tower (dead or alive)
     public virtual bool IsAlive()
