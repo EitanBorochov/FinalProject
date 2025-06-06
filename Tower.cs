@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: June 5th 2025
+// Modification Date: June 6th 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;
@@ -197,6 +197,13 @@ public class Tower
         
         return false;
     }
+    
+    // Overloading update to accomodate for landmine
+    public virtual bool Update(MouseState mouse, int screenWidth, Zombie[] zombies)
+    {
+        return false;
+    }
+    
 
     // Drawing tower
     public virtual void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
@@ -212,6 +219,12 @@ public class Tower
     public virtual void CheckPlacement(MouseState mouse, MouseState prevMouse,
         Rectangle platform) 
     {}
+    
+    // Overloading CheckPlacement for landmine
+    public virtual bool CheckPlacement(MouseState mouse, MouseState prevMouse)
+    {
+        return false;
+    }
     
     // Returning the state of the tower (dead or alive)
     public virtual bool IsAlive()

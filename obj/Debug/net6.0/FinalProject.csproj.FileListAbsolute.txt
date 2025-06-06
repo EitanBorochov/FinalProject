@@ -344,3 +344,4 @@ C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\obj\Debug\net6.0\refint\Fina
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\obj\Debug\net6.0\FinalProject.pdb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\obj\Debug\net6.0\FinalProject.genruntimeconfig.cache
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\obj\Debug\net6.0\ref\FinalProject.dll
+C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Sprites\Gameplay\LandMine.xnb

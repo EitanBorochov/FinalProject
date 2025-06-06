@@ -2,7 +2,7 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: June 4th 2025
+// Modification Date: June 6th 2025
 // Description: Zombie object, handles attacking, translating, etc.
 
 using System;
@@ -173,7 +173,7 @@ public class Zombie
     #region Behaviours
     
     // Spawning zombie
-    public void Spawn(byte gameLvl)
+    public void Spawn(byte gameLvl, int zombieHealth)
     {
         if (state == INACTIVE)
         {
@@ -204,7 +204,7 @@ public class Zombie
             actionTimer.ResetTimer(true);
 
             // Reseting health
-            health = 20;
+            health = zombieHealth;
 
             // Setting zombie state to walk and translating that animation to the start
             state = WALK;

@@ -2,7 +2,7 @@
 // File Name: KingTower.cs
 // Project Name: FinalProject
 // Creation Date: May 27th 2025
-// Modification Date: June 2nd 2025
+// Modification Date: June 6th 2025
 // Description: Inhereted tower class for the king tower
 
 using System;

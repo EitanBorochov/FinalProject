@@ -166,6 +166,18 @@
 /processorParam:TextureFormat=Color
 /build:Images/Sprites/Gameplay/KingTower.png
 
+#begin Images/Sprites/Gameplay/LandMine.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Sprites/Gameplay/LandMine.png
+
 #begin Images/Sprites/Gameplay/Wall/WallLvl1.png
 /importer:TextureImporter
 /processor:TextureProcessor

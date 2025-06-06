@@ -158,6 +158,9 @@ public class Game1 : Game
     // Storing buttons to purchase archer towers
     private Button[] archerPrevs = new Button[3];
     
+    // Storing button to purchase landmine
+    private Button landminePrev;
+    
     // Storing currently selected preview button
     private Button selBut = null;
     
@@ -172,7 +175,7 @@ public class Game1 : Game
     #region Sub Region - Projectiles
 
     // Storing max number of cannonballs inside array size
-    private Cannonball[] cannonballs = new Cannonball[4];
+    private Cannonball[] cannonballs = new Cannonball[10];
     
     // Storing max number of arrows inside array size
     private Arrow[] arrows = new Arrow[20];
@@ -329,6 +332,12 @@ public class Game1 : Game
         
         archerPrevs[2] = new Button(lvl3ArcherImg, redCrossImg, archerPrevs[1].Rec.X - 5 - archerPrevs[1].Rec.Width, 5,
             PREVIEW_SIZE * ((float)lvl3ArcherImg.Width / lvl3ArcherImg.Height), PREVIEW_SIZE, () => ArchPrev(2));
+        
+        // Loading landmine texture and button
+        Texture2D landmineImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/LandMine");
+        landminePrev = new Button(landmineImg, archerPrevs[2].Rec.X - 5 - PREVIEW_SIZE,
+            5 + PREVIEW_SIZE * (1 - (float)landmineImg.Height / landmineImg.Width), PREVIEW_SIZE,
+            PREVIEW_SIZE * (float)landmineImg.Height / landmineImg.Width, () => ArchPrev(2));
         
         // Constructing demolish building button and image
         Texture2D demolishImg = Content.Load<Texture2D>("Images/Sprites/UI/TrashCan");
@@ -652,6 +661,10 @@ public class Game1 : Game
     {
         UpdateWallButtons();
         UpdateArcherButtons();
+        if (landminePrev.Update(mouse, prevMouse))
+        {
+                selBut = landminePrev;
+        }
     }
 
     private void UpdateWallButtons()
@@ -714,7 +727,7 @@ public class Game1 : Game
             // Checking for empty slot
             for (int i = 0; i < zombies.Length; i++)
             {
-                zombies[i].Spawn(gameState);
+                zombies[i].Spawn(gameState, 20);
             }
         }
         
@@ -1012,6 +1025,9 @@ public class Game1 : Game
             DrawWithPrice(archerPrevs[i], ArcherTower.GetDefaultPrice(i));
         }
         
+        // Drawing landmine tower preview with price
+        DrawWithPrice(landminePrev, Landmine.GetDefaultPrice());
+        
         // Drawing demolish button
         demolishBuilding.Draw(_spriteBatch);
     }
@@ -1053,7 +1069,7 @@ public class Game1 : Game
     #region Button Actions
 
     // Action for level 1 button click
-    public void Level1Button()
+    private void Level1Button()
     {
         // Setting game state to level 1
         gameState = LEVEL_1;
@@ -1067,7 +1083,7 @@ public class Game1 : Game
     }
 
     // Action for level 2 button click
-    public void Level2Button()
+    private void Level2Button()
     {
         // Setting game state to level 2
         gameState = LEVEL_2;
@@ -1078,12 +1094,12 @@ public class Game1 : Game
         // TESTING
         for (int i = 0; i < zombies.Length; i++)
         {
-            zombies[i].Spawn(LEVEL_2);
+            zombies[i].Spawn(LEVEL_2, 20);
         }
     }
 
     // Checks if any tower is being placed. True if no towers are in preview
-    public bool CheckIfAnythingInPrev()
+    private bool CheckIfAnythingInPrev()
     {
         // Checking if any tower is currently being placed
         for (int i = 0; i < towers.Count; i++)
@@ -1107,74 +1123,77 @@ public class Game1 : Game
         return true;
     }
 
-    public void WallPrev(byte lvl)
+    private void AllButtonDeselect()
+    {
+        if (selBut != null && !CheckIfAnythingInPrev())
+        {
+            // Deselecting button
+            selBut.Deselect();
+            selBut = null;
+            
+            // Removing any tower in preview
+            for (int i = 0; i < towers.Count; i++)
+            {
+                if (!towers[i].IsPlaced())
+                {
+                    towers.RemoveAt(i);
+                }
+            }
+        }
+    }
+
+    private void WallPrev(byte lvl)
     {
         // Checking if any tower is currently being placed
         if (CheckIfAnythingInPrev())
         {
             // Creating a new wall inside towers to be placed
             Texture2D wallImg = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Wall/WallLvl{lvl + 1}");
-            Wall wall = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, 6, platform.Rec, lvl);
-            towers.Add(wall);
-            
-            
+            towers.Add(new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, 6, platform.Rec, lvl));
+
             // Selecting button
             wallPrevs[lvl].Select();
             selBut = wallPrevs[lvl];
-            selBut = wallPrevs[lvl];
         }
-        else if (selBut != null && !CheckIfAnythingInPrev())
-        {
-            // Deselecting button
-            selBut.Deselect();
-            selBut = null;
-            
-            // Removing any tower in preview
-            for (int i = 0; i < towers.Count; i++)
-            {
-                if (!towers[i].IsPlaced())
-                {
-                    towers.RemoveAt(i);
-                }
-            }
-        }
+        AllButtonDeselect();
     }
 
-    public void ArchPrev(byte lvl)
+    private void ArchPrev(byte lvl)
     {
         // Checking if any tower is currently being placed
         if (CheckIfAnythingInPrev())
         {
-            // Creating a new wall instance to be placed
+            // Creating a new archer tower instance to be placed
             Texture2D img = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Archer/ArcherTowerLvl{lvl + 1}");
             Texture2D arrowImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/Arrow");
-            ArcherTower archerTower = new ArcherTower(img, new Vector2(0, platform.Rec.Top - img.Height / 2 + 5), 
-                                                        img.Width / 2, img.Height / 2, img.Width / 2, 
-                                                        img.Height / 2, arrowImg, lvl);
-            towers.Add(archerTower);
+            towers.Add(new ArcherTower(img, new Vector2(0, platform.Rec.Top - img.Height / 2 + 5), 
+                img.Width / 2, img.Height / 2, img.Width / 2, 
+                img.Height / 2, arrowImg, lvl));
             
             // Selecting button
             archerPrevs[lvl].Select();
             selBut = archerPrevs[lvl];
         }
-        else if (selBut != null && !CheckIfAnythingInPrev())
-        {
-            // Deselecting button
-            selBut.Deselect();
-            selBut = null;
-            
-            // Removing any tower in preview
-            for (int i = 0; i < towers.Count; i++)
-            {
-                if (!towers[i].IsPlaced())
-                {
-                    towers.RemoveAt(i);
-                }
-            }
-        }
+        AllButtonDeselect();
     }
 
-    public void DemolishButton()
+    private void LandminePrev()
+    {
+        // Checking if any tower is currently being placed
+        if (CheckIfAnythingInPrev())
+        {
+            // Creating a new landmine instance to be placed and adding it to tower list
+            Texture2D img = Content.Load<Texture2D>("Images/Sprites/Gameplay/LandMine");
+            towers.Add(new Landmine(img, 2, platform.Rec.Top));
+            
+            // Selecting button
+            landminePrev.Select();
+            selBut = landminePrev;
+        }
+        AllButtonDeselect();
+    }
+
+    private void DemolishButton()
     {
         if (!demolishing)
         {
