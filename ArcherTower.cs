@@ -8,7 +8,7 @@ using System;
 using GameUtility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input;    
 
 namespace FinalProject;
 
@@ -27,7 +27,7 @@ public class ArcherTower : Tower
     
     // Damage & Attack related
     private static int[] damages = {2, 4, 7};
-    private static int[] ranges = { 250, 300, 375 };
+    private static int[] ranges = { 300, 350, 425 };
     private static int[] cooldownLengths = { 600, 550, 500 };
 
     #endregion
@@ -39,11 +39,12 @@ public class ArcherTower : Tower
         Texture2D projectileImg, byte lvl) : 
         base(towerImg, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLengths[lvl])
     {
-        // Storing parameters
+        // Storing array at index of level as main variable in parent class 
         this.lvl = lvl;
         health = healths[lvl];
         initialHealth = INITIAL_HEALTHS[lvl];
         damage = damages[lvl];
+        price = prices[lvl];
     }
 
     #endregion

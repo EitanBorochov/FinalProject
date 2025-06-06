@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameUtility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -585,11 +586,11 @@ public class Game1 : Game
         // Looping through tower list to update
         for (int i = 0; i < towers.Count; i++)
         {
-            if (towers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(towers[i].Hitbox)))
+            if (towers[i] != null && towers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(towers[i].Hitbox)))
             {
                 towers.RemoveAt(i);
             }
-            else
+            else if (towers[i] != null)
             {
                 // Check if placed
                 if (towers[i].IsPlaced())
@@ -603,7 +604,7 @@ public class Game1 : Game
                 {
                     for (int j = 0; j < arrows.Length; j++)
                     {
-                        if (arrows[j] != null)
+                        if (arrows[j] == null)
                         {
                             // Creating a new arrow to fire to the closest zombie
                             arrows[j] = ((ArcherTower)towers[i]).ShootArrow(LocateNearestZombie(towers[i].Hitbox,
@@ -644,6 +645,38 @@ public class Game1 : Game
     }
 
     #endregion
+
+    #region Update Buttons
+
+    private void UpdateButtons()
+    {
+        UpdateWallButtons();
+        UpdateArcherButtons();
+    }
+
+    private void UpdateWallButtons()
+    {
+        for (int i = 0; i < wallPrevs.Length; i++)
+        {
+            if (wallPrevs[i].Update(mouse, prevMouse))
+            {
+                selBut = wallPrevs[i];
+            }
+        }
+    }
+
+    private void UpdateArcherButtons()
+    {
+        for (int i = 0; i < archerPrevs.Length; i++)
+        {
+            if (archerPrevs[i].Update(mouse, prevMouse))
+            {
+                selBut = archerPrevs[i];
+            }
+        }
+    }
+
+    #endregion
     
     #region Game Main Methods
 
@@ -657,39 +690,15 @@ public class Game1 : Game
         UpdateObjects(gameTime);
         
         // Updating tower preview buttons AFTER preview check so it won't place automatically and checking if its selected
-        for (int i = 0; i < wallPrevs.Length; i++)
-        {
-            if (wallPrevs[i].Update(mouse, prevMouse))
-            {
-                selBut = wallPrevs[i];
-            }
-        }
-        for (int i = 0; i < archerPrevs.Length; i++)
-        {
-            if (archerPrevs[i].Update(mouse, prevMouse))
-            {
-                selBut = archerPrevs[i];
-            }
-        }
-        
-        // Deselecting on click
-        if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
-        {
-            if (selBut != null)
-            {
-                selBut.Deselect();
-                selBut = null;
-            }
-        }
-        
-        // Updating demolish button and checking for demolition
-        demolishBuilding.Update(mouse, prevMouse);
-        Demolition();
+        UpdateButtons();
         
         // Checking for placement for towers
         for (int i = 0; i < towers.Count; i++)
         {
-            towers[i].CheckPlacement(mouse, prevMouse, platform.Rec);
+            if (towers[i] != null)
+            {
+                towers[i].CheckPlacement(mouse, prevMouse, platform.Rec);
+            }
         }
         
         // Handling all of collisions
@@ -708,6 +717,10 @@ public class Game1 : Game
                 zombies[i].Spawn(gameState);
             }
         }
+        
+        // Updating demolish button and checking for demolition
+        demolishBuilding.Update(mouse, prevMouse);
+        Demolition();
     }
 
     // Drawing everything in both levels
@@ -731,19 +744,22 @@ public class Game1 : Game
             zombies[i].Draw(_spriteBatch);
         }
         
-        // Drawing walls
+        // Drawing towers
         for (int i = 0; i < towers.Count; i++)
         {
-            if (demolishing)
+            if (towers[i] != null)
             {
-                towers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.Red);
-            }
-            else
-            {
-                towers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.White);
+                if (demolishing)
+                {
+                    towers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.Red);
+                }
+                else
+                {
+                    towers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.White);
+                }
             }
         }
-        
+
         // Drawing cannonballs with their explosions
         for (int i = 0; i < cannonballs.Length; i++)
         {
@@ -807,7 +823,7 @@ public class Game1 : Game
             for (int j = 0; j < towers.Count; j++)
             {
                 // Making sure wall isn't null and it is currently placed
-                if (towers[j].IsPlaced())
+                if (towers[j] != null && towers[j].IsPlaced())
                 {
                     if (zombies[i].Rec.Intersects(towers[j].Hitbox))
                     {
@@ -939,7 +955,7 @@ public class Game1 : Game
     private void LaunchCannon()
     {
         // Checking for king tower shots only at nighttime and when other stuff is not in preview
-        if (skyOpacity == 1 && PreviewCheck())
+        if (skyOpacity == 1 && CheckIfAnythingInPrev())
         {
             if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
             {
@@ -967,7 +983,7 @@ public class Game1 : Game
         // Checking intersection with wall towers
         for (int i = 0; i < towers.Count; i++)
         {
-            if (building.Intersects(towers[i].Hitbox) && towers[i].IsPlaced())
+            if (towers[i] != null && building.Intersects(towers[i].Hitbox) && towers[i].IsPlaced())
             {
                 return false;
             }
@@ -1010,7 +1026,7 @@ public class Game1 : Game
     // Checking for demolition
     private void Demolition()
     {
-        // Procceeding if currently demolishing
+        // Proceeding if currently demolishing
         if (demolishing)
         {
             // Checking for mouse click
@@ -1066,8 +1082,8 @@ public class Game1 : Game
         }
     }
 
-    // Checks if any tower is being placed
-    public bool PreviewCheck()
+    // Checks if any tower is being placed. True if no towers are in preview
+    public bool CheckIfAnythingInPrev()
     {
         // Checking if any tower is currently being placed
         for (int i = 0; i < towers.Count; i++)
@@ -1082,26 +1098,52 @@ public class Game1 : Game
             }
         }
         
-        // If it passed all of them it must be valid
+        // If it passed all of them it must be valid so unselecting all buttons
+        if (selBut != null)
+        {
+            selBut.Deselect();
+            selBut = null;
+        }
         return true;
     }
 
     public void WallPrev(byte lvl)
     {
         // Checking if any tower is currently being placed
-        if (PreviewCheck())
+        if (CheckIfAnythingInPrev())
         {
             // Creating a new wall inside towers to be placed
             Texture2D wallImg = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Wall/WallLvl{lvl + 1}");
             Wall wall = new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, 6, platform.Rec, lvl);
             towers.Add(wall);
+            
+            
+            // Selecting button
+            wallPrevs[lvl].Select();
+            selBut = wallPrevs[lvl];
+            selBut = wallPrevs[lvl];
+        }
+        else if (selBut != null && !CheckIfAnythingInPrev())
+        {
+            // Deselecting button
+            selBut.Deselect();
+            selBut = null;
+            
+            // Removing any tower in preview
+            for (int i = 0; i < towers.Count; i++)
+            {
+                if (!towers[i].IsPlaced())
+                {
+                    towers.RemoveAt(i);
+                }
+            }
         }
     }
 
     public void ArchPrev(byte lvl)
     {
         // Checking if any tower is currently being placed
-        if (PreviewCheck())
+        if (CheckIfAnythingInPrev())
         {
             // Creating a new wall instance to be placed
             Texture2D img = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Archer/ArcherTowerLvl{lvl + 1}");
@@ -1110,6 +1152,25 @@ public class Game1 : Game
                                                         img.Width / 2, img.Height / 2, img.Width / 2, 
                                                         img.Height / 2, arrowImg, lvl);
             towers.Add(archerTower);
+            
+            // Selecting button
+            archerPrevs[lvl].Select();
+            selBut = archerPrevs[lvl];
+        }
+        else if (selBut != null && !CheckIfAnythingInPrev())
+        {
+            // Deselecting button
+            selBut.Deselect();
+            selBut = null;
+            
+            // Removing any tower in preview
+            for (int i = 0; i < towers.Count; i++)
+            {
+                if (!towers[i].IsPlaced())
+                {
+                    towers.RemoveAt(i);
+                }
+            }
         }
     }
 
@@ -1126,5 +1187,4 @@ public class Game1 : Game
     }
 
     #endregion
-    
 }

@@ -23,7 +23,7 @@ public class Button
     private Action onClick;
 
     // Storing cancel img and bool 
-    private Texture2D cancelImg;
+    private Texture2D cancelImg = null;
     private bool selected = false;
 
     #endregion
@@ -83,11 +83,15 @@ public class Button
             if (buttonRec.Contains(mouse.Position))
             {
                 onClick();
-                selected = true;
             }
         }
 
         return selected;
+    }
+
+    public void Select()
+    {
+        selected = true;
     }
 
     public void Deselect()
@@ -100,7 +104,7 @@ public class Button
     {
         spriteBatch.Draw(buttonImg, buttonRec, Color.White);
 
-        if (selected)
+        if (cancelImg != null && selected)
         {
             spriteBatch.Draw(cancelImg, buttonRec, Color.White);
         }
