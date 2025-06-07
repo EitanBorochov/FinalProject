@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 namespace FinalProject;
 
-public class Landmine : Tower
+public class Landmine : Defence
 {
     #region Attributes
     

@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
-// Modification Date: June 5th 2025
+// Modification Date: June 7th 2025
 // Description: Main driver class for the game
 
 using System;
@@ -125,8 +125,8 @@ public class Game1 : Game
     // Storing explosion animation
     private Animation[] explosionAnims;
     
-    // Storing a list of towers
-    private List<Tower> towers = new List<Tower>();
+    // Storing a list of defences (i.e defences pre change)
+    private List<Defence> defences = new List<Defence>();
     
     // Storing if any in preview
     private bool isAnyInPreview;
@@ -152,13 +152,13 @@ public class Game1 : Game
     private string dispCoins = $"${coins}";
     private Vector2 coinsPos;
     
-    // Width and height for the tower preview buttons
+    // Width and height for the defence preview buttons
     private const int PREVIEW_SIZE = 80;
     
     // Storing buttons to purchase walls
     private Button[] wallPrevs = new Button[2];
     
-    // Storing buttons to purchase archer towers
+    // Storing buttons to purchase archer defences
     private Button[] archerPrevs = new Button[3];
     
     // Storing button to purchase landmine
@@ -564,7 +564,7 @@ public class Game1 : Game
         UpdateCannonballs();
         UpdateExplosions(gameTime);
         
-        // Updating archer towers, checking for placement and collisions, and updating arrows
+        // Updating archer defences, checking for placement and collisions, and updating arrows
         UpdateArrows();
         
         // Updating walls and checking for placement and collisions
@@ -596,14 +596,14 @@ public class Game1 : Game
     private void UpdateTowers(GameTime gameTime)
     {
         // Looping through tower list to update
-        for (int i = 0; i < towers.Count; i++)
+        for (int i = 0; i < defences.Count; i++)
         {
-            if (towers[i] != null)
+            if (defences[i] != null)
             {
-                if (towers[i].Update(gameTime, mouse, buildableRec, ValidPlacement(towers[i].Hitbox), screenWidth, zombies))
+                if (defences[i].Update(gameTime, mouse, buildableRec, ValidPlacement(defences[i].Hitbox), screenWidth, zombies))
                 {
                     // Checking if its landmine, spawning cannonball to explode at landmine location
-                    if (towers[i] is Landmine)
+                    if (defences[i] is Landmine)
                     {
                         // Checking for an empty slot in cannonball array
                         for (int j = 0; j < cannonballs.Length; j++)
@@ -612,24 +612,24 @@ public class Game1 : Game
                             {
                                 // Creating new cannonball to explode at landmine location
                                 Texture2D cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
-                                cannonballs[j] = new Cannonball(towers[i].Hitbox, cannonballImg, towers[i].Damage, 3);
+                                cannonballs[j] = new Cannonball(defences[i].Hitbox, cannonballImg, defences[i].Damage, 3);
                                 break;
                             }
                         }
                     }
-                    towers.RemoveAt(i);
+                    defences.RemoveAt(i);
                 }
                 // Shooting arrows
                 // Finding an empty arrow slot
-                else if (towers[i] is ArcherTower)
+                else if (defences[i] is ArcherTower)
                 {
                     for (int j = 0; j < arrows.Length; j++)
                     {
                         if (arrows[j] == null)
                         {
                             // Creating a new arrow to fire to the closest zombie
-                            arrows[j] = ((ArcherTower)towers[i]).ShootArrow(LocateNearestZombie(towers[i].Hitbox,
-                                ((ArcherTower)towers[i]).Range));
+                            arrows[j] = ((ArcherTower)defences[i]).ShootArrow(LocateNearestZombie(defences[i].Hitbox,
+                                ((ArcherTower)defences[i]).Range));
                             break;
                         }
                     }
@@ -714,25 +714,25 @@ public class Game1 : Game
         // Updating all objects in game
         UpdateObjects(gameTime);
         
-        // Checking if any tower in preview
+        // Checking if any defence in preview
         CheckIfAnythingInPrev();
         
-        // Checking for placement for towers
-        for (int i = 0; i < towers.Count; i++)
+        // Checking for placement for defences
+        for (int i = 0; i < defences.Count; i++)
         {
-            if (towers[i] != null)
+            if (defences[i] != null)
             {
-                towers[i].CheckPlacement(mouse, prevMouse, platform.Rec);
+                defences[i].CheckPlacement(mouse, prevMouse, platform.Rec);
                 
-                // For landmines, if true then cancelled, remove tower.
-                if (towers[i].CheckPlacement(mouse, prevMouse))
+                // For landmines, if true then cancelled, remove defence.
+                if (defences[i] is Landmine && defences[i].CheckPlacement(mouse, prevMouse))
                 {
-                    towers.RemoveAt(i);
+                    defences.RemoveAt(i);
                 }
             }
         }
         
-        // Updating tower preview buttons and checking if they're selected
+        // Updating defence preview buttons and checking if they're selected
         UpdateButtons();
         
         // Handling all of collisions
@@ -778,18 +778,18 @@ public class Game1 : Game
             zombies[i].Draw(_spriteBatch);
         }
         
-        // Drawing towers
-        for (int i = 0; i < towers.Count; i++)
+        // Drawing defences
+        for (int i = 0; i < defences.Count; i++)
         {
-            if (towers[i] != null)
+            if (defences[i] != null)
             {
                 if (demolishing)
                 {
-                    towers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.Red);
+                    defences[i].Draw(_spriteBatch, buildableRec.Center.X, Color.Red);
                 }
                 else
                 {
-                    towers[i].Draw(_spriteBatch, buildableRec.Center.X, Color.White);
+                    defences[i].Draw(_spriteBatch, buildableRec.Center.X, Color.White);
                 }
             }
         }
@@ -854,15 +854,15 @@ public class Game1 : Game
             }
 
             // Checking for walls
-            for (int j = 0; j < towers.Count; j++)
+            for (int j = 0; j < defences.Count; j++)
             {
                 // Making sure wall isn't null and it is currently placed
-                if (towers[j] != null && towers[j].IsPlaced())
+                if (defences[j] != null && defences[j].IsPlaced())
                 {
-                    if (zombies[i].Rec.Intersects(towers[j].Hitbox))
+                    if (zombies[i].Rec.Intersects(defences[j].Hitbox))
                     {
                         // Dealing damage to wall
-                        towers[j].HP = zombies[i].Attack(towers[j].HP);
+                        defences[j].HP = zombies[i].Attack(defences[j].HP);
                         
                         // Setting attacking to true
                         isAttacking = true;
@@ -1014,10 +1014,10 @@ public class Game1 : Game
             return false;
         }
 
-        // Checking intersection with wall towers
-        for (int i = 0; i < towers.Count; i++)
+        // Checking intersection with wall defences
+        for (int i = 0; i < defences.Count; i++)
         {
-            if (towers[i] != null && building.Intersects(towers[i].Hitbox) && towers[i].IsPlaced())
+            if (defences[i] != null && building.Intersects(defences[i].Hitbox) && defences[i].IsPlaced())
             {
                 return false;
             }
@@ -1069,14 +1069,14 @@ public class Game1 : Game
             // Checking for mouse click
             if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
             {
-                // Looping through all towers to see if mouse is on any of them
-                for (int i = 0; i < towers.Count; i++)
+                // Looping through all defences to see if mouse is on any of them
+                for (int i = 0; i < defences.Count; i++)
                 {
-                    if (towers[i] != null && towers[i].Hitbox.Contains(mouse.Position))
+                    if (defences[i] != null && defences[i].Hitbox.Contains(mouse.Position))
                     {
                         // Destroying wall and giving refund
-                        coins += (int)(towers[i].Price * towers[i].HPPercentage);
-                        towers[i] = null;
+                        coins += (int)(defences[i].Price * defences[i].HPPercentage);
+                        defences[i] = null;
                         
                         // exiting demolishing state and ending method
                         demolishing = false;
@@ -1119,16 +1119,16 @@ public class Game1 : Game
         }
     }
 
-    // Checks if any tower is being placed. True if no towers are in preview
+    // Checks if any tower is being placed. True if no defences are in preview
     private void CheckIfAnythingInPrev()
     {
         // Checking if any tower is currently being placed
-        for (int i = 0; i < towers.Count; i++)
+        for (int i = 0; i < defences.Count; i++)
         {
-            if (towers[i] != null)
+            if (defences[i] != null)
             {
                 // If ANY tower is in preview, not valid
-                if (!towers[i].IsPlaced())
+                if (!defences[i].IsPlaced())
                 {
                     isAnyInPreview = true;
                     return;
@@ -1152,11 +1152,11 @@ public class Game1 : Game
         selBut = null;
         
         // Removing any tower in preview
-        for (int i = 0; i < towers.Count; i++)
+        for (int i = 0; i < defences.Count; i++)
         {
-            if (!towers[i].IsPlaced())
+            if (!defences[i].IsPlaced())
             {
-                towers.RemoveAt(i);
+                defences.RemoveAt(i);
             }
         }
     }
@@ -1166,9 +1166,9 @@ public class Game1 : Game
         // Checking if any tower is currently being placed
         if (!isAnyInPreview)
         {
-            // Creating a new wall inside towers to be placed
+            // Creating a new wall inside defences to be placed
             Texture2D wallImg = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Wall/WallLvl{lvl + 1}");
-            towers.Add(new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, 6, platform.Rec, lvl));
+            defences.Add(new Wall(wallImg, wallImg.Width / 2, wallImg.Height / 2, 6, platform.Rec, lvl));
 
             // Selecting button
             wallPrevs[lvl].Select();
@@ -1191,7 +1191,7 @@ public class Game1 : Game
             ArcherTower archerTower = new ArcherTower(img, new Vector2(0, platform.Rec.Top - img.Height / 2 + 5),
                 img.Width / 2, img.Height / 2, img.Width / 2,
                 img.Height / 2, arrowImg, lvl);
-            towers.Add(archerTower);
+            defences.Add(archerTower);
             
             // Selecting button
             archerPrevs[lvl].Select();
@@ -1210,7 +1210,7 @@ public class Game1 : Game
         {
             // Creating a new landmine instance to be placed and adding it to tower list
             Texture2D img = Content.Load<Texture2D>("Images/Sprites/Gameplay/LandMine");
-            towers.Add(new Landmine(img, 2, platform.Rec.Top));
+            defences.Add(new Landmine(img, 2, platform.Rec.Top));
             
             // Selecting button
             landminePrev.Select();

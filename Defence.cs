@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace FinalProject;
 
-public class Tower
+public class Defence
 {
     #region Attributes
 
@@ -63,7 +63,7 @@ public class Tower
     #region Constructors
     
     // Setting up constructors, one with projectiles and one without
-    public Tower(Texture2D img, Vector2 position, int width, int height, 
+    public Defence(Texture2D img, Vector2 position, int width, int height, 
         int hitboxWidth, int hitboxHeight, Texture2D projectileImg, int cooldownTimerLength)
     {
         // Storing temporary variables for calculations
@@ -95,7 +95,7 @@ public class Tower
     }
     
     // Constructor for wall
-    public Tower(Texture2D img, int width, int height)
+    public Defence(Texture2D img, int width, int height)
     {
         // Storing the given image in global variable
         this.img = img;
@@ -110,7 +110,7 @@ public class Tower
     private void LoadHPBars()
     {
         // Loading health bars
-        emptyHPBarRec = new Rectangle(hitbox.X, hitbox.Y - 20, hitbox.Width, 10);
+        emptyHPBarRec = new Rectangle(displayRec.X, displayRec.Y - 20, hitbox.Width, 10);
         fullHPBarRec = emptyHPBarRec;
     }
 
@@ -206,7 +206,7 @@ public class Tower
         
         // Translating health bar to always follow tower
         emptyHPBarRec.X = hitbox.X;
-        emptyHPBarRec.Y = hitbox.Y - emptyHPBarRec.Height * 2;
+        emptyHPBarRec.Y = displayRec.Y - emptyHPBarRec.Height * 2;
         fullHPBarRec.Location = emptyHPBarRec.Location;
         
         // Returning that the tower is down

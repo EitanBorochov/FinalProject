@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace FinalProject;
 
-public class ArcherTower : Tower
+public class ArcherTower : Defence
 {
     #region Attributes
     

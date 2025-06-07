@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace FinalProject;
 
-public class KingTower : Tower
+public class KingTower : Defence
 {
     #region Constructor
 
@@ -24,6 +24,7 @@ public class KingTower : Tower
     {
         // Storing health and damage
         health = 1000;
+        initialHealth = health;
         damage = 4;
     }
 
@@ -44,6 +45,8 @@ public class KingTower : Tower
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         spriteBatch.Draw(img, displayRec, placedColor);
+        
+        base.Draw(spriteBatch, buildRecCenter, placedColor);
     }
 
     // Launching cannon ball

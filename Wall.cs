@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace FinalProject;
 
-public class Wall : Tower
+public class Wall : Defence
 {
     #region Attributes
     
