@@ -1,4 +1,4 @@
-﻿// Author: Eitan Borochov
+﻿﻿// Author: Eitan Borochov
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: May 6th 2025
@@ -32,7 +32,7 @@ public class Game1 : Game
     private MouseState prevMouse;
     
     // Storing a single pixel texture to draw a simple solid color
-    private Texture2D pixelImg;
+    public static Texture2D pixelImg;
 
     #region Game State Variables
     // Storing constant variable constants for game states
