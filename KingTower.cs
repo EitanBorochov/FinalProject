@@ -44,8 +44,6 @@ public class KingTower : Tower
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         spriteBatch.Draw(img, displayRec, placedColor);
-        
-        base.Draw(spriteBatch, buildRecCenter, placedColor);
     }
 
     // Launching cannon ball

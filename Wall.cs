@@ -53,6 +53,7 @@ public class Wall : Tower
         
         // Loading hitbox
         hitbox = new Rectangle(tileRecs[0].X, tileRecs[0].Y, tileRecs[0].Width, tileRecs.Length * tileRecs[0].Height);
+        displayRec = hitbox;
         TranslateY(platformRec.Top - hitbox.Height);
     }
 
@@ -143,6 +144,9 @@ public class Wall : Tower
 
         // Offsetting collision rec
         hitbox.Y = tileRecs[0].Y;
+        
+        // Updating display rec
+        displayRec.Y = hitbox.Y;
     }
     public void TranslateX(float xPos)
     {
@@ -154,6 +158,9 @@ public class Wall : Tower
 
         // Offsetting collision rec
         hitbox.X = tileRecs[0].X;
+        
+        // Updating display rec
+        displayRec.X = hitbox.X;
     }
 
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)

@@ -53,6 +53,10 @@ public class Tower
     
     // Storing tower price
     protected int price;
+    
+    // Storing health bar rectangle to be displayed on top of tower. One full and one empty
+    protected Rectangle emptyHPBarRec;
+    protected Rectangle fullHPBarRec;
 
     #endregion
 
@@ -85,6 +89,9 @@ public class Tower
         // Loading projectile data
         this.projImg = projectileImg;
         projRec = new Rectangle(0, 0, projImg.Width, projImg.Height);
+        
+        // Loading health bars
+        LoadHPBars();
     }
     
     // Constructor for wall
@@ -95,6 +102,16 @@ public class Tower
         
         // Constructing hitbox
         hitbox = new Rectangle(0, 0, width, height);
+        
+        // Loading health bars
+        LoadHPBars();
+    }
+
+    private void LoadHPBars()
+    {
+        // Loading health bars
+        emptyHPBarRec = new Rectangle(hitbox.X, hitbox.Y - 20, hitbox.Width, 10);
+        fullHPBarRec = emptyHPBarRec;
     }
 
     #endregion
@@ -184,11 +201,13 @@ public class Tower
     public virtual bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
                                 bool isValid, int screenWidth, Zombie[] zombies)
     {
-        // Checking if tower is alive of dead
-        if (health <= 0)
-        {
-            TranslateTo(new Vector2(-1000, -1000));
-        }
+        // Updating health bar
+        fullHPBarRec.Width = (int)(emptyHPBarRec.Width * HPPercentage);
+        
+        // Translating health bar to always follow tower
+        emptyHPBarRec.X = hitbox.X;
+        emptyHPBarRec.Y = hitbox.Y - emptyHPBarRec.Height * 2;
+        fullHPBarRec.Location = emptyHPBarRec.Location;
         
         // Returning that the tower is down
         if (health <= 0)
@@ -200,10 +219,12 @@ public class Tower
     }
     
 
-    // Drawing tower
+    // Drawing Health bar above tower, tower will be drawn in each inherited class
     public virtual void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
-        
+        // Drawing health bars:
+        spriteBatch.Draw(Game1.pixelImg, emptyHPBarRec, Color.White);
+        spriteBatch.Draw(Game1.pixelImg, fullHPBarRec, Color.Green);
     }
     
     public virtual void CheckPlacement(MouseState mouse, MouseState prevMouse,
