@@ -35,9 +35,9 @@ public class ArcherTower : Tower
     #region Constructor
 
     // Basic constructor for the main Tower class attributes, with also lvl and price
-    public ArcherTower(Texture2D towerImg, Vector2 position, int width, int height, int hitboxWidth, int hitboxHeight, 
+    public ArcherTower(Texture2D img, Vector2 position, int width, int height, int hitboxWidth, int hitboxHeight, 
         Texture2D projectileImg, byte lvl) : 
-        base(towerImg, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLengths[lvl])
+        base(img, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLengths[lvl])
     {
         // Storing array at index of level as main variable in parent class 
         this.lvl = lvl;
@@ -67,7 +67,8 @@ public class ArcherTower : Tower
     #region Behaviours
     
     // Adding to base update
-    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
+    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
+                                bool isValid, int screenWidth, Zombie[] zombies)
     {
         // Storing if current location is valid for placement by collision
         this.isValid = isValid;
@@ -77,7 +78,7 @@ public class ArcherTower : Tower
         // Updating timer
         cooldownTimer.Update(gameTime);
 
-        return base.Update(gameTime, mouse, buildableRec, isValid);
+        return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
     }
     
     // Allowing player to move the wall around while its in preview
@@ -91,11 +92,13 @@ public class ArcherTower : Tower
             {
                 hitbox.X = (int)mouse.Position.ToVector2().X;
             }
+            // If mouse is to the right of the buildableRec, snap to right
             else if (mouse.Position.ToVector2().X >= buildableRec.Right - hitbox.Width)
             {
                 hitbox.X = buildableRec.Right - hitbox.Width;
             }
-            else
+            // If mouse is to the left of the buildableRec, snap to left
+            else if (mouse.Position.ToVector2().X < buildableRec.Left)
             {
                 hitbox.X = buildableRec.Left;
             }
@@ -139,16 +142,16 @@ public class ArcherTower : Tower
         if (state == PREVIEW)
         {
             // Drawing red if invalid and regular if it is valid
-            if (Game1.Coins < prices[lvl] || !isValid)
+            if (Game1.Coins < price|| !isValid)
             {
                 // Drawing flipped if it's on the left side of the screen
                 if (hitbox.Center.X > buildRecCenter)
                 {
-                    spriteBatch.Draw(towerImg, displayRec, Color.Red * 0.8f);
+                    spriteBatch.Draw(img, displayRec, Color.Red * 0.8f);
                 }
                 else
                 {
-                    spriteBatch.Draw(towerImg, displayRec, null, Color.Red * 0.8f, 0, 
+                    spriteBatch.Draw(img, displayRec, null, Color.Red * 0.8f, 0, 
                         Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
                 }
             }
@@ -157,11 +160,11 @@ public class ArcherTower : Tower
                 // Drawing flipped if it's on the left side of the screen
                 if (hitbox.Center.X > buildRecCenter)
                 {
-                    spriteBatch.Draw(towerImg, displayRec, Color.White * 0.8f);
+                    spriteBatch.Draw(img, displayRec, Color.White * 0.8f);
                 }
                 else
                 {
-                    spriteBatch.Draw(towerImg, displayRec, null, Color.White * 0.8f, 0, 
+                    spriteBatch.Draw(img, displayRec, null, Color.White * 0.8f, 0, 
                         Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
                 }
             }
@@ -171,14 +174,17 @@ public class ArcherTower : Tower
             // Drawing flipped if it's on the left side of the screen
             if (hitbox.Center.X > buildRecCenter)
             {
-                spriteBatch.Draw(towerImg, displayRec, placedColor);
+                spriteBatch.Draw(img, displayRec, placedColor);
             }
             else
             {
-                spriteBatch.Draw(towerImg, displayRec, null, placedColor, 0, 
+                spriteBatch.Draw(img, displayRec, null, placedColor, 0, 
                     Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
             }
         }
+        
+        // Base draws health bar on top of tower
+        base.Draw(spriteBatch, buildRecCenter, placedColor);
     }
 
     // Shooting arrows

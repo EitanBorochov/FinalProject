@@ -18,6 +18,9 @@ public class Cannonball : Projectile
     // Storing a constant cannonball speed
     public const float LAUNCH_SPEED = 1000f;
     
+    // Storing a constant max zombie hit (how many zombies can cannonball hit in one explosion)
+    public const int MAX_HITS = 5;
+    
     // Storing collision hitbox that is double the size by default
     private Rectangle hitbox;
     
@@ -25,6 +28,14 @@ public class Cannonball : Projectile
 
     public Cannonball(Rectangle rec, Vector2 mousePos, bool highAngle, Texture2D image, int damage, int hitboxMultiplier, float maxMag) : 
             base(rec, LAUNCH_SPEED, mousePos, highAngle, image, damage, maxMag)
+    {
+        // Calculating hitbox
+        hitbox = new Rectangle(rec.X - (rec.Width * (hitboxMultiplier - 1) ) / 2, rec.Y, rec.Width * hitboxMultiplier, rec.Height);
+    }
+
+    // Creating new constructor only for landmine explosions that just need the cannonball to spawn and explode immediately
+    public Cannonball(Rectangle rec, Texture2D img, int damage, int hitboxMultiplier) : base(rec, LAUNCH_SPEED, rec.Location.ToVector2(),
+        false, img, damage, 100)
     {
         // Calculating hitbox
         hitbox = new Rectangle(rec.X - (rec.Width * (hitboxMultiplier - 1) ) / 2, rec.Y, rec.Width * hitboxMultiplier, rec.Height);

@@ -18,23 +18,9 @@ namespace FinalProject;
 public class Landmine : Tower
 {
     #region Attributes
-
-    // Storing rectangle and image of landmine
-    private Rectangle rec;
-    private Texture2D img;
     
-    // Storing possible states for when its placed or not
-    private const byte PREVIEW = 1;
-    private const byte PLACED = 2;
-    
-    // Storing current state
-    private byte state = PREVIEW;
-    
-    // Storing damage
-    private int damage = 10;
-    
-    // Storing price
-    private static int price = 275;
+    // Storing constant price
+    private const int PRICE = 275;
 
     #endregion
 
@@ -45,8 +31,13 @@ public class Landmine : Tower
         // Storing image from parameter
         this.img = img;
         
+        // Storing parent damage and price
+        damage = 10;
+        price = PRICE;
+        
         // Setting up rectangle
-        rec = new Rectangle(0, platformTop - img.Height * scale, img.Width * scale, img.Height * scale);
+        hitbox = new Rectangle(0, platformTop - img.Height * scale, img.Width * scale, img.Height * scale);
+        displayRec = hitbox;
     }
 
     #endregion
@@ -56,7 +47,7 @@ public class Landmine : Tower
     // Returning default price of this class
     public static int GetDefaultPrice()
     {
-        return price;
+        return PRICE;
     }
 
     #endregion
@@ -65,8 +56,11 @@ public class Landmine : Tower
 
     /* Main goal of update is to check for zombie collisions, if it detects any zombie, returns true which will spawn
      a cannonball in place of the landmine, the cannonball should explode immediately.*/
-    public override bool Update(MouseState mouse, int screenWidth, Zombie[] zombies)
+    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
+                                bool isValid, int screenWidth, Zombie[] zombies)
     {
+        this.isValid = isValid;
+        
         // Translating during preview
         PreviewStateTranslation(mouse, screenWidth);
         
@@ -76,7 +70,7 @@ public class Landmine : Tower
             for (int i = 0; i < zombies.Length; i++)
             {
                 // If a collision occured, returning true which sends the signal to summon a cannonball
-                if (zombies[i].Rec.Intersects(rec))
+                if (zombies[i].Rec.Intersects(hitbox))
                 {
                     return true;
                 }
@@ -88,14 +82,14 @@ public class Landmine : Tower
     
     private void PreviewStateTranslation(MouseState mouse, int screenWidth)
     {
-        // Checking if state is preview
+        // Checking if state is preview and placement is valid
         if (state == PREVIEW)
         {
             // Making sure mouse is in screen boundaries
-            if (mouse.Position.X < 0 && mouse.Position.X > screenWidth - rec.Width)
+            if (mouse.Position.X > 0 && mouse.Position.X < screenWidth - hitbox.Width)
             {
                 // Translating bomb to mouse position
-                rec.X = mouse.Position.X;
+                hitbox.X = mouse.Position.X;
             }
         }
     }
@@ -113,7 +107,7 @@ public class Landmine : Tower
             }
 
             // Checking if user has enough money and the placement is valid
-            if (Game1.Coins >= price)
+            if (isValid && Game1.Coins >= price)
             {
                 if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
                 {
@@ -131,22 +125,22 @@ public class Landmine : Tower
 
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
-        // Drawing transparent if in preview
+        // Drawing transparent preview state
         if (state == PREVIEW)
         {
-            // Drawing red if not enough coins
-            if (Game1.Coins >= price)
+            // Drawing red if invalid and regular if it is valid
+            if (Game1.Coins < price || !isValid)
             {
-                spriteBatch.Draw(img, rec, placedColor * 0.8f);
+                spriteBatch.Draw(img, hitbox, Color.Red * 0.8f);
             }
-            else
+            else if (isValid)
             {
-                spriteBatch.Draw(img, rec, Color.Red * 0.8f);
+                spriteBatch.Draw(img, hitbox, Color.White * 0.8f);
             }
         }
-        else
+        else if (state == PLACED)
         {
-            spriteBatch.Draw(img, rec, placedColor);
+            spriteBatch.Draw(img, hitbox, placedColor);
         }
     }
 

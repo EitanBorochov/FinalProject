@@ -16,9 +16,6 @@ namespace FinalProject;
 public class Wall : Tower
 {
     #region Attributes
-
-    // Storing tile images for levels 1 and 2, and current level
-    private Texture2D img;
     
     // Storing tile rec array and full rectangle
     private Rectangle[] tileRecs;
@@ -74,14 +71,15 @@ public class Wall : Tower
     #region Behaviours
 
     // Main update method that returns a true or false if the tower is down or not
-    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
+    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
+                                bool isValid, int screenWidth, Zombie[] zombies)
     {
         // Storing if current location is valid for placement by collision
         this.isValid = isValid;
         
         PreviewStateTranslation(mouse, buildableRec);
 
-        return base.Update(gameTime, mouse, buildableRec, isValid);
+        return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
     }
 
     // Allowing player to move the wall around while its in preview
@@ -181,6 +179,9 @@ public class Wall : Tower
                 spriteBatch.Draw(img, tileRecs[i], placedColor);
             }
         }
+        
+        // Base draws health bar on top of tower
+        base.Draw(spriteBatch, buildRecCenter, placedColor); 
     }
 
     #endregion

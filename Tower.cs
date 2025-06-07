@@ -18,15 +18,15 @@ public class Tower
     #region Attributes
 
     // Storing images of the king tower, king, and cannons
-    protected Texture2D towerImg;
+    protected Texture2D img;
     
     // Storing rectangles of the king tower, king, cannons, and hitbox
     protected Rectangle displayRec;
     protected Rectangle hitbox;
     
     // Storing tower HP and initial HP
-    protected int health;
-    protected int initialHealth;
+    protected int health = 1;
+    protected int initialHealth = 1;
     
     // Storing action timer
     protected Timer cooldownTimer;
@@ -59,7 +59,7 @@ public class Tower
     #region Constructors
     
     // Setting up constructors, one with projectiles and one without
-    public Tower(Texture2D towerImg, Vector2 position, int width, int height, 
+    public Tower(Texture2D img, Vector2 position, int width, int height, 
         int hitboxWidth, int hitboxHeight, Texture2D projectileImg, int cooldownTimerLength)
     {
         // Storing temporary variables for calculations
@@ -67,7 +67,7 @@ public class Tower
         int hitboxY;
         
         // Storing the given image in global variable
-        this.towerImg = towerImg;
+        this.img = img;
         
         // Creating new rectangle using the given parameters
         displayRec = new Rectangle((int)position.X, (int)position.Y, width, height);
@@ -88,10 +88,10 @@ public class Tower
     }
     
     // Constructor for wall
-    public Tower(Texture2D towerImg, int width, int height)
+    public Tower(Texture2D img, int width, int height)
     {
         // Storing the given image in global variable
-        this.towerImg = towerImg;
+        this.img = img;
         
         // Constructing hitbox
         hitbox = new Rectangle(0, 0, width, height);
@@ -128,10 +128,10 @@ public class Tower
     }
     
     // Setting a new image for the object
-    public virtual void SetImage(Texture2D towerImg, int width, int height)
+    public virtual void SetImage(Texture2D img, int width, int height)
     {
         // Updating image
-        this.towerImg = towerImg;
+        this.img = img;
         
         // Updating width and height
         displayRec.Width = width;
@@ -181,7 +181,8 @@ public class Tower
     #region Behaviours
     
     // Updating tower
-    public virtual bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
+    public virtual bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
+                                bool isValid, int screenWidth, Zombie[] zombies)
     {
         // Checking if tower is alive of dead
         if (health <= 0)
@@ -198,22 +199,11 @@ public class Tower
         return false;
     }
     
-    // Overloading update to accomodate for landmine
-    public virtual bool Update(MouseState mouse, int screenWidth, Zombie[] zombies)
-    {
-        return false;
-    }
-    
 
     // Drawing tower
     public virtual void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
-        // Check if tower is alive
-        if (health > 0)
-        {
-            // Drawing
-            spriteBatch.Draw(towerImg, displayRec, placedColor);
-        }
+        
     }
     
     public virtual void CheckPlacement(MouseState mouse, MouseState prevMouse,
@@ -224,19 +214,6 @@ public class Tower
     public virtual bool CheckPlacement(MouseState mouse, MouseState prevMouse)
     {
         return false;
-    }
-    
-    // Returning the state of the tower (dead or alive)
-    public virtual bool IsAlive()
-    {
-        if (health > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
     
     // Translate object

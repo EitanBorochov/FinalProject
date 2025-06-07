@@ -31,12 +31,21 @@ public class KingTower : Tower
 
     #region Behaviours
 
-    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, bool isValid)
+    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
+                                bool isValid, int screenWidth, Zombie[] zombies)
     {
         // Updating cooldown timer
         cooldownTimer.Update(gameTime);
         
-        return base.Update(gameTime, mouse, buildableRec, isValid);
+        return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
+    }
+
+    // Drawing tower
+    public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
+    {
+        spriteBatch.Draw(img, displayRec, placedColor);
+        
+        base.Draw(spriteBatch, buildRecCenter, placedColor);
     }
 
     // Launching cannon ball

@@ -2,7 +2,7 @@
 // File Name: Projectiles.cs
 // Project Name: FinalProject
 // Creation Date: May 26th 2025
-// Modification Date: June 4th 2025
+// Modification Date: June 6th 2025
 // Description: Parent class for all projectiles
 
 using System;
@@ -38,7 +38,7 @@ public class Projectile
     {
         // Storing parameters
         this.rec = rec;
-        this.velocity = FindLaunchVelocity(rec.Location.ToVector2(), mousePos, highAngle, launchSpeed, maxMag);
+        velocity = FindLaunchVelocity(rec.Location.ToVector2(), mousePos, highAngle, launchSpeed, maxMag);
         this.image = image;
         
         // Storing initial position
