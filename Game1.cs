@@ -7,18 +7,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GameUtility;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace FinalProject;
 
+[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    private SpriteBatch spriteBatch;
     
     // Storing random number generator
     public static Random rng = new Random();
@@ -30,6 +34,10 @@ public class Game1 : Game
     // Storing mouse input
     private MouseState mouse;
     private MouseState prevMouse;
+    
+    // Storing keyboard input
+    private KeyboardState kb;
+    private KeyboardState prevKb;
     
     // Storing a single pixel texture to draw a simple solid color
     public static Texture2D pixelImg;
@@ -96,6 +104,9 @@ public class Game1 : Game
     // Storing platform
     private Platform platform;
     
+    // Storing a public instance that will be uniform for the whole project of Message Manager
+    public static MessageManager messageManager;
+    
     // Storing buildable rectangle area
     private Rectangle buildableRec;
     
@@ -125,7 +136,7 @@ public class Game1 : Game
     // Storing explosion animation
     private Animation[] explosionAnims;
     
-    // Storing a list of defences (i.e defences pre change)
+    // Storing a list of defences (i.e. towers pre change)
     private List<Defence> defences = new List<Defence>();
     
     // Storing if any in preview
@@ -173,6 +184,9 @@ public class Game1 : Game
     // Storing demolishing bool (if currently in demolishing or not)
     private bool demolishing;
     
+    // Storing how many zombies were killed in an update
+    public static int zombiesKilledPerUpdate = 0;
+    
     #endregion
 
     #region Sub Region - Projectiles
@@ -184,6 +198,40 @@ public class Game1 : Game
     private Arrow[] arrows = new Arrow[20];
 
     #endregion
+
+    #endregion
+
+    #region Sounds
+
+    // Storing sounds for various game activities. Making them public static so they can be played on any class
+    public static SoundEffect cannonSnd;
+    public static  SoundEffect arrowSnd;
+    
+    public static  SoundEffect defencePlacedSnd;
+    public static  SoundEffect defenceDestroyedSnd;
+
+    public static  SoundEffect buttonSnd;
+    
+    public static  SoundEffect zombieAttackSnd;
+    public static  SoundEffect zombieHitSnd;
+
+    #endregion
+
+    #region Music
+
+    // Storing game background music
+    private Song gameMusic;
+    
+    // Storing an array of time spans in which a new song starts playing in game music soundtrack (17 total)
+    private TimeSpan[] gameMusicSongTimes = new TimeSpan[] { new TimeSpan(0, 3, 46), new TimeSpan(0, 7, 0), 
+                                                             new TimeSpan(0, 10, 38), new TimeSpan(0, 14, 13),
+                                                             new TimeSpan(0, 17, 32), new TimeSpan(0, 21, 22),
+                                                             new TimeSpan(0, 25, 1), new TimeSpan(0, 28, 05),
+                                                             new TimeSpan(0, 31, 49), new TimeSpan(0, 35, 50),
+                                                             new TimeSpan(0, 39, 13), new TimeSpan(0, 42, 41),
+                                                             new TimeSpan(0, 46, 0), new TimeSpan(0, 49, 29),
+                                                             new TimeSpan(0, 52, 53), new TimeSpan(0, 56, 11),
+                                                             new TimeSpan(0, 59, 36) };
 
     #endregion
     
@@ -213,8 +261,8 @@ public class Game1 : Game
     
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-
+        spriteBatch = new SpriteBatch(GraphicsDevice);
+        
         // Loading sprite fonts
         titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
         HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
@@ -239,6 +287,9 @@ public class Game1 : Game
         // Loading platform and its texture (defining texture locally as it will be used in the Platform class)
         Texture2D platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
         platform = new Platform(platformImg, screenWidth, screenHeight);
+        
+        // Loading message manager
+        messageManager = new MessageManager(smallFont, new Vector2(0, platform.Rec.Top - 150));
         
         // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
         Texture2D kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
@@ -287,10 +338,20 @@ public class Game1 : Game
             zombieImgs[i][4] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Zombie{i+1}/Attack_3");
         }
         
+        // Loading blood animation image variants
+        Texture2D[] bloodImgs = new Texture2D[5];
+        for (int i = 0; i < bloodImgs.Length; i++)
+        {
+            bloodImgs[i] = Content.Load<Texture2D>($"Images/Sprites/Gameplay/Blood/Blood{i+1}");
+        }
+        
+        
         // Loading all the zombies
         for (int i = 0; i < zombies.Length; i++)
         {
-            zombies[i] = new Zombie(zombieImgs[rng.Next(0, 3)], screenWidth, platform.Rec.Y);
+            // Randomizing variant and blood animation type
+            zombies[i] = new Zombie(zombieImgs[rng.Next(0, 3)], bloodImgs[rng.Next(0, bloodImgs.Length)], screenWidth, 
+                          platform.Rec.Y);
         }
         
         // Loading positions of HUD objects
@@ -317,9 +378,9 @@ public class Game1 : Game
         
         // Loading wall preview buttons using wall textures
         wallPrevs[0] = new Button(lvl1Wall, redCrossImg, screenWidth - PREVIEW_SIZE - 5, 5, 
-            PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(0));
+            PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(0), () => WallPrevDrawHover(0));
         wallPrevs[1] = new Button(lvl2Wall, redCrossImg, wallPrevs[0].Rec.X - 5 - PREVIEW_SIZE, 5,
-            PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1));
+            PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1), () => WallPrevDrawHover(1));
         
         // Loading archer tower textures
         Texture2D lvl1ArcherImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl1");
@@ -328,19 +389,22 @@ public class Game1 : Game
         
         // Loading archer tower preview buttons (couldn't do a loop because of the x offset)
         archerPrevs[0] = new Button(lvl1ArcherImg, redCrossImg, wallPrevs[1].Rec.X - 5 - PREVIEW_SIZE, 5,
-            PREVIEW_SIZE * ((float)lvl1ArcherImg.Width / lvl1ArcherImg.Height), PREVIEW_SIZE, () => ArchPrev(0));
+                              PREVIEW_SIZE * ((float)lvl1ArcherImg.Width / lvl1ArcherImg.Height), PREVIEW_SIZE, 
+                            () => ArchPrev(0), () => ArcherPrevDrawHover(0));
         
         archerPrevs[1] = new Button(lvl2ArcherImg, redCrossImg, archerPrevs[0].Rec.X - 5 - archerPrevs[0].Rec.Width, 5,
-            PREVIEW_SIZE * ((float)lvl2ArcherImg.Width / lvl2ArcherImg.Height), PREVIEW_SIZE, () => ArchPrev(1));
+                               PREVIEW_SIZE * ((float)lvl2ArcherImg.Width / lvl2ArcherImg.Height), PREVIEW_SIZE, 
+                             () => ArchPrev(1), () => ArcherPrevDrawHover(1));
         
         archerPrevs[2] = new Button(lvl3ArcherImg, redCrossImg, archerPrevs[1].Rec.X - 5 - archerPrevs[1].Rec.Width, 5,
-            PREVIEW_SIZE * ((float)lvl3ArcherImg.Width / lvl3ArcherImg.Height), PREVIEW_SIZE, () => ArchPrev(2));
+                               PREVIEW_SIZE * ((float)lvl3ArcherImg.Width / lvl3ArcherImg.Height), PREVIEW_SIZE, 
+                             () => ArchPrev(2), () => ArcherPrevDrawHover(2));
         
         // Loading landmine texture and button
         Texture2D landmineImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/LandMine");
-        landminePrev = new Button(landmineImg, archerPrevs[2].Rec.X - 5 - PREVIEW_SIZE,
+        landminePrev = new Button(landmineImg, redCrossImg, archerPrevs[2].Rec.X - 5 - PREVIEW_SIZE,
             5 + PREVIEW_SIZE * (1 - (float)landmineImg.Height / landmineImg.Width), PREVIEW_SIZE,
-            PREVIEW_SIZE * (float)landmineImg.Height / landmineImg.Width, LandminePrev);
+            PREVIEW_SIZE * (float)landmineImg.Height / landmineImg.Width, LandminePrev, LandminePrevDrawHover);
         
         // Constructing demolish building button and image
         Texture2D demolishImg = Content.Load<Texture2D>("Images/Sprites/UI/TrashCan");
@@ -350,6 +414,28 @@ public class Game1 : Game
             
         // Loading buildable rectangle to be on the floor as a preview of where you can build
         buildableRec = new Rectangle((int)WidthCenter(800), platform.Rec.Y, 800, platform.Rec.Height);
+        
+        // Loading all sounds
+        cannonSnd = Content.Load<SoundEffect>("Audio/Sounds/CannonShoot");
+        arrowSnd = Content.Load<SoundEffect>("Audio/Sounds/ArrowShoot");
+        
+        buttonSnd = Content.Load<SoundEffect>("Audio/Sounds/ButtonClick");
+        
+        defencePlacedSnd = Content.Load<SoundEffect>("Audio/Sounds/BuildingPlaced");
+        defenceDestroyedSnd = Content.Load<SoundEffect>("Audio/Sounds/BuildingBreak");
+        
+        zombieAttackSnd = Content.Load<SoundEffect>("Audio/Sounds/ZombieAttack");
+        zombieHitSnd = Content.Load<SoundEffect>("Audio/Sounds/ZombieHit");
+        
+        // Loading game soundtrack
+        gameMusic = Content.Load<Song>("Audio/Music/GameMusic");
+
+        // Setting volume of music and setting repeat to true
+        MediaPlayer.Volume = 0.4f;
+        MediaPlayer.IsRepeating = true;
+        
+        // Starting music
+        ShuffleMusic();
     }
     
     protected override void Update(GameTime gameTime)
@@ -357,6 +443,10 @@ public class Game1 : Game
         // Updating mouse input
         prevMouse = mouse;
         mouse = Mouse.GetState();
+        
+        // Updating keyboard input
+        prevKb = kb;
+        kb = Keyboard.GetState();
         
         // Storing time passed
         timePassed = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -409,23 +499,23 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.RoyalBlue);
 
         // Initializing sprite drawing batch
-        _spriteBatch.Begin();
+        spriteBatch.Begin();
         
         // Drawing game based on game state
         switch (gameState)
         {
             case MENU:
                 // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
                 // Draw title
-                _spriteBatch.Draw(titleImg, titleRec, Color.White);
+                spriteBatch.Draw(titleImg, titleRec, Color.White);
                 
                 // Drawing buttons
-                level1Button.Draw(_spriteBatch);
-                level2Button.Draw(_spriteBatch);
-                settingsButton.Draw(_spriteBatch);
-                tutorialButton.Draw(_spriteBatch);
+                level1Button.Draw(spriteBatch, mouse.Position);
+                level2Button.Draw(spriteBatch, mouse.Position);
+                settingsButton.Draw(spriteBatch, mouse.Position);
+                tutorialButton.Draw(spriteBatch, mouse.Position);
                 
                 break;
             
@@ -441,13 +531,13 @@ public class Game1 : Game
             
             case PAUSE:
                 // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
                 break;
             
             case SETTINGS:
                 // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
                 break;
             
@@ -457,13 +547,13 @@ public class Game1 : Game
             
             case ENDGAME:
                 // Drawing background
-                _spriteBatch.Draw(bgImg, bgRec, Color.White);
+                spriteBatch.Draw(bgImg, bgRec, Color.White);
                 
                 break;
         }
         
         // Finish sprite batch
-        _spriteBatch.End();
+        spriteBatch.End();
 
         base.Draw(gameTime);
     }
@@ -549,8 +639,8 @@ public class Game1 : Game
     // Drawing text with drop shadow
     private void DrawWithShadow(SpriteFont font, string text, Vector2 pos, Color color, Color shadowColor)
     {
-        _spriteBatch.DrawString(font, text, pos + DROP_SHADOW, shadowColor);
-        _spriteBatch.DrawString(font, text, pos, color);
+        spriteBatch.DrawString(font, text, pos + DROP_SHADOW, shadowColor);
+        spriteBatch.DrawString(font, text, pos, color);
     }
 
     #endregion
@@ -568,7 +658,7 @@ public class Game1 : Game
         UpdateArrows();
         
         // Updating walls and checking for placement and collisions
-        UpdateTowers(gameTime);
+        UpdateDefences(gameTime);
         
         // Updating zombies
         UpdateZombies(gameTime);
@@ -577,9 +667,6 @@ public class Game1 : Game
     private void UpdateKing(GameTime gameTime)
     {
         kingTower.Update(gameTime, mouse, buildableRec, true, screenWidth, zombies);
-        
-        // Checking for cannon launch
-        LaunchCannon();
     }
 
     private void UpdateCannonballs()
@@ -593,7 +680,7 @@ public class Game1 : Game
         }
     }
 
-    private void UpdateTowers(GameTime gameTime)
+    private void UpdateDefences(GameTime gameTime)
     {
         // Looping through tower list to update
         for (int i = 0; i < defences.Count; i++)
@@ -603,7 +690,7 @@ public class Game1 : Game
                 if (defences[i].Update(gameTime, mouse, buildableRec, ValidPlacement(defences[i].Hitbox), screenWidth, zombies))
                 {
                     // Checking if its landmine, spawning cannonball to explode at landmine location
-                    if (defences[i] is Landmine)
+                    if (defences[i].IsPlaced() && defences[i] is Landmine)
                     {
                         // Checking for an empty slot in cannonball array
                         for (int j = 0; j < cannonballs.Length; j++)
@@ -617,6 +704,13 @@ public class Game1 : Game
                             }
                         }
                     }
+                    // Playing tower destroyed sound if it's not a landmine
+                    else if (defences[i].IsPlaced())
+                    {
+                        PlaySound(defenceDestroyedSnd, 0.5f);
+                    }
+                    
+                    // Removing tower
                     defences.RemoveAt(i);
                 }
                 // Shooting arrows
@@ -675,7 +769,7 @@ public class Game1 : Game
         UpdateArcherButtons();
         if (landminePrev.Update(mouse, prevMouse))
         {
-                selBut = landminePrev;
+            selBut = landminePrev;
         }
     }
 
@@ -708,8 +802,14 @@ public class Game1 : Game
     // Updating everything that is common to both levels
     private void UpdateGame(GameTime gameTime)
     {
+        // resetting zombie kill count per update
+        zombiesKilledPerUpdate = 0;
+        
         // Casting night sky every day night cycle
         DayNightCycle(gameTime);
+        
+        // Updating message manager
+        messageManager.Update(gameTime);
         
         // Updating all objects in game
         UpdateObjects(gameTime);
@@ -717,23 +817,20 @@ public class Game1 : Game
         // Checking if any defence in preview
         CheckIfAnythingInPrev();
         
+        // Updating defence preview buttons and checking if they're selected
+        UpdateButtons();
+        
+        // Checking for cannon launch
+        LaunchCannon();
+        
         // Checking for placement for defences
         for (int i = 0; i < defences.Count; i++)
         {
             if (defences[i] != null)
             {
-                defences[i].CheckPlacement(mouse, prevMouse, platform.Rec);
-                
-                // For landmines, if true then cancelled, remove defence.
-                if (defences[i] is Landmine && defences[i].CheckPlacement(mouse, prevMouse))
-                {
-                    defences.RemoveAt(i);
-                }
+                defences[i].CheckPlacement(mouse, prevMouse);
             }
         }
-        
-        // Updating defence preview buttons and checking if they're selected
-        UpdateButtons();
         
         // Handling all of collisions
         Collisions();
@@ -741,9 +838,9 @@ public class Game1 : Game
         // Updating coins display and centering it
         dispCoins = $"${coins}";
         coinsPos.X = WidthCenter(HUDFont.MeasureString(dispCoins).X);
-        
+
         // SPAWNING ZOMBIES FOR BETA TESTING
-        if (Keyboard.GetState().IsKeyDown(Keys.K))
+        if (kb.IsKeyDown(Keys.K) && !prevKb.IsKeyDown(Keys.K))
         {
             // Checking for empty slot
             for (int i = 0; i < zombies.Length; i++)
@@ -751,31 +848,45 @@ public class Game1 : Game
                 zombies[i].Spawn(gameState, 20);
             }
         }
+        else if (kb.IsKeyDown(Keys.M) && !prevKb.IsKeyDown(Keys.M))
+        {
+            messageManager.DisplayMessage("TESTING", Color.White);
+        }
         
         // Updating demolish button and checking for demolition
         demolishBuilding.Update(mouse, prevMouse);
         Demolition();
+        
+        // Displaying how many zombies were killed per update
+        if (zombiesKilledPerUpdate == 1)
+        {
+            messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.DarkGreen);
+        }
+        else if (zombiesKilledPerUpdate > 1)
+        {
+            messageManager.DisplayMessage($"{zombiesKilledPerUpdate} ZOMBIES KILLED", Color.DarkGreen);
+        }
     }
 
     // Drawing everything in both levels
     private void DrawGame()
     {
         // Drawing night sky overlay
-        _spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
+        spriteBatch.Draw(nightBGImg, nightBGRec, Color.White * skyOpacity);
         
         // Drawing background
-        _spriteBatch.Draw(gameBgImg, gameBgRec, Color.White);
+        spriteBatch.Draw(gameBgImg, gameBgRec, Color.White);
         
         // Drawing platform
-        platform.Draw(_spriteBatch);
+        platform.Draw(spriteBatch);
                 
         // Drawing king tower
-        kingTower.Draw(_spriteBatch, buildableRec.Center.X, Color.White);
+        kingTower.Draw(spriteBatch, buildableRec.Center.X, Color.White);
         
         // Drawing zombies
         for (int i = 0; i < zombies.Length; i++)
         {
-            zombies[i].Draw(_spriteBatch);
+            zombies[i].Draw(spriteBatch);
         }
         
         // Drawing defences
@@ -785,11 +896,11 @@ public class Game1 : Game
             {
                 if (demolishing)
                 {
-                    defences[i].Draw(_spriteBatch, buildableRec.Center.X, Color.Red);
+                    defences[i].Draw(spriteBatch, buildableRec.Center.X, Color.Red);
                 }
                 else
                 {
-                    defences[i].Draw(_spriteBatch, buildableRec.Center.X, Color.White);
+                    defences[i].Draw(spriteBatch, buildableRec.Center.X, Color.White);
                 }
             }
         }
@@ -799,10 +910,10 @@ public class Game1 : Game
         {
             if (cannonballs[i] != null)
             {
-                cannonballs[i].Draw(_spriteBatch);
+                cannonballs[i].Draw(spriteBatch);
             }
             
-            explosionAnims[i].Draw(_spriteBatch, Color.White);
+            explosionAnims[i].Draw(spriteBatch, Color.White);
         }
         
         // Drawing arrows
@@ -810,15 +921,18 @@ public class Game1 : Game
         {
             if (arrows[i] != null)
             {
-                arrows[i].Draw(_spriteBatch);
+                arrows[i].Draw(spriteBatch);
             }
         }
+        
+        // Drawing display messages
+        messageManager.Draw(spriteBatch);
         
         // Drawing HUD
         DrawHud();
         
         // Drawing buildable area rectangle as just a single solid color
-        _spriteBatch.Draw(pixelImg, buildableRec, Color.Green * 0.5f);
+        spriteBatch.Draw(pixelImg, buildableRec, Color.Green * 0.5f);
     }
 
     #endregion
@@ -853,7 +967,7 @@ public class Game1 : Game
                 isAttacking = true;
             }
 
-            // Checking for walls
+            // Checking for defences
             for (int j = 0; j < defences.Count; j++)
             {
                 // Making sure wall isn't null and it is currently placed
@@ -902,7 +1016,7 @@ public class Game1 : Game
                         if (zombies[j].Rec.Intersects(cannonballs[i].Hitbox))
                         {
                             // Dealing damage to zombie and increasing count
-                            zombies[j].HP -= cannonballs[i].Damage;
+                            zombies[j].HitZombie(cannonballs[i].Damage);
                             count++;
                         }
 
@@ -918,6 +1032,9 @@ public class Game1 : Game
                         cannonballs[i].Rec.Y - (explosionAnims[i].GetDestRec().Height - 
                                                      cannonballs[i].Rec.Height) / 2 - 10);
                     explosionAnims[i].Activate(true);
+                    
+                    // Playing cannon sound
+                    PlaySound(cannonSnd, 0.15f);
                     
                     // Setting to null so it can be reused
                     cannonballs[i] = null;
@@ -939,7 +1056,7 @@ public class Game1 : Game
                     if (arrows[i].Rec.Intersects(zombies[j].Rec))
                     {
                         // Dealing damage to zombie and deleting arrow
-                        zombies[j].HP -= arrows[i].Damage;
+                        zombies[j].HitZombie(arrows[i].Damage);
                         arrows[i] = null;
                         break;
                     }
@@ -988,6 +1105,9 @@ public class Game1 : Game
     
     private void LaunchCannon()
     {
+        // Checking again if any tower is in preview
+        CheckIfAnythingInPrev();
+        
         // Checking for king tower shots only at nighttime and when other stuff is not in preview
         if (skyOpacity == 1 && !isAnyInPreview)
         {
@@ -1034,6 +1154,9 @@ public class Game1 : Game
         DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
         DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
         
+        // Drawing demolish button
+        demolishBuilding.Draw(spriteBatch, mouse.Position);
+        
         // Drawing wall tower preview options
         for (int i = 0; i < wallPrevs.Length; i++)
         {
@@ -1048,16 +1171,13 @@ public class Game1 : Game
         
         // Drawing landmine tower preview with price
         DrawWithPrice(landminePrev, Landmine.GetDefaultPrice());
-        
-        // Drawing demolish button
-        demolishBuilding.Draw(_spriteBatch);
     }
     
     // Meant for drawing preview buttons with prices on them
     private void DrawWithPrice(Button button, int price)
     {
-        button.Draw(_spriteBatch);
-        _spriteBatch.DrawString(smallFont, $"${price}", button.Rec.Location.ToVector2(), Color. Gold);
+        button.Draw(spriteBatch, mouse.Position);
+        spriteBatch.DrawString(smallFont, $"${price}", button.Rec.Location.ToVector2(), Color. Gold);
     }
     
     // Checking for demolition
@@ -1074,9 +1194,17 @@ public class Game1 : Game
                 {
                     if (defences[i] != null && defences[i].Hitbox.Contains(mouse.Position))
                     {
+                        int refund = (int)(defences[i].Price * defences[i].HPPercentage);
+                        
+                        // displaying message to user about demolish
+                        messageManager.DisplayMessage($"DEFENCE DESTROYED | Refund: {refund}", Color.Red);
+                        
                         // Destroying wall and giving refund
-                        coins += (int)(defences[i].Price * defences[i].HPPercentage);
-                        defences[i] = null;
+                        coins += refund;
+                        defences.RemoveAt(i);
+                        
+                        // Playing destroyed building sound
+                        PlaySound(defenceDestroyedSnd, 0.5f);
                         
                         // exiting demolishing state and ending method
                         demolishing = false;
@@ -1086,9 +1214,47 @@ public class Game1 : Game
             }
         }
     }
+    
+    // Checks if any tower is being placed. True if no defences are in preview
+    private void CheckIfAnythingInPrev()
+    {
+        // Checking if any tower is currently being placed
+        for (int i = 0; i < defences.Count; i++)
+        {
+            if (defences[i] != null && !defences[i].IsPlaced())
+            {
+                isAnyInPreview = true;
+                return;
+            }
+        }
+        
+        // If it passed all of them it must be valid so unselecting all buttons
+        if (selBut != null)
+        {
+            selBut.Deselect();
+            selBut = null;
+        }
+        
+        isAnyInPreview = false;
+    }
 
     #region Button Actions
-
+    private void AllButtonDeselect()
+    {
+        // Deselecting button
+        selBut.Deselect();
+        selBut = null;
+        
+        // Removing any tower in preview
+        for (int i = 0; i < defences.Count; i++)
+        {
+            if (defences[i] != null && !defences[i].IsPlaced())
+            {
+                defences.RemoveAt(i);
+            }
+        }
+    }
+    
     // Action for level 1 button click
     private void Level1Button()
     {
@@ -1101,6 +1267,9 @@ public class Game1 : Game
         // Modifying buildable rec to be the right third of the screen
         buildableRec.Width = screenWidth / 3;
         buildableRec.X = screenWidth - buildableRec.Width;
+        
+        // Shuffling music song
+        ShuffleMusic();
     }
 
     // Action for level 2 button click
@@ -1112,55 +1281,16 @@ public class Game1 : Game
         // Updating king position
         kingTower.TranslateTo(lvl2KingPos);
         
+        // Shuffling music song
+        ShuffleMusic();
+        
         // TESTING
         for (int i = 0; i < zombies.Length; i++)
         {
             zombies[i].Spawn(LEVEL_2, 20);
         }
     }
-
-    // Checks if any tower is being placed. True if no defences are in preview
-    private void CheckIfAnythingInPrev()
-    {
-        // Checking if any tower is currently being placed
-        for (int i = 0; i < defences.Count; i++)
-        {
-            if (defences[i] != null)
-            {
-                // If ANY tower is in preview, not valid
-                if (!defences[i].IsPlaced())
-                {
-                    isAnyInPreview = true;
-                    return;
-                }
-            }
-        }
-        
-        // If it passed all of them it must be valid so unselecting all buttons
-        if (selBut != null)
-        {
-            selBut.Deselect();
-            selBut = null;
-        }
-        isAnyInPreview = false;
-    }
-
-    private void AllButtonDeselect()
-    {
-        // Deselecting button
-        selBut.Deselect();
-        selBut = null;
-        
-        // Removing any tower in preview
-        for (int i = 0; i < defences.Count; i++)
-        {
-            if (!defences[i].IsPlaced())
-            {
-                defences.RemoveAt(i);
-            }
-        }
-    }
-
+    
     private void WallPrev(byte lvl)
     {
         // Checking if any tower is currently being placed
@@ -1234,5 +1364,56 @@ public class Game1 : Game
         }
     }
 
+    private void WallPrevDrawHover(byte lvl)
+    {
+        // Drawing background for easier text read
+        spriteBatch.Draw(pixelImg, new Rectangle(mouse.Position, 
+                                    smallFont.MeasureString($"HP: {Wall.GetDefaultHP(lvl)}").ToPoint()), Color.White);
+        
+        // Drawing HP of wall
+        spriteBatch.DrawString(smallFont, $"HP: {Wall.GetDefaultHP(lvl)}", mouse.Position.ToVector2(), Color.Green);
+    }
+
+    private void ArcherPrevDrawHover(byte lvl)
+    {
+        // Drawing background for easier text read
+        spriteBatch.Draw(pixelImg, new Rectangle(mouse.Position.X, mouse.Position.Y, 
+            (int)smallFont.MeasureString($"Cooldown Time: {ArcherTower.GetDefaultCooldownLength(lvl)}s").X,
+                (int)(smallFont.MeasureString($"HP: {ArcherTower.GetDefaultHP(lvl)}").Y * 3)), Color.White);
+        
+        // Drawing stats of archer tower
+        spriteBatch.DrawString(smallFont, $"HP: {ArcherTower.GetDefaultHP(lvl)}", mouse.Position.ToVector2(), Color.Green);
+        spriteBatch.DrawString(smallFont, $"Damage: {ArcherTower.GetDefualtDamage(lvl)}", 
+                        mouse.Position.ToVector2() + new Vector2(0, smallFont.MeasureString("1").Y), Color.Red);
+        spriteBatch.DrawString(smallFont, $"Cooldown Time: {ArcherTower.GetDefaultCooldownLength(lvl)}s", 
+            mouse.Position.ToVector2() + new Vector2(0, smallFont.MeasureString("1").Y * 2), Color.CornflowerBlue);
+    }
+
+    private void LandminePrevDrawHover()
+    {
+        // Drawing background for easier readability
+        spriteBatch.Draw(pixelImg, new Rectangle(mouse.Position, 
+                    smallFont.MeasureString($"Damage: {Landmine.GetDefaultDamage()}").ToPoint()), Color.White);
+        
+        // Drawing damage of landmine
+        spriteBatch.DrawString(smallFont, $"Damage: {Landmine.GetDefaultDamage()}", mouse.Position.ToVector2(), Color.Red);
+    }
+
     #endregion
+    
+    // Creating sound instance of any sound and volume
+    public static void PlaySound(SoundEffect sound, float soundVolume)
+    {
+        // Playing chosen sound at default volume
+        SoundEffectInstance snd = sound.CreateInstance();
+        snd.Volume = soundVolume;
+        snd.Play();
+    }
+
+    private void ShuffleMusic()
+    {
+        // Starting game music by randomizing which song it starts on
+        MediaPlayer.Stop();
+        MediaPlayer.Play(gameMusic, gameMusicSongTimes[rng.Next(0, gameMusicSongTimes.Length)]);
+    }
 }

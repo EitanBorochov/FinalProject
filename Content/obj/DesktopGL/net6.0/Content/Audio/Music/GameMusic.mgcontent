@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Music/GameMusic.mp3</SourceFile>
+  <SourceTime>2025-06-08T15:13:37.9452669-04:00</SourceTime>
+  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Audio/Music/GameMusic.xnb</DestFile>
+  <DestTime>2025-06-08T15:29:44.6695151-04:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
+  <Processor>SongProcessor</Processor>
+  <ProcessorTime>2022-07-26T07:44:56-04:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput>
+    <string>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Audio/Music/GameMusic.ogg</string>
+  </BuildOutput>
+</PipelineBuildEvent>

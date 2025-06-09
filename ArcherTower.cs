@@ -2,8 +2,8 @@
 // File Name: ArcherTower.cs
 // Project Name: FinalProject
 // Creation Date: June 2nd 2025
-// Modification Date: June 5th 2025
-// Description: Inhereted tower class specifically for the archer tower
+// Modification Date: June 8th 2025
+// Description: Inherited tower class specifically for the archer tower
 using System;
 using GameUtility;
 using Microsoft.Xna.Framework;
@@ -57,6 +57,22 @@ public class ArcherTower : Defence
         return prices[lvl];
     }
     
+    // Returning the default HP at each lvl
+    public static int GetDefaultHP(int lvl)
+    {
+        return INITIAL_HEALTHS[lvl];
+    }
+
+    public static int GetDefualtDamage(int lvl)
+    {
+        return damages[lvl];
+    }
+
+    public static float GetDefaultCooldownLength(int lvl)
+    {
+        return (float)Math.Round(cooldownLengths[lvl] / 1000f, 2);
+    }
+    
     public int Range
     {
         get => ranges[lvl];
@@ -104,35 +120,6 @@ public class ArcherTower : Defence
             }
             
             displayRec.Location = hitbox.Location;
-        }
-    }
-
-    public override void CheckPlacement(MouseState mouse, MouseState prevMouse,
-        Rectangle platform)
-    {
-        if (state == PREVIEW)
-        {
-            // Checking for right click button cancel
-            if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
-            {
-                // Killing tower and ending method
-                health = 0;
-                return;
-            }
-
-            // Checking if user has enough money and the placement is valid
-            if (isValid && Game1.Coins >= prices[lvl])
-            {
-                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
-                {
-                    // placing tower
-                    state = PLACED;
-                    hitbox.Y = platform.Top - hitbox.Height;
-
-                    // Taking away coins
-                    Game1.Coins -= prices[lvl];
-                }
-            }
         }
     }
 
@@ -202,6 +189,9 @@ public class ArcherTower : Defence
                 // Firing at nearest target:
                 // Setting projectile rectangle location to be top center
                 projRec.Location = new Point(displayRec.Center.X, displayRec.Y);
+                
+                // Playing arrow sound
+                Game1.PlaySound(Game1.arrowSnd, 0.1f);
                 
                 return new Arrow(projRec, nearestTarget, false, projImg, damage, ranges[lvl]);
             }

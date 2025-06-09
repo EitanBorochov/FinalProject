@@ -45,6 +45,9 @@ public class Wall : Defence
         health = healths[lvl];
         initialHealth = INITIAL_HEALTHS[lvl];
         
+        // Storing price to price of chosen lvl
+        price = prices[lvl];
+        
         // Constructing rectangles
         for (int i = 0; i < tileRecs.Length; i++)
         {
@@ -65,6 +68,12 @@ public class Wall : Defence
     public static int GetDefaultPrice(int lvl)
     {
         return prices[lvl];
+    }
+    
+    // Returning the default HP at each lvl
+    public static int GetDefaultHP(int lvl)
+    {
+        return INITIAL_HEALTHS[lvl];
     }
 
     #endregion
@@ -101,35 +110,6 @@ public class Wall : Defence
             else
             {
                 TranslateX(buildableRec.Left);
-            }
-        }
-    }
-
-    public override void CheckPlacement(MouseState mouse, MouseState prevMouse, 
-        Rectangle platform)
-    {
-        if (state == PREVIEW)
-        {
-            // Checking for right click button cancel
-            if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
-            {
-                // Killing tower and ending method
-                healths[lvl] = 0;
-                return;
-            }
-
-            // Checking if user has enough money and the placement is valid
-            if (isValid && Game1.Coins >= prices[lvl])
-            {
-                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
-                {
-                    // placing tower
-                    state = PLACED;
-                    TranslateY(platform.Top - hitbox.Height);
-                    
-                    // Taking away coins
-                    Game1.Coins -= prices[lvl];
-                }
             }
         }
     }
@@ -180,7 +160,7 @@ public class Wall : Defence
                     spriteBatch.Draw(img, tileRecs[i], Color.White * 0.8f);
                 }
             }
-            // Drawing permenant state
+            // Drawing permanent state
             else if (state == PLACED)
             {
                 spriteBatch.Draw(img, tileRecs[i], placedColor);

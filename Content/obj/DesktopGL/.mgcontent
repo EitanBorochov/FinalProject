@@ -4,6 +4,14 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Music/GameMusic.mp3</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/ArrowShoot.wav</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/BuildingBreak.wav</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/BuildingPlaced.wav</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/ButtonClick.wav</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/CannonShoot.wav</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/ZombieAttack.wav</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/ZombieHit.wav</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/SmallFont.spritefont</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
@@ -14,6 +22,11 @@
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl2.png</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl3.png</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/Arrow.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Blood/Blood1.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Blood/Blood2.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Blood/Blood3.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Blood/Blood4.png</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Blood/Blood5.png</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Brick.png</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Cannonball.png</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/explosion.png</File>
@@ -47,6 +60,19 @@
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

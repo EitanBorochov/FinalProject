@@ -55,12 +55,15 @@ public class Zombie
     
     // Storing reward which is how many coins the player earns on kill
     private int reward = 10;
+    
+    // Storing blood animation, each zombie has a different random one
+    private Animation bloodAnim;
 
     #endregion
 
     #region Constructor
     // Constructor
-    public Zombie(Texture2D[] images, int screenWidth, int groundLevel)
+    public Zombie(Texture2D[] images, Texture2D bloodAnimImg, int screenWidth, int groundLevel)
     {
         // Storing the array of images for the animations
         this.images = images;
@@ -77,6 +80,9 @@ public class Zombie
         //Loading initial zombie poss
         leftOfScreen = new Vector2(-anims[0].GetDestRec().Width, groundLevel - anims[0].GetDestRec().Height);
         rightOfScreen = new Vector2(screenWidth, groundLevel - anims[0].GetDestRec().Height);
+        
+        // Creating blood animation
+        bloodAnim = new Animation(bloodAnimImg, 6, 6, 29, 0, -1, 1, 1000, pos, 0.5f ,false);
     }
     
     #endregion
@@ -89,13 +95,13 @@ public class Zombie
         get
         {
             // Making sure the state is not inactive
-            if (state < 5)
+            if (state == INACTIVE)
             {
-                return anims[state].GetDestRec();
+                // Returning a rectangle out of screen as zombie is inactive
+                return new Rectangle(-1000, -1000, 0, 0);
             }
 
-            // Returning any animation rectangle
-            return anims[ATTACK3].GetDestRec();
+            return anims[state].GetDestRec();
         }
     }
 
@@ -111,8 +117,6 @@ public class Zombie
             state = value;
         }
     }
-    
-    
 
     // Returning and setting zombie HP 
     public int HP
@@ -218,8 +222,9 @@ public class Zombie
         if (state != INACTIVE)
         {
             // Updating timer & Animations
-            actionTimer.Update(timePassed);
+            actionTimer.Update(gameTime);
             anims[state].Update(gameTime);
+            bloodAnim.Update(gameTime);
 
             // Zombie Action
             Action(timePassed);
@@ -238,14 +243,6 @@ public class Zombie
         // Killing zombie if dying animation is done
         if (state == DYING && anims[DYING].IsFinished()) 
         {
-            // Translating zombie out of screen
-            pos.X = -1000;
-            pos.Y = -1000;
-            for (int i = 0; i < state - 1; i++)
-            {
-                anims[i].TranslateTo(pos.X, pos.Y);
-            }
-            
             // Deactivating zombie
             state = INACTIVE;
         }
@@ -279,6 +276,9 @@ public class Zombie
             
             // Rewarding player with coins
             Game1.Coins += reward;
+            
+            // Adding to zombie kill count per update
+            Game1.zombiesKilledPerUpdate++;
         }
     }
 
@@ -307,6 +307,9 @@ public class Zombie
 
                 // Lowering tower HP
                 towerHP -= damage;
+                
+                // Playing attack sound
+                Game1.PlaySound(Game1.zombieAttackSnd, 0.05f);
 
                 // Resetting action timer
                 actionTimer.ResetTimer(true);
@@ -314,6 +317,19 @@ public class Zombie
         }
 
         return towerHP;
+    }
+
+    public void HitZombie(int damage)
+    {
+        // Lowering health
+        health -= damage;
+        
+        // Playing blood animation at zombie's location
+        bloodAnim.TranslateTo(pos.X, pos.Y);
+        bloodAnim.Activate(true);
+        
+        // Playing damage sound
+        Game1.PlaySound(Game1.zombieHitSnd, 0.1f);
     }
 
     public void Walk()
@@ -332,6 +348,7 @@ public class Zombie
         if (state != INACTIVE)
         {
             anims[state].Draw(spriteBatch, Color.White, effect);
+            bloodAnim.Draw(spriteBatch, Color.White, effect);
         }
     }
 

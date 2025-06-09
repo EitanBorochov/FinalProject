@@ -2,7 +2,7 @@
 // File Name: Tower.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: June 6th 2025
+// Modification Date: June 8th 2025
 // Description: Handles everything to do with the towers and their properties
 
 using System;
@@ -197,7 +197,7 @@ public class Defence
 
     #region Behaviours
     
-    // Updating tower
+    // Updating defence
     public virtual bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
                                 bool isValid, int screenWidth, Zombie[] zombies)
     {
@@ -226,15 +226,47 @@ public class Defence
         spriteBatch.Draw(Game1.pixelImg, emptyHPBarRec, Color.White);
         spriteBatch.Draw(Game1.pixelImg, fullHPBarRec, Color.Green);
     }
-    
-    public virtual void CheckPlacement(MouseState mouse, MouseState prevMouse,
-        Rectangle platform) 
-    {}
-    
-    // Overloading CheckPlacement for landmine
-    public virtual bool CheckPlacement(MouseState mouse, MouseState prevMouse)
+
+    public virtual void CheckPlacement(MouseState mouse, MouseState prevMouse)
     {
-        return false;
+        if (state == PREVIEW)
+        {
+            // Checking for right click button cancel
+            if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
+            {
+                // Returning true which means delete landmine
+                health = 0;
+            }
+
+            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+            {
+                // Checking if user has enough money and the placement is valid
+                if (isValid && Game1.Coins >= price)
+                {
+                    // placing defence
+                    state = PLACED;
+
+                    // Taking away coins
+                    Game1.Coins -= price;
+                    
+                    // Playing placing sound
+                    Game1.PlaySound(Game1.defencePlacedSnd, 0.5f);
+
+                    // Sending feedback to user, wall placed
+                    Game1.messageManager.DisplayMessage($"DEFENCE PLACED", Color.Green);
+                }
+                else if (!isValid)
+                {
+                    // Sending feedback to user, invalid location
+                    Game1.messageManager.DisplayMessage("INVALID PLACEMENT", Color.Red);
+                }
+                else if (Game1.Coins >= price)
+                {
+                    // Sending feedback to user, not enough money
+                    Game1.messageManager.DisplayMessage("NOT ENOUGH MONEY", Color.Red);
+                }
+            }
+        }
     }
     
     // Translate object

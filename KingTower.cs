@@ -70,7 +70,7 @@ public class KingTower : Defence
             }
 
             cooldownTimer.ResetTimer(true);
-
+            
             return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 350);
         }
 

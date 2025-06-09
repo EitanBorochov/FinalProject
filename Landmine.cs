@@ -21,7 +21,10 @@ public class Landmine : Defence
     
     // Storing constant price
     private const int PRICE = 275;
-
+    
+    // Storing constant damage
+    private const int DAMAGE = 10;
+    
     #endregion
 
     #region Constructor
@@ -32,8 +35,11 @@ public class Landmine : Defence
         this.img = img;
         
         // Storing parent damage and price
-        damage = 10;
+        damage = DAMAGE;
         price = PRICE;
+
+        // TESTING
+        health = 10;
         
         // Setting up rectangle
         hitbox = new Rectangle(0, platformTop - img.Height * scale, img.Width * scale, img.Height * scale);
@@ -50,6 +56,11 @@ public class Landmine : Defence
         return PRICE;
     }
 
+    public static int GetDefaultDamage()
+    {
+        return DAMAGE;
+    }
+    
     #endregion
 
     #region Behaviours
@@ -72,12 +83,13 @@ public class Landmine : Defence
                 // If a collision occured, returning true which sends the signal to summon a cannonball
                 if (zombies[i].Rec.Intersects(hitbox))
                 {
+                    // Returning true to explode landmine
                     return true;
                 }
             }
         }
-        
-        return false;
+
+        return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
     }
     
     private void PreviewStateTranslation(MouseState mouse, int screenWidth)
@@ -95,21 +107,21 @@ public class Landmine : Defence
     }
     
     // Checks for placement of landmine, returns true if placement is cancelled
-    public override bool CheckPlacement(MouseState mouse, MouseState prevMouse)
+    public override void CheckPlacement(MouseState mouse, MouseState prevMouse)
     {
         if (state == PREVIEW)
         {
             // Checking for right click button cancel
             if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
             {
-                // Returning true which means delete landmine
-                return true;
+                // Returning true which means delete defence
+                health = 0;
             }
 
             // Checking if user has enough money and the placement is valid
-            if (isValid && Game1.Coins >= price)
+            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
             {
-                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+                if (isValid && Game1.Coins >= price)
                 {
                     // placing tower
                     state = PLACED;
@@ -119,8 +131,6 @@ public class Landmine : Defence
                 }
             }
         }
-
-        return false;
     }
 
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
