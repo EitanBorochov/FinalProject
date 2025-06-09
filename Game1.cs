@@ -105,22 +105,36 @@ public class Game1 : Game
     // Storing the two king tower locaations for each level
     private Vector2 lvl1KingPos;
     private Vector2 lvl2KingPos;
+
+    #region ZOMBIE WAVES MODIFICATIONS
+
+    // Storing max number of zombies which will change every night
+    private const int I_MAX_ZOMBIES = 10;
+    private int maxZombies = I_MAX_ZOMBIES;
+    
+    // Storing zombies max hp as it increases every night
+    private int zombieMaxHP = 20;
     
     // Storing zombies array
-    private Zombie[] zombies = new Zombie[5];
+    private Zombie[] zombies = new Zombie[100];
+    
+    // Storing nighttime length that will increase every night
+    private int nightTime = 20000;
     
     // Storing timer for day night cycle
-    private Timer dayNightCycle = new Timer(200000, true);
+    private Timer dayNightCycle = new Timer(40000, true);
     
     // Storing background night sky texture and rectangle
     private Texture2D nightBGImg;
     private Rectangle nightBGRec;
     
     // Storing night sky color multiplier, incrase and decrease constants, and multiplier modifier
-    private float skyOpacity = 1f;
+    private float skyOpacity = 0f;
     private const int POSITIVE = 1;
     private const int NEGATIVE = -1;
     private int skyMultiplier;
+
+    #endregion
     
     // Storing explosion animation
     private Animation[] explosionAnims;
@@ -151,6 +165,13 @@ public class Game1 : Game
     private static int coins = 100000;
     private string dispCoins = $"${coins}";
     private Vector2 coinsPos;
+
+    #region ZOMBIE WAVES MODIFICATION
+    
+    // Storing position to display how much time left in round
+    private Vector2 timeLeftDispPos;
+
+    #endregion
     
     // Width and height for the defence preview buttons
     private const int PREVIEW_SIZE = 80;
@@ -296,6 +317,7 @@ public class Game1 : Game
         // Loading positions of HUD objects
         dayCountPos = new Vector2(5, 5);
         mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
+        timeLeftDispPos = new Vector2(5, mobsKilledPos.Y + HUDFont.MeasureString(dispDayCount).Y);
         kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
         coinsPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispCoins).X),
             5 + HUDFont.MeasureString(dispKingHP).Y);
@@ -469,21 +491,39 @@ public class Game1 : Game
     }
 
     #endregion
-
-    // Storing coins as a public property of Game1
+    
+    /// <summary>
+    /// Storing coins as a public property of Game1 
+    /// </summary>
     public static int Coins
     {
         get => coins;
-        set => coins = value;
+        set
+        {
+            if (value > 0)
+            {
+                coins = value;
+            }
+            else
+            {
+                coins = 0;
+            }
+        }
     }
     
-    // Method accessible by zombies to increase points
+    /// <summary>
+    /// Method accessible by zombies class to increase kill count
+    /// </summary>
     public static void IncreaseMobsKilled()
     {
         mobsKilled++;
         dispMobsKilled = $"Kills: {mobsKilled}";
     }
-        
+    
+    /// <summary>
+    /// Manages day night cycle by keeping track of a timer and increasing/decreasing night sky opacity
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void DayNightCycle(GameTime gameTime)
     {
         // Updating day night cycle timer
@@ -493,10 +533,15 @@ public class Game1 : Game
         if (dayNightCycle.IsFinished())
         {
             // Flipping the sky multiplier to either turn the sky on or off
+            // Turning nighttime
             if (skyOpacity == 0)
             {
                 skyMultiplier = POSITIVE;
+                
+                // Updating wave stats and spawning zombies
+                ZombieWaves();
             }
+            // Turning daytime
             else if (skyOpacity == 1)
             {
                 skyMultiplier = NEGATIVE;
@@ -513,7 +558,7 @@ public class Game1 : Game
             }
             
             // Restarting the timer
-            dayNightCycle.ResetTimer(true);
+            dayNightCycle.ResetTimer(true, nightTime);
         }
 
         // Updating the sky opacity and clamping it
@@ -523,8 +568,11 @@ public class Game1 : Game
     }
 
     #region Centers & Drop Shadow
-
-    // The function uses screen width and text/image width to center the image horizontally
+    /// <summary>
+    /// The function uses screen width and text/image width to center the image horizontally
+    /// </summary>
+    /// <param name="spriteWidth"> The width of the thing that is centered horizontally on the screen</param>
+    /// <returns>Returns an X position on screen of the rectangle/vector2 of the object</returns>
     private float WidthCenter(float spriteWidth)
     {
         float center;
@@ -535,7 +583,11 @@ public class Game1 : Game
         return center;
     }
     
-    // The function uses screen height and text/image height to center the image vertically
+    /// <summary>
+    /// The function uses screen height and text/image height to center the image vertically
+    /// </summary>
+    /// <param name="spriteHeight">The width of the thing that is centered vertically on the screen</param>
+    /// <returns>Returns a Y position on screen of the rectangle/vector2 of the object</returns>
     private float HeightCenter(float spriteHeight)
     {
         float center;
@@ -546,7 +598,14 @@ public class Game1 : Game
         return center;
     }
     
-    // Drawing text with drop shadow
+    /// <summary>
+    /// Drawing string with drop shadow
+    /// </summary>
+    /// <param name="font">SpriteFont of text</param>
+    /// <param name="text">Actual text/message</param>
+    /// <param name="pos">Vector 2 position of text on screen</param>
+    /// <param name="color">Color of actual text</param>
+    /// <param name="shadowColor">Color of drop shadow background</param>
     private void DrawWithShadow(SpriteFont font, string text, Vector2 pos, Color color, Color shadowColor)
     {
         _spriteBatch.DrawString(font, text, pos + DROP_SHADOW, shadowColor);
@@ -557,6 +616,10 @@ public class Game1 : Game
 
     #region Update objects
 
+    /// <summary>
+    /// Central method to keep track of all objects that are being updated
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void UpdateObjects(GameTime gameTime)
     {
         // Updating king tower, cannonballs and their explosions
@@ -574,6 +637,10 @@ public class Game1 : Game
         UpdateZombies(gameTime);
     }
 
+    /// <summary>
+    /// Updating king tower and checking for cannon launches
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void UpdateKing(GameTime gameTime)
     {
         kingTower.Update(gameTime, mouse, buildableRec, true, screenWidth, zombies);
@@ -582,6 +649,9 @@ public class Game1 : Game
         LaunchCannon();
     }
 
+    /// <summary>
+    /// Looping through cannonballs and updating the ones that are not null
+    /// </summary>
     private void UpdateCannonballs()
     {
         for (int i = 0; i < cannonballs.Length; i++)
@@ -593,6 +663,11 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Updating all Defences by looping through them. Method also checks if defence is a landmine to create an explosion
+    /// or if its an archer tower to shoot an arrow
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void UpdateTowers(GameTime gameTime)
     {
         // Looping through tower list to update
@@ -638,6 +713,9 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Looping through arrows and updating the ones that are not null
+    /// </summary>
     private void UpdateArrows()
     {
         for (int i = 0; i < arrows.Length; i++)
@@ -649,6 +727,10 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Looping through zombies and Updating them
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void UpdateZombies(GameTime gameTime)
     {
         for (int i = 0; i < zombies.Length; i++)
@@ -657,6 +739,10 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Updating explosion animations for the ones that are active
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void UpdateExplosions(GameTime gameTime)
     {
         for (int i = 0; i < explosionAnims.Length; i++)
@@ -705,7 +791,10 @@ public class Game1 : Game
     
     #region Game Main Methods
 
-    // Updating everything that is common to both levels
+    /// <summary>
+    /// Main method that updates ANYTHING to do with the actual gameplay
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in each update. Used to update most objects</param>
     private void UpdateGame(GameTime gameTime)
     {
         // Casting night sky every day night cycle
@@ -757,7 +846,9 @@ public class Game1 : Game
         Demolition();
     }
 
-    // Drawing everything in both levels
+    /// <summary>
+    /// Main method to draw ANYTHING to do with the actual gameplay
+    /// </summary>
     private void DrawGame()
     {
         // Drawing night sky overlay
@@ -825,6 +916,9 @@ public class Game1 : Game
 
     #region Collisions
 
+    /// <summary>
+    /// Central method that includes everything to do with object collisions
+    /// </summary>
     private void Collisions()
     {
         ZombieCollision();
@@ -832,6 +926,9 @@ public class Game1 : Game
         ArrowCollision();
     }
     
+    /// <summary>
+    /// Loops through zombie array and checks for collisions with defences, updates king health if king tower is attacked
+    /// </summary>
     private void ZombieCollision()
     {
         // Checking collision with each zombie
@@ -878,6 +975,10 @@ public class Game1 : Game
         }
     }
     
+    /// <summary>
+    /// Checking for cannonball collisions; checks for zombie collision with hitbox, plays explosion animation,
+    /// and deletes cannonball
+    /// </summary>
     private void CannonCollision()
     {
         // Checking collision for each cannonball
@@ -926,6 +1027,9 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Checking for arrow collisions with zombies: deals damage to zombies and deletes arrow
+    /// </summary>
     private void ArrowCollision()
     {
         for (int i = 0; i < arrows.Length; i++)
@@ -956,6 +1060,12 @@ public class Game1 : Game
 
     #endregion
 
+    /// <summary>
+    /// Locates the nearest zombie to a defence by looping through zombie list and comparing to see which is closest
+    /// </summary>
+    /// <param name="towerRec">Rectangle of the defence that checks proximity</param>
+    /// <param name="radius">The maximum distance the zombie can be from the tower to be tracked</param>
+    /// <returns>Returns the position of the closest zombie, returns (5000, 5000) if no zombies are in proxy</returns>
     private Vector2 LocateNearestZombie(Rectangle towerRec, float radius)
     {
         // Storing nearest distance and current distance
@@ -986,6 +1096,9 @@ public class Game1 : Game
         return closestZombie;
     }
     
+    /// <summary>
+    /// Launches cannonball. Checks if its currently day time and if any tower is currently being placed
+    /// </summary>
     private void LaunchCannon()
     {
         // Checking for king tower shots only at nighttime and when other stuff is not in preview
@@ -1006,6 +1119,11 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Checks if a defence can be placed in the current location without intersecting any other hitbox
+    /// </summary>
+    /// <param name="building">The defence that is being checked</param>
+    /// <returns></returns>
     private bool ValidPlacement(Rectangle building)
     {
         // Checking intersection with king tower
@@ -1026,41 +1144,54 @@ public class Game1 : Game
         return true;
     }
     
+    /// <summary>
+    /// Drawing anything to do with the top hud during gameplay
+    /// </summary>
     private void DrawHud()
     {
-        // Drawing day count, kill count, health with offset, and coins
+        // Drawing day count, kill count, time left in round, health with offset, and coins
         DrawWithShadow(HUDFont, dispDayCount, dayCountPos, Color.Yellow, Color.Black);
         DrawWithShadow(HUDFont, dispMobsKilled, mobsKilledPos, Color.IndianRed, Color.Black);
+        // ZOMBIE WAVES MODIFICATION
+        DrawWithShadow(HUDFont, $"{(int)dayNightCycle.GetTimeRemaining() / 1000}", timeLeftDispPos, 
+                       Color.White, Color.Black);
+        
         DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
         DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
         
         // Drawing wall tower preview options
         for (int i = 0; i < wallPrevs.Length; i++)
         {
-            DrawWithPrice(wallPrevs[i], Wall.GetDefaultPrice(i));
+            DrawButtonWithPrice(wallPrevs[i], Wall.GetDefaultPrice(i));
         }
         
         // Drawing archer tower preview options
         for (int i = 0; i < archerPrevs.Length; i++)
         {
-            DrawWithPrice(archerPrevs[i], ArcherTower.GetDefaultPrice(i));
+            DrawButtonWithPrice(archerPrevs[i], ArcherTower.GetDefaultPrice(i));
         }
         
         // Drawing landmine tower preview with price
-        DrawWithPrice(landminePrev, Landmine.GetDefaultPrice());
+        DrawButtonWithPrice(landminePrev, Landmine.GetDefaultPrice());
         
         // Drawing demolish button
         demolishBuilding.Draw(_spriteBatch);
     }
     
-    // Meant for drawing preview buttons with prices on them
-    private void DrawWithPrice(Button button, int price)
+    /// <summary>
+    /// Meant for drawing preview buttons with prices on them
+    /// </summary>
+    /// <param name="button">The button that has the price drawn on it</param>
+    /// <param name="price">The price of the item that the button represents. > 0</param>
+    private void DrawButtonWithPrice(Button button, int price)
     {
         button.Draw(_spriteBatch);
         _spriteBatch.DrawString(smallFont, $"${price}", button.Rec.Location.ToVector2(), Color. Gold);
     }
     
-    // Checking for demolition
+    /// <summary>
+    /// Checking if any defence was clicked during demolition. If it was, defence is deleted
+    /// </summary>
     private void Demolition()
     {
         // Proceeding if currently demolishing
@@ -1087,9 +1218,48 @@ public class Game1 : Game
         }
     }
 
+    #region ZOMBIE WAVES MODIFICATION
+
+    /// <summary>
+    /// Increases zombie HP, amount of zombies, and night time length every night cycle
+    /// </summary>
+    private void ZombieWaves()
+    {
+        // Modifying max zombie count with respect to how many nights passed
+        maxZombies = 10 + Convert.ToInt32(Math.Pow(dayCount, 1.2) * 2);
+
+        // Adding 2 more seconds to each night that passes
+        // Timer reset happens in day and night cycle
+        nightTime += 2000;
+        
+        // Spawning zombies when its nighttime
+        SpawnZombies();
+        
+        // Adding to zombie HP every 5 nights
+        if (dayCount % 5 == 0)
+        {
+            zombieMaxHP += 5;
+        }
+    }
+
+    /// <summary>
+    /// Spawns all zombies of maxZombies length
+    /// </summary>
+    private void SpawnZombies()
+    {
+        for (int i = 0; i < maxZombies; i++)
+        {
+            zombies[i].Spawn(gameState, zombieMaxHP);
+        }
+    }
+
+    #endregion
+
     #region Button Actions
 
-    // Action for level 1 button click
+    /// <summary>
+    /// Sends player to the level 1 game mode and prepares game
+    /// </summary>
     private void Level1Button()
     {
         // Setting game state to level 1
@@ -1104,6 +1274,9 @@ public class Game1 : Game
     }
 
     // Action for level 2 button click
+    /// <summary>
+    /// Sends player to lvl 2 gamemode and preps game
+    /// </summary>
     private void Level2Button()
     {
         // Setting game state to level 2
@@ -1111,15 +1284,11 @@ public class Game1 : Game
         
         // Updating king position
         kingTower.TranslateTo(lvl2KingPos);
-        
-        // TESTING
-        for (int i = 0; i < zombies.Length; i++)
-        {
-            zombies[i].Spawn(LEVEL_2, 20);
-        }
     }
 
-    // Checks if any tower is being placed. True if no defences are in preview
+    /// <summary>
+    /// Checks if any tower is being placed. True if no defences are in preview
+    /// </summary>
     private void CheckIfAnythingInPrev()
     {
         // Checking if any tower is currently being placed
@@ -1145,6 +1314,9 @@ public class Game1 : Game
         isAnyInPreview = false;
     }
 
+    /// <summary>
+    /// Deselects all buttons
+    /// </summary>
     private void AllButtonDeselect()
     {
         // Deselecting button
@@ -1161,6 +1333,10 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Action for when a button is clicked to place a wall
+    /// </summary>
+    /// <param name="lvl">The lvl of the wall that is being placed (between 1 and 2)</param>
     private void WallPrev(byte lvl)
     {
         // Checking if any tower is currently being placed
@@ -1180,6 +1356,10 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Action for when a button is clicked to place an archer tower
+    /// </summary>
+    /// <param name="lvl">The lvl of the archer tower that is being placed (between 1 and 3)</param>
     private void ArchPrev(byte lvl)
     {
         // Checking if any tower is currently being placed
@@ -1203,6 +1383,9 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Action for when a button is clicked to place a landmine
+    /// </summary>
     private void LandminePrev()
     {
         // Checking if any tower is currently being placed
@@ -1222,6 +1405,9 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Toggles demolishing state if button is clicked
+    /// </summary>
     private void DemolishButton()
     {
         if (!demolishing)
