@@ -78,10 +78,10 @@ public class MessageManager
     /// </summary>
     /// <param name="message">The actual message that is sent</param>
     /// <param name="color">The color of the message</param>
-    public void DisplayMessage(string message, Color color)
+    public void DisplayMessage(string message, Color color, Color dropShadowColor)
     {
         // Inserting new message at the top of the list
-        messages.Insert(0, new Message(font, message, firstPos, color));
+        messages.Insert(0, new Message(font, message, firstPos, color, dropShadowColor));
         
         // Translating all messages upwards
         for (int i = 0; i < messages.Count; i++)

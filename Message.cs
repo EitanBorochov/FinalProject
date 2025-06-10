@@ -2,7 +2,7 @@
 // File Name: Message.cs
 // Project Name: FinalProject
 // Creation Date: June 8th 2025
-// Modification Date: June 9th 2025
+// Modification Date: June 10th 2025
 // Description: Creates a message to be displayed on screen when an action is done
 
 using System;
@@ -35,18 +35,20 @@ public class Message
     
     // Storing color of message
     private Color color;
+    private Color dropShadowColor;
 
     #endregion
 
     #region Constructor
 
-    public Message(SpriteFont font, string message, Vector2 position, Color color)
+    public Message(SpriteFont font, string message, Vector2 position, Color color, Color dropShadowColor)
     {
         // Storing input parameters
         this.font = font;
         this.message = message;
         this.position = position;
         this.color = color;
+        this.dropShadowColor = dropShadowColor;
     }
 
     #endregion
@@ -111,7 +113,7 @@ public class Message
     public void Draw(SpriteBatch spriteBatch)
     {
         // Drawing message with drop shadow
-        spriteBatch.DrawString(font, message, position + DROP_SHADOW, Color.Black * opacity);
+        spriteBatch.DrawString(font, message, position + DROP_SHADOW, dropShadowColor * opacity);
         spriteBatch.DrawString(font, message, position, color * opacity);
     }
 

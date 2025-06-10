@@ -253,17 +253,17 @@ public class Defence
                     Game1.PlaySound(Game1.defencePlacedSnd, 0.5f);
 
                     // Sending feedback to user, wall placed
-                    Game1.messageManager.DisplayMessage($"DEFENCE PLACED", Color.Green);
+                    Game1.messageManager.DisplayMessage($"DEFENCE PLACED", Color.Green, Color.Black);
                 }
                 else if (!isValid)
                 {
                     // Sending feedback to user, invalid location
-                    Game1.messageManager.DisplayMessage("INVALID PLACEMENT", Color.Red);
+                    Game1.messageManager.DisplayMessage("INVALID PLACEMENT", Color.Red, Color.Black);
                 }
                 else if (Game1.Coins < price)
                 {
                     // Sending feedback to user, not enough money
-                    Game1.messageManager.DisplayMessage("NOT ENOUGH MONEY", Color.Red);
+                    Game1.messageManager.DisplayMessage("NOT ENOUGH MONEY", Color.Red, Color.Black);
                 }
             }
         }

@@ -35,10 +35,6 @@ public class Game1 : Game
     private MouseState mouse;
     private MouseState prevMouse;
     
-    // Storing keyboard input
-    private KeyboardState kb;
-    private KeyboardState prevKb;
-    
     // Storing a single pixel texture to draw a simple solid color
     public static Texture2D pixelImg;
 
@@ -300,7 +296,7 @@ public class Game1 : Game
         platform = new Platform(platformImg, screenWidth, screenHeight);
         
         // Loading message manager
-        messageManager = new MessageManager(smallFont, new Vector2(0, platform.Rec.Top - 150));
+        messageManager = new MessageManager(smallFont, new Vector2(10, platform.Rec.Top - 150));
         
         // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
         Texture2D kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
@@ -457,10 +453,6 @@ public class Game1 : Game
         // Updating mouse input
         prevMouse = mouse;
         mouse = Mouse.GetState();
-        
-        // Updating keyboard input
-        prevKb = kb;
-        kb = Keyboard.GetState();
         
         // Storing time passed
         timePassedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -919,20 +911,6 @@ public class Game1 : Game
         // Updating coins display and centering it
         dispCoins = $"${coins}";
         coinsPos.X = WidthCenter(HUDFont.MeasureString(dispCoins).X);
-
-        // SPAWNING ZOMBIES FOR BETA TESTING
-        if (kb.IsKeyDown(Keys.K) && !prevKb.IsKeyDown(Keys.K))
-        {
-            // Checking for empty slot
-            for (int i = 0; i < zombies.Length; i++)
-            {
-                zombies[i].Spawn(gameState, 20);
-            }
-        }
-        else if (kb.IsKeyDown(Keys.M) && !prevKb.IsKeyDown(Keys.M))
-        {
-            messageManager.DisplayMessage("TESTING", Color.White);
-        }
         
         // Updating demolish button and checking for demolition
         demolishBuilding.Update(mouse, prevMouse);
@@ -941,11 +919,11 @@ public class Game1 : Game
         // Displaying how many zombies were killed per update
         if (zombiesKilledPerUpdate == 1)
         {
-            messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.DarkGreen);
+            messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.DarkGreen, Color.White);
         }
         else if (zombiesKilledPerUpdate > 1)
         {
-            messageManager.DisplayMessage($"{zombiesKilledPerUpdate} ZOMBIES KILLED", Color.DarkGreen);
+            messageManager.DisplayMessage($"{zombiesKilledPerUpdate} ZOMBIES KILLED", Color.DarkGreen, Color.White);
         }
     }
 
@@ -1319,7 +1297,7 @@ public class Game1 : Game
                         int refund = (int)(defences[i].Price * defences[i].HPPercentage);
                         
                         // displaying message to user about demolish
-                        messageManager.DisplayMessage($"DEFENCE DESTROYED | Refund: {refund}", Color.Red);
+                        messageManager.DisplayMessage($"DEFENCE DESTROYED | Refund: {refund}", Color.Red, Color.Black);
                         
                         // Destroying wall and giving refund
                         coins += refund;
@@ -1344,7 +1322,11 @@ public class Game1 : Game
     {
         // Modifying max zombie count with respect to how many nights passed
         maxZombies = 10 + Convert.ToInt32(Math.Pow(dayCount, 1.2) * 2);
-
+        if (maxZombies > 100)
+        {
+            maxZombies = 100;
+        }
+        
         // Adding 2 more seconds to each night that passes
         // Timer reset happens in day and night cycle
         nightTime += 2000;
