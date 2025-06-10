@@ -35,6 +35,10 @@ public class Game1 : Game
     private MouseState mouse;
     private MouseState prevMouse;
     
+    // Storing keyboard input
+    private KeyboardState kb;
+    private KeyboardState prevKb;
+    
     // Storing a single pixel texture to draw a simple solid color
     public static Texture2D pixelImg;
 
@@ -82,6 +86,10 @@ public class Game1 : Game
     // Storing title image and rectangle
     private Texture2D titleImg;
     Rectangle titleRec;
+    
+    // Storing array of tutorial image slides and index of current slide
+    private Texture2D[] tutorialImgs = new Texture2D[5];
+    private byte currentSlide = 0;
     
     #endregion
 
@@ -295,6 +303,12 @@ public class Game1 : Game
         Texture2D platformImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Brick");
         platform = new Platform(platformImg, screenWidth, screenHeight);
         
+        // Loading tutorial image slides
+        for (int i = 0; i < tutorialImgs.Length; i++)
+        {
+            tutorialImgs[i] = Content.Load<Texture2D>($"Images/Sprites/UI/Tutorial/Slide{i + 1}");
+        }
+        
         // Loading message manager
         messageManager = new MessageManager(smallFont, new Vector2(10, platform.Rec.Top - 150));
         
@@ -316,7 +330,7 @@ public class Game1 : Game
         settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
         tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
         
-        // Loading all buttons
+        // Loading all menu buttons
         level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
                                     level1Img.Width, level1Img.Height, Level1Button);
         level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
@@ -324,7 +338,7 @@ public class Game1 : Game
         settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5f, settingsImg.Height / 5f, 
                             () => gameState = SETTINGS);
         tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5f, 50, 
-            tutorialBtnImg.Width / 5f, tutorialBtnImg.Height / 5f, () => gameState = TUTORIAL);
+            tutorialBtnImg.Width / 5f, tutorialBtnImg.Height / 5f, TutorialButton);
         
         // Loading title image and rectangle
         titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
@@ -454,6 +468,10 @@ public class Game1 : Game
         prevMouse = mouse;
         mouse = Mouse.GetState();
         
+        // Updating keyboard input
+        prevKb = kb;
+        kb = Keyboard.GetState();
+        
         // Storing time passed
         timePassedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
@@ -489,6 +507,18 @@ public class Game1 : Game
                 break;
             
             case TUTORIAL:
+                
+                // Checking for click to move slideshow:
+                if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
+                {
+                    currentSlide++;
+                }
+                
+                // Checking if slideshow is over
+                if (currentSlide == 5)
+                {
+                    gameState = MENU;
+                }
                 
                 break;
             
@@ -548,6 +578,8 @@ public class Game1 : Game
                 break;
             
             case TUTORIAL:
+                // Drawing current slide. Using bgRec since it just fills the whole screen
+                spriteBatch.Draw(tutorialImgs[currentSlide], bgRec, Color.White);
                 
                 break;
             
@@ -1294,6 +1326,7 @@ public class Game1 : Game
                 {
                     if (defences[i] != null && defences[i].Hitbox.Contains(mouse.Position))
                     {
+                        // Calculating refund
                         int refund = (int)(defences[i].Price * defences[i].HPPercentage);
                         
                         // displaying message to user about demolish
@@ -1376,8 +1409,7 @@ public class Game1 : Game
         
         isAnyInPreview = false;
     }
-
-    #region Button Actions
+    
     /// <summary>
     /// Deselects all buttons
     /// </summary>
@@ -1395,6 +1427,17 @@ public class Game1 : Game
                 defences.RemoveAt(i);
             }
         }
+    }
+
+    #region Button Actions
+
+    /// <summary>
+    /// Setting game state to tutorial and reseting slideshow
+    /// </summary>
+    private void TutorialButton()
+    {
+        gameState = TUTORIAL;
+        currentSlide = 0;
     }
     
     /// <summary>

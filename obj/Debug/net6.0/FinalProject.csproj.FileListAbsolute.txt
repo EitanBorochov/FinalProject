@@ -302,3 +302,8 @@ C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Aud
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/Gameplay/Blood/Blood3.xnb
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/Gameplay/Blood/Blood4.xnb
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/Gameplay/Blood/Blood5.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide1.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide2.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide3.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide4.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide5.xnb

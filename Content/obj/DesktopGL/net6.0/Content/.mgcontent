@@ -58,9 +58,19 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/SettingsButton.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Title.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TrashCan.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Tutorial/Slide1.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Tutorial/Slide2.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Tutorial/Slide3.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Tutorial/Slide4.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Tutorial/Slide5.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
