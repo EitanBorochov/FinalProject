@@ -203,7 +203,10 @@ public class Game1 : Game
     private Button selBut = null;
     
     // Storing button to demolish building
-    private Button demolishBuilding; 
+    private Button demolishButton; 
+    
+    // Storing fast forward button to skip the day
+    private Button fastForwardButton;
     
     // Storing demolishing bool (if currently in demolishing or not)
     private bool demolishing;
@@ -445,11 +448,16 @@ public class Game1 : Game
         
         // Constructing demolish building button and image
         Texture2D demolishImg = Content.Load<Texture2D>("Images/Sprites/UI/TrashCan");
-        demolishBuilding = new Button(demolishImg, 
+        demolishButton = new Button(demolishImg, 
                                       screenWidth - PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height), 
                                       wallPrevs[0].Rec.Bottom + 5, 
                                       PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height),
                                       PREVIEW_SIZE, DemolishButton);
+
+        Texture2D fastForwardImg = Content.Load<Texture2D>("Images/Sprites/UI/FastForward");
+        fastForwardButton = new Button(fastForwardImg, screenWidth - PREVIEW_SIZE - 5, 
+                                       demolishButton.Rec.Y + PREVIEW_SIZE + 5,
+                                       PREVIEW_SIZE, PREVIEW_SIZE, FastForwardButton);
             
         // Loading buildable rectangle to be on the floor as a preview of where you can build
         buildableRec = new Rectangle((int)CenterWidth(screenWidth / 2), platform.Rec.Y, screenWidth / 2,
@@ -902,6 +910,8 @@ public class Game1 : Game
         {
             selBut = landminePrev;
         }
+        demolishButton.Update(mouse, prevMouse);
+        fastForwardButton.Update(mouse, prevMouse);
     }
 
     /// <summary>
@@ -979,8 +989,7 @@ public class Game1 : Game
         dispCoins = $"${coins}";
         coinsPos.X = CenterWidth(HUDFont.MeasureString(dispCoins).X);
         
-        // Updating demolish button and checking for demolition
-        demolishBuilding.Update(mouse, prevMouse);
+        // Updating checking for demolition
         Demolition();
         
         // Displaying how many zombies were killed per update
@@ -1315,8 +1324,9 @@ public class Game1 : Game
         DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
         DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
         
-        // Drawing demolish button
-        demolishBuilding.Draw(spriteBatch, mouse.Position);
+        // Drawing demolish button and fast forward button
+        demolishButton.Draw(spriteBatch, mouse.Position);
+        fastForwardButton.Draw(spriteBatch, mouse.Position);
         
         // Drawing wall tower preview options
         for (int i = 0; i < wallPrevs.Length; i++)
@@ -1495,6 +1505,19 @@ public class Game1 : Game
         
         // Shuffling music song
         ShuffleMusic();
+    }
+
+    /// <summary>
+    /// Skipping the day
+    /// </summary>
+    private void FastForwardButton()
+    {
+        // Making sure its daytime
+        if (skyOpacity == 0)
+        {
+            // Finishing day night timer
+            dayNightCycle.SetTimePassed(nightTime);
+        }
     }
     
     /// <summary>
