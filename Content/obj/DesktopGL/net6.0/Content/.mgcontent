@@ -17,6 +17,7 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/SmallFont.spritefont</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/GameBackground.png</File>
+    <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/GameoverBg.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/MenuBackground.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Backgrounds/PixelNightSky.png</File>
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Archer/ArcherTowerLvl1.png</File>
@@ -66,6 +67,7 @@
     <File>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

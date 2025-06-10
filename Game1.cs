@@ -71,6 +71,13 @@ public class Game1 : Game
     private Texture2D bgImg;
     private Rectangle bgRec;
     
+    // Storing background image for game over screen
+    private Texture2D gameoverImg;
+    
+    // Storing position of kills and days in game over
+    private Vector2 gameoverKillPos;
+    private Vector2 gameoverDayPos;
+    
     // Storing all button images
     private Texture2D level1Img;
     private Texture2D level2Img;
@@ -290,6 +297,9 @@ public class Game1 : Game
         // Loading background image and rectangle
         bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
         bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
+        
+        // Loading game over background
+        gameoverImg = Content.Load<Texture2D>("Images/Backgrounds/GameoverBg");
         
         // Loading game background
         gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
@@ -524,6 +534,11 @@ public class Game1 : Game
             
             case ENDGAME:
                 
+                // Checking for enter to go back to menu
+                if (kb.IsKeyDown(Keys.Enter) && !prevKb.IsKeyDown(Keys.Enter))
+                {
+                    gameState = MENU;
+                }
                 break;
         }
 
@@ -585,7 +600,11 @@ public class Game1 : Game
             
             case ENDGAME:
                 // Drawing background
-                spriteBatch.Draw(bgImg, bgRec, Color.White);
+                spriteBatch.Draw(gameoverImg, bgRec, Color.White);
+                
+                // Drawing final stats
+                DrawWithShadow(HUDFont, dispMobsKilled, gameoverKillPos, Color.Red, Color.Black);
+                DrawWithShadow(HUDFont, dispDayCount, gameoverDayPos, Color.Yellow, Color.Black);
                 
                 break;
         }
@@ -740,7 +759,16 @@ public class Game1 : Game
     /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void UpdateKing(GameTime gameTime)
     {
-        kingTower.Update(gameTime, mouse, buildableRec, true, screenWidth, zombies);
+        if (kingTower.Update(gameTime, mouse, buildableRec, true, screenWidth, zombies))
+        {
+            gameState = ENDGAME;
+            
+            // Loading positions of kill and day counts in game over screen
+            gameoverKillPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispMobsKilled).X) - 500,
+                HeightCenter(HUDFont.MeasureString(dispMobsKilled).Y));
+            gameoverDayPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispDayCount).X) + 500,
+                HeightCenter(HUDFont.MeasureString(dispDayCount).Y));
+        }
     }
 
     /// <summary>
@@ -951,7 +979,7 @@ public class Game1 : Game
         // Displaying how many zombies were killed per update
         if (zombiesKilledPerUpdate == 1)
         {
-            messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.DarkGreen, Color.White);
+            messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.Green, Color.Black);
         }
         else if (zombiesKilledPerUpdate > 1)
         {

@@ -307,3 +307,4 @@ C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Aud
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide3.xnb
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide4.xnb
 /Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Sprites/UI/Tutorial/Slide5.xnb
+/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/bin/Debug/net6.0/Content/Images/Backgrounds/GameoverBg.xnb
