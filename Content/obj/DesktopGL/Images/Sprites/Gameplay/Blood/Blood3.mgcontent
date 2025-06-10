@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Blood/Blood3.png</SourceFile>
-  <SourceTime>2025-06-09T20:35:13.4135133-04:00</SourceTime>
-  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/Gameplay/Blood/Blood3.xnb</DestFile>
-  <DestTime>2025-06-10T09:18:52.973073-04:00</DestTime>
+  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Blood/Blood3.png</SourceFile>
+  <SourceTime>2025-06-08T15:39:19.7960543-04:00</SourceTime>
+  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/Gameplay/Blood/Blood3.xnb</DestFile>
+  <DestTime>2025-06-10T18:11:21.3283166-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

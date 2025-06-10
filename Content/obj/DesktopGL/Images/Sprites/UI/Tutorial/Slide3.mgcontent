@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Tutorial/Slide3.png</SourceFile>
-  <SourceTime>2025-06-10T09:12:15.1356422-04:00</SourceTime>
-  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/UI/Tutorial/Slide3.xnb</DestFile>
-  <DestTime>2025-06-10T09:18:54.4233801-04:00</DestTime>
+  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/Tutorial/Slide3.png</SourceFile>
+  <SourceTime>2025-06-10T17:39:17.8844421-04:00</SourceTime>
+  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Images/Sprites/UI/Tutorial/Slide3.xnb</DestFile>
+  <DestTime>2025-06-10T18:11:21.9282562-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

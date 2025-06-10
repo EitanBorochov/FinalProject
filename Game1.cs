@@ -54,6 +54,9 @@ public class Game1 : Game
     
     // Storing current game state
     private byte gameState = MENU;
+    
+    // Storing current game
+    private byte currentGame;
 
     #endregion
 
@@ -74,21 +77,19 @@ public class Game1 : Game
     // Storing background image for game over screen
     private Texture2D gameoverImg;
     
+    // Storing background image for pause screen
+    private Texture2D pauseImg;
+    
     // Storing position of kills and days in game over
     private Vector2 gameoverKillPos;
     private Vector2 gameoverDayPos;
-    
-    // Storing all button images
-    private Texture2D level1Img;
-    private Texture2D level2Img;
-    private Texture2D settingsImg;
-    private Texture2D tutorialBtnImg;
     
     // Storing all buttons
     private Button level1Button;
     private Button level2Button;
     private Button settingsButton;
     private Button tutorialButton;
+    private Button menuButton;
     
     // Storing title image and rectangle
     private Texture2D titleImg;
@@ -304,8 +305,9 @@ public class Game1 : Game
         bgImg = Content.Load<Texture2D>("Images/Backgrounds/MenuBackground");
         bgRec = new Rectangle(0, 0, screenWidth, screenHeight);
         
-        // Loading game over background
+        // Loading game over and pause backgrounds
         gameoverImg = Content.Load<Texture2D>("Images/Backgrounds/GameoverBg");
+        pauseImg = Content.Load<Texture2D>("Images/Backgrounds/PauseBackground");
         
         // Loading game background
         gameBgImg = Content.Load<Texture2D>("Images/Backgrounds/GameBackground");
@@ -341,10 +343,11 @@ public class Game1 : Game
                                     platform.Rec.Y - kingTower.Hitbox.Height + 10);
 
         // Loading button images
-        level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
-        level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
-        settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
-        tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
+        Texture2D level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
+        Texture2D level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
+        Texture2D settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
+        Texture2D tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
+        Texture2D menuBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/HomeButton");
         
         // Loading all menu buttons
         level1Button = new Button(level1Img, (int)CenterWidth(level1Img.Width) - 400, screenHeight - 300, 
@@ -354,7 +357,9 @@ public class Game1 : Game
         settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5f, settingsImg.Height / 5f, 
                             () => gameState = SETTINGS);
         tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5f, 50, 
-            tutorialBtnImg.Width / 5f, tutorialBtnImg.Height / 5f, TutorialButton);
+                                    tutorialBtnImg.Width / 5f, tutorialBtnImg.Height / 5f, TutorialButton);
+        menuButton = new Button(menuBtnImg, screenWidth - 50 - menuBtnImg.Width / 5f, 50,
+                                menuBtnImg.Width / 5f, menuBtnImg.Height / 5f, () => gameState = MENU);
         
         // Loading title image and rectangle
         titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
@@ -391,11 +396,8 @@ public class Game1 : Game
                           platform.Rec.Y);
         }
         
-        // Loading positions of HUD objects
-        dayCountPos = new Vector2(5, 5);
-        mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
-        timeLeftDispPos = new Vector2(5, mobsKilledPos.Y + HUDFont.MeasureString(dispDayCount).Y);
-
+        // Loading positions of HUD objects that do not move (everything but kill and day count)
+        timeLeftDispPos = new Vector2(5, 5 + (5 + HUDFont.MeasureString(dispDayCount).Y) * 2);
         kingHPPos = new Vector2(CenterWidth(HUDFont.MeasureString(dispKingHP).X), 5);
         coinsPos = new Vector2(CenterWidth(HUDFont.MeasureString(dispCoins).X),
             5 + HUDFont.MeasureString(dispKingHP).Y);
@@ -524,7 +526,21 @@ public class Game1 : Game
                 break;
             
             case PAUSE:
+                // Updating button to go back to menu
+                menuButton.Update(mouse, prevMouse);
                 
+                // Checking for enter to go back to game
+                if (kb.IsKeyDown(Keys.Enter) && !prevKb.IsKeyDown(Keys.Enter))
+                {
+                    // Resetting HUD positions
+                    ResetKillAndDayCountPos();
+                    
+                    // Setting game state to current game
+                    gameState = currentGame;
+                    
+                    // Shuffling music
+                    ShuffleMusic();
+                }
                 break;
             
             case SETTINGS:
@@ -597,8 +613,14 @@ public class Game1 : Game
             
             case PAUSE:
                 // Drawing background
-                spriteBatch.Draw(bgImg, bgRec, Color.White);
+                spriteBatch.Draw(pauseImg, bgRec, Color.White);
                 
+                // Drawing button to go back to menu
+                menuButton.Draw(spriteBatch, mouse.Position);
+                
+                // Drawing current stats
+                DrawWithShadow(HUDFont, dispMobsKilled, mobsKilledPos, Color.IndianRed, Color.Black);
+                DrawWithShadow(HUDFont, dispDayCount, dayCountPos, Color.Yellow, Color.Black);
                 break;
             
             case SETTINGS:
@@ -618,7 +640,7 @@ public class Game1 : Game
                 spriteBatch.Draw(gameoverImg, bgRec, Color.White);
                 
                 // Drawing final stats
-                DrawWithShadow(HUDFont, dispMobsKilled, gameoverKillPos, Color.Red, Color.Black);
+                DrawWithShadow(HUDFont, dispMobsKilled, gameoverKillPos, Color.IndianRed, Color.Black);
                 DrawWithShadow(HUDFont, dispDayCount, gameoverDayPos, Color.Yellow, Color.Black);
                 
                 break;
@@ -952,9 +974,6 @@ public class Game1 : Game
     /// <param name="gameTime">Keeps track of time passed in each update. Used to update most objects</param>
     private void UpdateGame(GameTime gameTime)
     {
-        // resetting zombie kill count per update
-        zombiesKilledPerUpdate = 0;
-        
         // Casting night sky every day night cycle
         DayNightCycle(gameTime);
         
@@ -991,15 +1010,14 @@ public class Game1 : Game
         
         // Updating checking for demolition
         Demolition();
-        
+
         // Displaying how many zombies were killed per update
-        if (zombiesKilledPerUpdate == 1)
+        DisplayZombiesKilledPerUpdate();
+        
+        // Checking for game pause
+        if (kb.IsKeyDown(Keys.Escape) && !prevKb.IsKeyDown(Keys.Escape))
         {
-            messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.Green, Color.Black);
-        }
-        else if (zombiesKilledPerUpdate > 1)
-        {
-            messageManager.DisplayMessage($"{zombiesKilledPerUpdate} ZOMBIES KILLED", Color.DarkGreen, Color.White);
+            PauseGame();
         }
     }
 
@@ -1222,6 +1240,31 @@ public class Game1 : Game
     }
 
     #endregion
+
+    /// <summary>
+    /// Sending a message of how many zombies killed per update, if any
+    /// </summary>
+    private void DisplayZombiesKilledPerUpdate()
+    {
+        switch (zombiesKilledPerUpdate)
+        {
+            case 1:
+                messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.Green, Color.Black);
+                
+                // resetting zombie kill count per update
+                zombiesKilledPerUpdate = 0;
+                
+                break;
+            
+            case > 1:
+                messageManager.DisplayMessage($"{zombiesKilledPerUpdate} ZOMBIES KILLED", Color.DarkGreen, Color.White);
+                
+                // resetting zombie kill count per update
+                zombiesKilledPerUpdate = 0;
+                
+                break;
+        }
+    }
 
     /// <summary>
     /// Locates the nearest zombie to a defence by looping through zombie list and comparing to see which is closest
@@ -1475,6 +1518,27 @@ public class Game1 : Game
     }
 
     /// <summary>
+    /// Moving to paused gameState
+    /// </summary>
+    private void PauseGame()
+    {
+        // Storing current game level
+        currentGame = gameState;
+        
+        // Setting kill and day count display positions to be in the center of the screen
+        mobsKilledPos.X = CenterWidth(HUDFont.MeasureString(dispMobsKilled).X);
+        mobsKilledPos.Y = CenterHeight(HUDFont.MeasureString(dispMobsKilled).Y) + HUDFont.MeasureString(dispMobsKilled).Y;
+        dayCountPos.X = CenterWidth(HUDFont.MeasureString(dispDayCount).X);
+        dayCountPos.Y = CenterHeight(HUDFont.MeasureString(dispDayCount).Y) - HUDFont.MeasureString(dispDayCount).Y;
+        
+        // Setting game state to PAUSE
+        gameState = PAUSE;
+        
+        // Shuffling music
+        ShuffleMusic();
+    }
+
+    /// <summary>
     /// Resetting anything that changed through out the night
     /// </summary>
     private void ResetGame()
@@ -1486,11 +1550,23 @@ public class Game1 : Game
         coins = INITIAL_COINS;
         zombieHP = INITIAL_ZOMBIE_HP;
         
+        ResetKillAndDayCountPos();
+        
         // Clearing defences list
         defences.Clear();
         
         // Resetting king tower HP
         kingTower.ResetHP();
+    }
+
+    /// <summary>
+    /// As the name suggests, reseting kill and day count display positions when in game
+    /// </summary>
+    private void ResetKillAndDayCountPos()
+    {
+        // Resetting day and kill count display positions
+        dayCountPos = new Vector2(5, 5);
+        mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
     }
 
     #region Button Actions
