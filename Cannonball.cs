@@ -15,6 +15,8 @@ namespace FinalProject;
 
 public class Cannonball : Projectile
 {
+    #region Attributes
+
     // Storing a constant cannonball speed
     public const float LAUNCH_SPEED = 1000f;
     
@@ -23,19 +25,20 @@ public class Cannonball : Projectile
     
     // Storing collision hitbox that is double the size by default
     private Rectangle hitbox;
+
+    #endregion
     
     #region Constructor
 
-    public Cannonball(Rectangle rec, Vector2 mousePos, bool highAngle, Texture2D image, int damage, int hitboxMultiplier, float maxMag) : 
-            base(rec, LAUNCH_SPEED, mousePos, highAngle, image, damage, maxMag)
+    public Cannonball(Rectangle rec, Vector2 mousePos, Texture2D image, int damage, int hitboxMultiplier, float maxMag) : 
+            base(rec, LAUNCH_SPEED, mousePos, image, damage, maxMag)
     {
         // Calculating hitbox
         hitbox = new Rectangle(rec.X - (rec.Width * (hitboxMultiplier - 1) ) / 2, rec.Y, rec.Width * hitboxMultiplier, rec.Height);
     }
 
     // Creating new constructor only for landmine explosions that just need the cannonball to spawn and explode immediately
-    public Cannonball(Rectangle rec, Texture2D img, int damage, int hitboxMultiplier) : base(rec, LAUNCH_SPEED, rec.Location.ToVector2(),
-        false, img, damage, 100)
+    public Cannonball(Rectangle rec, Texture2D img, int damage, int hitboxMultiplier) : base(rec, LAUNCH_SPEED, rec.Location.ToVector2(), img, damage, 100)
     {
         // Calculating hitbox
         hitbox = new Rectangle(rec.X - (rec.Width * (hitboxMultiplier - 1) ) / 2, rec.Y, rec.Width * hitboxMultiplier, rec.Height);
@@ -45,7 +48,9 @@ public class Cannonball : Projectile
 
     #region Getters & Setters
 
-    // Returning hitbox
+    /// <summary>
+    /// Hitbox property to be modified
+    /// </summary>
     public Rectangle Hitbox
     {
         get => hitbox;
@@ -56,9 +61,13 @@ public class Cannonball : Projectile
     
     #region Behaviours
     
-    public override void Update(float timePassed)
+    /// <summary>
+    /// Translates hitbox. Base update
+    /// </summary>
+    /// <param name="timePassed">time passed in seconds</param>
+    public override void Update(float timePassedSeconds)
     {
-        base.Update(timePassed);
+        base.Update(timePassedSeconds);
         hitbox.Location = new Point(rec.X - (hitbox.Width - rec.Width) / 2, rec.Y);
     }
 

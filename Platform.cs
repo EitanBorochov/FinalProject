@@ -2,7 +2,7 @@
 // File Name: Platform.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: May 12th 2025
+// Modification Date: June 9th 2025 
 // Description: Handles collision, properties, and drawing of platform
 
 using System;
@@ -57,22 +57,25 @@ public class Platform
 
     #region Getters & Setters
 
-    // Getting the platform rec for calculations or collisions
-    public Rectangle Rec
-    {
-        get => platformRec;
-    }
+    /// <summary>
+    /// Getting the platform rec for calculations or collisions
+    /// </summary>
+    public Rectangle Rec => platformRec;
 
     #endregion
 
     #region Behaviours
 
-    public void Draw(SpriteBatch _spriteBatch)
+    /// <summary>
+    /// Draws each brick separately in a loop
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+    public void Draw(SpriteBatch spriteBatch)
     {
         // Drawing platform
-        for (int i = 0; i < brickRecs.Length; i++)
+        foreach (Rectangle brickRec in brickRecs)
         {
-            _spriteBatch.Draw(brickImg, brickRecs[i], Color.White);
+            spriteBatch.Draw(brickImg, brickRec, Color.White);
         }
     }
 

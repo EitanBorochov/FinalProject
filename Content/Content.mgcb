@@ -61,6 +61,12 @@
 /processorParam:Quality=Best
 /build:Audio/Sounds/ZombieHit.wav
 
+#begin Audio/Sounds/ZombieSpawn.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Sounds/ZombieSpawn.wav
+
 #begin Fonts/HUDFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

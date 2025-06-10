@@ -2,7 +2,7 @@
 // File Name: Button.cs
 // Project Name: FinalProject
 // Creation Date: May 13th 2025
-// Modification Date: June 8th, 2025
+// Modification Date: June 9th, 2025
 // Description: Creates a button object that handles its interactions
 
 using System;
@@ -67,21 +67,37 @@ public class Button
 
     #region Getters & Setters
 
-    // Rectangle retriever
-    public Rectangle Rec
+    /// <summary>
+    /// Returns rectangle of button
+    /// </summary>
+    public Rectangle Rec => buttonRec;
+    
+    /// <summary>
+    /// Selecting this button
+    /// </summary>
+    public void Select()
     {
-        get => buttonRec;
+        selected = true;
     }
 
-    public bool Selected
+    /// <summary>
+    /// Deselecting this button
+    /// </summary>
+    public void Deselect()
     {
-        get => selected;
+        selected = false;
     }
+
     #endregion
 
     #region Behaviors
 
-    // Main update method that checks for interactions
+    /// <summary>
+    /// Main update method that checks for interactions
+    /// </summary>
+    /// <param name="mouse">current state of mouse</param>
+    /// <param name="prevMouse">state of mouse from previous update</param>
+    /// <returns></returns>
     public bool Update(MouseState mouse, MouseState prevMouse)
     {
         // Checking for mouse click
@@ -99,33 +115,27 @@ public class Button
 
         return selected;
     }
-
-    public void Select()
-    {
-        selected = true;
-    }
-
-    public void Deselect()
-    {
-        selected = false;
-    }
     
-    // Drawing the button
+    /// <summary>
+    /// Drawing button with cancel option and hover options on top of it
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+    /// <param name="mousePos">Position of current mouse</param>
     public void Draw(SpriteBatch spriteBatch, Point mousePos)
     {
+        // Drawing button
         spriteBatch.Draw(buttonImg, buttonRec, Color.White);
 
+        // Drawing cancel option if its available
         if (cancelImg != null && selected)
         {
             spriteBatch.Draw(cancelImg, buttonRec, Color.White);
         }
 
-        if (buttonRec.Contains(mousePos))
+        // Drawing hover action
+        if (drawOnHover != null && buttonRec.Contains(mousePos))
         {
-            if (drawOnHover != null)
-            {
-                drawOnHover();
-            }        
+            drawOnHover();
         }
     }
 

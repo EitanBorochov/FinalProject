@@ -12,6 +12,7 @@
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/CannonShoot.wav</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/ZombieAttack.wav</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/ZombieHit.wav</File>
+    <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Sounds/ZombieSpawn.wav</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/HUDFont.spritefont</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/SmallFont.spritefont</File>
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Fonts/TitleFont.spritefont</File>
@@ -60,6 +61,7 @@
     <File>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/UI/TutorialButton.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

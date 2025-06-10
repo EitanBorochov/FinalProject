@@ -362,3 +362,4 @@ C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Ima
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Sprites\Gameplay\Blood\Blood3.xnb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Sprites\Gameplay\Blood\Blood4.xnb
 C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Images\Sprites\Gameplay\Blood\Blood5.xnb
+C:\Users\mreit\Desktop\ICS\Assignments\FinalProject\bin\Debug\net6.0\Content\Audio\Sounds\ZombieSpawn.xnb

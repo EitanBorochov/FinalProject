@@ -2,7 +2,7 @@
 // File Name: KingTower.cs
 // Project Name: FinalProject
 // Creation Date: May 27th 2025
-// Modification Date: June 6th 2025
+// Modification Date: June 9th 2025
 // Description: Inhereted tower class for the king tower
 
 using System;
@@ -26,12 +26,25 @@ public class KingTower : Defence
         health = 1000;
         initialHealth = health;
         damage = 4;
+        
+        // State is placed from the start
+        state = PLACED;
     }
 
     #endregion
 
     #region Behaviours
 
+    /// <summary>
+    /// Updates cooldown timer
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between updates. Used for timer</param>
+    /// <param name="mouse">Keeps track of state of mouse. Used for translation and placing</param>
+    /// <param name="buildableRec">Area in which a tower can be placed on</param>
+    /// <param name="isValid">Can a defence be placed at that location</param>
+    /// <param name="screenWidth">Width of screen</param>
+    /// <param name="zombies">Array of current zombies</param>
+    /// <returns>Returns true if tower is dead (HP greater than 0)</returns>
     public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
                                 bool isValid, int screenWidth, Zombie[] zombies)
     {
@@ -41,7 +54,12 @@ public class KingTower : Defence
         return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
     }
 
-    // Drawing tower
+    /// <summary>
+    /// Drawing tower
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+    /// <param name="buildRecCenter">X center of the buildable area</param>
+    /// <param name="placedColor">Color of tower when its placed</param>
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         spriteBatch.Draw(img, displayRec, placedColor);
@@ -49,7 +67,11 @@ public class KingTower : Defence
         base.Draw(spriteBatch, buildRecCenter, placedColor);
     }
 
-    // Launching cannon ball
+    /// <summary>
+    /// Launching cannon ball
+    /// </summary>
+    /// <param name="mousePos">Position of current mouse acting as target</param>
+    /// <returns>Returns a cannonball heading towards mouse position</returns>
     public Cannonball LaunchBall(Vector2 mousePos)
     {
         if (cooldownTimer.IsFinished())
@@ -71,7 +93,7 @@ public class KingTower : Defence
 
             cooldownTimer.ResetTimer(true);
             
-            return new Cannonball(projRec, mousePos, false, projImg, damage, 5, 350);
+            return new Cannonball(projRec, mousePos, projImg, damage, 5, 350);
         }
 
         return null;

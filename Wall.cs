@@ -21,11 +21,10 @@ public class Wall : Defence
     private Rectangle[] tileRecs;
     
     // Storing a price array, the current price will be the price of index lvl
-    private static int[] prices = {100, 300};
+    private static readonly int[] PRICES = {100, 300};
     
     // Storing health array, the current health will be the health of index lvl
-    private int[] healths = {350, 800};
-    private static readonly int[] INITIAL_HEALTHS = {350, 800};
+    private static readonly int[] HEALTHS = {350, 800};
     
     #endregion
 
@@ -42,11 +41,11 @@ public class Wall : Defence
         tileRecs = new Rectangle[numTiles];
         
         // Storing health to health of chosen lvl
-        health = healths[lvl];
-        initialHealth = INITIAL_HEALTHS[lvl];
+        health = HEALTHS[lvl];
+        initialHealth = HEALTHS[lvl];
         
         // Storing price to price of chosen lvl
-        price = prices[lvl];
+        price = PRICES[lvl];
         
         // Constructing rectangles
         for (int i = 0; i < tileRecs.Length; i++)
@@ -64,57 +63,35 @@ public class Wall : Defence
 
     #region Getters & Setters
     
-    // Returning the default price at each lvl
+    /// <summary>
+    /// Returns default price for any lvl of tower
+    /// </summary>
+    /// <param name="lvl">Level of tower</param>
+    /// <returns>Price of tower with level lvl</returns>
     public static int GetDefaultPrice(int lvl)
     {
-        return prices[lvl];
+        return PRICES[lvl];
     }
     
-    // Returning the default HP at each lvl
+    /// <summary>
+    /// Returns default HP for any lvl of tower
+    /// </summary>
+    /// <param name="lvl">Level of tower</param>
+    /// <returns>HP of tower with level lvl</returns>
     public static int GetDefaultHP(int lvl)
     {
-        return INITIAL_HEALTHS[lvl];
+        return HEALTHS[lvl];
     }
 
     #endregion
 
     #region Behaviours
 
-    // Main update method that returns a true or false if the tower is down or not
-    public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
-                                bool isValid, int screenWidth, Zombie[] zombies)
-    {
-        // Storing if current location is valid for placement by collision
-        this.isValid = isValid;
-        
-        PreviewStateTranslation(mouse, buildableRec);
-
-        return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
-    }
-
-    // Allowing player to move the wall around while its in preview
-    private void PreviewStateTranslation(MouseState mouse, Rectangle buildableRec)
-    {
-        if (state == PREVIEW)
-        {
-            // Translating X position to the mouse position if its in buildable area
-            if (mouse.Position.ToVector2().X < buildableRec.Right - hitbox.Width
-                && mouse.Position.ToVector2().X > buildableRec.Left)
-            {
-                TranslateX(mouse.Position.ToVector2().X);
-            }
-            else if (mouse.Position.ToVector2().X >= buildableRec.Right - hitbox.Width)
-            {
-                TranslateX(buildableRec.Right - hitbox.Width);
-            }
-            else
-            {
-                TranslateX(buildableRec.Left);
-            }
-        }
-    }
-
-    public void TranslateY(float yPos)
+    /// <summary>
+    /// Overriding TranslateY from Defence.cs as wall has to translate each tile seperately
+    /// </summary>
+    /// <param name="yPos">Future y position of top tile</param>
+    public override void TranslateY(float yPos)
     {
         // Translating Y and offsetting each one from each other
         for (int i = 0; i < tileRecs.Length; i++)
@@ -128,7 +105,12 @@ public class Wall : Defence
         // Updating display rec
         displayRec.Y = hitbox.Y;
     }
-    public void TranslateX(float xPos)
+    
+    /// <summary>
+    /// Overriding TranslateX from Defence.cs as wall has to translate each tile seperately
+    /// </summary>
+    /// <param name="xPos">Future x position of all tiles</param>
+    public override void TranslateX(float xPos)
     {
         // Translating Y and offsetting each one from each other
         for (int i = 0; i < tileRecs.Length; i++)
@@ -143,6 +125,12 @@ public class Wall : Defence
         displayRec.X = hitbox.X;
     }
 
+    /// <summary>
+    /// Drawing each tile separately based on the state of the wall
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+    /// <param name="buildRecCenter">X center of the buildable area</param>
+    /// <param name="placedColor">Color of tower when its placed</param>
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         for (int i = 0; i < tileRecs.Length; i++)
@@ -151,7 +139,7 @@ public class Wall : Defence
             if (state == PREVIEW)
             {
                 // Drawing red if invalid and regular if it is valid
-                if (Game1.Coins < prices[lvl] || !isValid)
+                if (Game1.Coins < PRICES[lvl] || !isValid)
                 {
                     spriteBatch.Draw(img, tileRecs[i], Color.Red * 0.8f);
                 }

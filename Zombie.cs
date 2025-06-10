@@ -2,8 +2,8 @@
 // File Name: Zombie.cs
 // Project Name: FinalProject
 // Creation Date: May 20th 2025
-// Modification Date: June 6th 2025
-// Description: Zombie object, handles attacking, translating, etc.
+// Modification Date: June 9th 2025
+// Description: Zombie object, handles attacking, translating, animations, etc.
 
 using System;
 using GameUtility;
@@ -58,6 +58,9 @@ public class Zombie
     
     // Storing blood animation, each zombie has a different random one
     private Animation bloodAnim;
+    
+    // Storing respawn timer for when zombie dies
+    private Timer respawnTimer = new Timer(3000, false);
 
     #endregion
 
@@ -89,7 +92,9 @@ public class Zombie
     
     #region Getters & Setters
 
-    // Returning rectangle
+    /// <summary>
+    /// Returning rectangle of current state animation
+    /// </summary>
     public Rectangle Rec
     {
         get
@@ -104,64 +109,11 @@ public class Zombie
             return anims[state].GetDestRec();
         }
     }
-
-    // Returning and setting current zombie state
-    public byte State
-    {
-        get
-        {
-            return state;
-        }
-        set
-        {
-            state = value;
-        }
-    }
-
-    // Returning and setting zombie HP 
-    public int HP
-    {
-        get
-        {
-            return health;
-        }
-        set
-        {
-            health = value;
-        }
-    }
-
-    // Returning zombie damage
-    public int Damage
-    {
-        get => damage;
-    }
     
-    // Returning and setting zombie pos
-    public Vector2 Pos
-    {
-        get
-        {
-            return pos;
-        }
-        set
-        {
-            pos = value;
-        }
-    }
-    
-    // Checking if zombie is attacking for collisions
-    public bool IsAttacking()
-    {
-        if (state is ATTACK1 or ATTACK2 or ATTACK3)
-        {
-            return true;
-        }
-
-        return false;
-    }
-    
-    // Checking if zombie is dead
+    /// <summary>
+    /// Checking if zombie is dead
+    /// </summary>
+    /// <returns>Returning true if zombie is dead</returns>
     public bool IsDead()
     {
         if (state == INACTIVE)
@@ -176,7 +128,11 @@ public class Zombie
 
     #region Behaviours
     
-    // Spawning zombie
+    /// <summary>
+    /// Spawning zombie and resetting it
+    /// </summary>
+    /// <param name="gameLvl">Level of current game (level 1 or level 2)</param>
+    /// <param name="zombieHealth">Health of zombie to reset to</param>
     public void Spawn(byte gameLvl, int zombieHealth)
     {
         if (state == INACTIVE)
@@ -203,6 +159,9 @@ public class Zombie
                     effect = SpriteEffects.FlipHorizontally;
                 }
             }
+            
+            // Playing spawning sound
+            Game1.PlaySound(Game1.zombieSpawnSnd, 0.1f);
 
             // Starting action timer
             actionTimer.ResetTimer(true);
@@ -216,8 +175,14 @@ public class Zombie
         }
     }
 
-    // Zombie logic for each update
-    public void Update(GameTime gameTime, float timePassed)
+    /// <summary>
+    /// Updating zombie and making decisions for what to do every update
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between update</param>
+    /// <param name="gameLvl">Level of current game mode</param>
+    /// <param name="zombieHealth">Health of zombie for when it respawns</param>
+    /// <param name="isNightTime">Is it currently nighttime</param>
+    public void Update(GameTime gameTime, byte gameLvl, int zombieHealth, bool isNightTime)
     {
         if (state != INACTIVE)
         {
@@ -227,7 +192,7 @@ public class Zombie
             bloodAnim.Update(gameTime);
 
             // Zombie Action
-            Action(timePassed);
+            Action(gameTime);
 
             // Checking if zombie is dead
             if (health <= 0)
@@ -235,16 +200,31 @@ public class Zombie
                 KillZombie();
             }
         }
+        else if (state == INACTIVE && isNightTime)
+        {
+            // Updating respawn timer
+            respawnTimer.Update(gameTime);
+            
+            //Checking for if its done and its time for a respawn
+            if (respawnTimer.IsFinished())
+            {
+                Spawn(gameLvl, zombieHealth);
+            }
+        }
     }
     
-    // Determining zombie action based on state
-    private void Action(float timePassed)
+    /// <summary>
+    /// Determining zombie action based on state
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between updates</param>
+    private void Action(GameTime gameTime)
     {
         // Killing zombie if dying animation is done
         if (state == DYING && anims[DYING].IsFinished()) 
         {
             // Deactivating zombie
             state = INACTIVE;
+            respawnTimer.ResetTimer(true);
         }
         else if (state == WALK && actionTimer.IsFinished())
         {
@@ -252,7 +232,7 @@ public class Zombie
             anims[state].Activate(true);
             
             // Translating zombie pos
-            pos.X += speed * dir * timePassed;
+            pos.X += speed * dir * (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             anims[state].TranslateTo(pos.X, pos.Y);
             
             // Reactivating timer
@@ -260,7 +240,9 @@ public class Zombie
         }
     }
     
-    // Killing zombie
+    /// <summary>
+    /// Killing zombie
+    /// </summary>
     public void KillZombie()
     {
         // Making sure zombie is alive
@@ -282,8 +264,12 @@ public class Zombie
         }
     }
 
-    // Dealing damage to tower
-    public int Attack(int towerHP)
+    /// <summary>
+    /// Dealing damage to a defence
+    /// </summary>
+    /// <param name="defenceHP">health of defence</param>
+    /// <returns>health of defence when damage is dealt</returns>
+    public int Attack(int defenceHP)
     {
         // Making sure zombie is alive
         if (state != DYING && state != INACTIVE)
@@ -306,19 +292,23 @@ public class Zombie
                 anims[state].Activate(true);
 
                 // Lowering tower HP
-                towerHP -= damage;
+                defenceHP -= damage;
                 
                 // Playing attack sound
-                Game1.PlaySound(Game1.zombieAttackSnd, 0.05f);
+                Game1.PlaySound(Game1.zombieAttackSnd, 0.03f);
 
                 // Resetting action timer
                 actionTimer.ResetTimer(true);
             }
         }
 
-        return towerHP;
+        return defenceHP;
     }
 
+    /// <summary>
+    /// Dealing damage to current zombie
+    /// </summary>
+    /// <param name="damage">How much damage to deal to current zombie</param>
     public void HitZombie(int damage)
     {
         // Lowering health
@@ -332,6 +322,9 @@ public class Zombie
         Game1.PlaySound(Game1.zombieHitSnd, 0.1f);
     }
 
+    /// <summary>
+    /// Setting zombie state to walk if its not dead
+    /// </summary>
     public void Walk()
     {
         // Making sure zombie is alive
@@ -342,7 +335,10 @@ public class Zombie
         }
     }
     
-    // Drawing zombie
+    /// <summary>
+    /// Drawing zombie
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
     public void Draw(SpriteBatch spriteBatch)
     {
         if (state != INACTIVE)

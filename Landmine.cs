@@ -2,7 +2,7 @@
 // File Name: Game1.cs
 // Project Name: FinalProject
 // Creation Date: June 6th 2025
-// Modification Date: June 6th 2025
+// Modification Date: June 9th 2025
 // Description: Landmine will explode as soon as any zombie steps on it, can be placed anywhere, and is a 1 time use.
 // For more efficient code, the landmine will be part of the tower family and tower list.
 
@@ -50,12 +50,19 @@ public class Landmine : Defence
 
     #region Getters & Setters
 
-    // Returning default price of this class
+    /// <summary>
+    /// Returns default price of landmine
+    /// </summary>
+    /// <returns>Price of landmine</returns>
     public static int GetDefaultPrice()
     {
         return PRICE;
     }
 
+    /// <summary>
+    /// Returns default damage of landmine
+    /// </summary>
+    /// <returns>Damage of landmine</returns>
     public static int GetDefaultDamage()
     {
         return DAMAGE;
@@ -65,16 +72,19 @@ public class Landmine : Defence
 
     #region Behaviours
 
-    /* Main goal of update is to check for zombie collisions, if it detects any zombie, returns true which will spawn
-     a cannonball in place of the landmine, the cannonball should explode immediately.*/
+    /// <summary>
+    /// Base Update with also checking for zombie collision
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between updates. Used for timer</param>
+    /// <param name="mouse">Keeps track of state of mouse. Used for translation and placing</param>
+    /// <param name="buildableRec">Area in which a tower can be placed on</param>
+    /// <param name="isValid">Can a defence be placed at that location</param>
+    /// <param name="screenWidth">Width of screen</param>
+    /// <param name="zombies">Array of current zombies</param>
+    /// <returns>If returns true, landmine should explode</returns>
     public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
                                 bool isValid, int screenWidth, Zombie[] zombies)
     {
-        this.isValid = isValid;
-        
-        // Translating during preview
-        PreviewStateTranslation(mouse, screenWidth);
-        
         // Checking for collisions with zombies only if state is placed
         if (state == PLACED)
         {
@@ -92,47 +102,31 @@ public class Landmine : Defence
         return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
     }
     
-    private void PreviewStateTranslation(MouseState mouse, int screenWidth)
+    /// <summary>
+    /// Overriding default translation since landmine doesn't have bounds
+    /// </summary>
+    /// <param name="mouse">Gives mouse position and if clicked or not</param>
+    /// <param name="buildableRec">Area in which player can build in</param>
+    protected override void PreviewStateTranslation(MouseState mouse, Rectangle buildableRec)
     {
         // Checking if state is preview and placement is valid
         if (state == PREVIEW)
         {
             // Making sure mouse is in screen boundaries
-            if (mouse.Position.X > 0 && mouse.Position.X < screenWidth - hitbox.Width)
+            if (mouse.Position.X > 0 && mouse.Position.X < Game1.screenWidth - hitbox.Width)
             {
                 // Translating bomb to mouse position
                 hitbox.X = mouse.Position.X;
             }
         }
     }
-    
-    // Checks for placement of landmine, returns true if placement is cancelled
-    public override void CheckPlacement(MouseState mouse, MouseState prevMouse)
-    {
-        if (state == PREVIEW)
-        {
-            // Checking for right click button cancel
-            if (mouse.RightButton == ButtonState.Pressed && prevMouse.RightButton != ButtonState.Pressed)
-            {
-                // Returning true which means delete defence
-                health = 0;
-            }
 
-            // Checking if user has enough money and the placement is valid
-            if (mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton != ButtonState.Pressed)
-            {
-                if (isValid && Game1.Coins >= price)
-                {
-                    // placing tower
-                    state = PLACED;
-
-                    // Taking away coins
-                    Game1.Coins -= price;
-                }
-            }
-        }
-    }
-
+    /// <summary>
+    /// Drawing Landmine red or white depending on state and location
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+    /// <param name="buildRecCenter">X center of the buildable area</param>
+    /// <param name="placedColor">Color of tower when its placed</param>
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         // Drawing transparent preview state

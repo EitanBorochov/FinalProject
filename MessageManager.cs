@@ -2,7 +2,7 @@
 // File Name: MessageManager.cs
 // Project Name: FinalProject
 // Creation Date: June 8th 2025
-// Modification Date: June 8th 2025
+// Modification Date: June 9th 2025
 // Description: Manages all messages in a list and organizes them in order
 
 using System.Collections.Generic;
@@ -39,6 +39,10 @@ public class MessageManager
 
     #region Behaviours
 
+    /// <summary>
+    /// Updates All messages and caps them to 6 at a time
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in between updates</param>
     public void Update(GameTime gameTime)
     {
         // Updating messages
@@ -51,6 +55,10 @@ public class MessageManager
         }
     }
 
+    /// <summary>
+    /// Loops through message list and updates all of them
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time passed in between updates</param>
     private void UpdateMessages(GameTime gameTime)
     {
         // Updating all messages
@@ -65,6 +73,11 @@ public class MessageManager
         }
     }
 
+    /// <summary>
+    /// Creates a new message and adds it to the list
+    /// </summary>
+    /// <param name="message">The actual message that is sent</param>
+    /// <param name="color">The color of the message</param>
     public void DisplayMessage(string message, Color color)
     {
         // Inserting new message at the top of the list
@@ -81,6 +94,10 @@ public class MessageManager
         }
     }
 
+    /// <summary>
+    /// Draws messages on screen
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
     public void Draw(SpriteBatch spriteBatch)
     {
         foreach (Message message in messages)

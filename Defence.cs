@@ -1,9 +1,9 @@
 // Author: Eitan Borochov
-// File Name: Tower.cs
+// File Name: defence.cs
 // Project Name: FinalProject
 // Creation Date: May 9th 2025
-// Modification Date: June 8th 2025
-// Description: Handles everything to do with the towers and their properties
+// Modification Date: June 9th 2025
+// Description: Handles everything to do with the defences and their properties
 
 using System;
 using GameUtility;
@@ -17,14 +17,14 @@ public class Defence
 {
     #region Attributes
 
-    // Storing images of the king tower, king, and cannons
+    // Storing images of the king defence, king, and cannons
     protected Texture2D img;
     
-    // Storing rectangles of the king tower, king, cannons, and hitbox
+    // Storing rectangles of the king defence, king, cannons, and hitbox
     protected Rectangle displayRec;
     protected Rectangle hitbox;
     
-    // Storing tower HP and initial HP
+    // Storing defence HP and initial HP
     protected int health = 1;
     protected int initialHealth = 1;
     
@@ -48,13 +48,13 @@ public class Defence
     // Storing if the preview is in a valid location
     protected bool isValid;
     
-    // storing lvl of tower for upgrades (starting at 0)
+    // storing lvl of defence for upgrades (starting at 0)
     protected byte lvl;
     
-    // Storing tower price
+    // Storing defence price
     protected int price;
     
-    // Storing health bar rectangle to be displayed on top of tower. One full and one empty
+    // Storing health bar rectangle to be displayed on top of defence. One full and one empty
     protected Rectangle emptyHPBarRec;
     protected Rectangle fullHPBarRec;
 
@@ -117,52 +117,40 @@ public class Defence
     #endregion
 
     #region Getters & Setters
+    
+    /// <summary>
+    /// Returns the display rectangle
+    /// </summary>
+    public virtual Rectangle DisplayRec => displayRec;
 
-    // Getters:
-    // Returns display rectangle
-    public virtual Rectangle DisplayRec
-    {
-        get => displayRec;
-    }
-    
-    // Returns hitbox rectangle
-    public virtual Rectangle Hitbox
-    {
-        get => hitbox;
-    }
-    
-    // Modifying tower HP property
+    /// <summary>
+    /// Returns hitbox rectangle
+    /// </summary>
+    public virtual Rectangle Hitbox => hitbox;
+
+    /// <summary>
+    /// Modifying defence HP property
+    /// </summary>
     public virtual int HP
     {
-        get => this.health;
-        set => this.health = value;
+        get => health;
+        set => health = value;
     }
     
-    // Returning damage
-    public virtual int Damage
-    {
-        get => damage;
-    }
-    
-    // Setting a new image for the object
-    public virtual void SetImage(Texture2D img, int width, int height)
-    {
-        // Updating image
-        this.img = img;
-        
-        // Updating width and height
-        displayRec.Width = width;
-        displayRec.Height = height;
-    }
-    
-    // Returning price of current tower
-    public int Price
-    {
-        get => price;
-        set => price = value;
-    }
-    
-    // Returning if tower is placed or not
+    /// <summary>
+    /// Returning damage that defence deals
+    /// </summary>
+    public virtual int Damage => damage;
+
+    /// <summary>
+    /// Returning price of current defence
+    /// </summary>
+    public int Price => price;
+
+    /// <summary>
+    /// Checks if defence is placed or not
+    /// </summary>
+    /// <returns>Returning if defence is placed or not</returns>
     public bool IsPlaced()
     {
         if (state == PLACED)
@@ -172,44 +160,38 @@ public class Defence
 
         return false;
     }
-
-    // Allowing modification of tower lvl
-    public byte Lvl
-    {
-        get => lvl;
-        set
-        {
-            // Making sure lvl is between 1 and 3
-            if (lvl <= 3 && lvl > 0)
-            {
-                lvl = value;
-            }
-        }
-    }
     
-    // Returning health %
-    public float HPPercentage
-    {
-        get => (float)health / initialHealth;
-    }
+    /// <summary>
+    /// Returning the percentage of the remaining HP that the defence has
+    /// </summary>
+    public float HPPercentage => (float)health / initialHealth;
 
     #endregion
 
     #region Behaviours
     
-    // Updating defence
+    /// <summary>
+    /// Basic update that all defences include
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between updates. Used for timer</param>
+    /// <param name="mouse">Keeps track of state of mouse. Used for translation and placing</param>
+    /// <param name="buildableRec">Area in which a tower can be placed on</param>
+    /// <param name="isValid">Can a defence be placed at that location</param>
+    /// <param name="screenWidth">Width of screen</param>
+    /// <param name="zombies">Array of current zombies</param>
+    /// <returns>Returns true if defence is dead (HP greater than 0)</returns>
     public virtual bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
                                 bool isValid, int screenWidth, Zombie[] zombies)
     {
+        this.isValid = isValid;
+        
         // Updating health bar
         fullHPBarRec.Width = (int)(emptyHPBarRec.Width * HPPercentage);
         
-        // Translating health bar to always follow tower
-        emptyHPBarRec.X = hitbox.X;
-        emptyHPBarRec.Y = displayRec.Y - emptyHPBarRec.Height * 2;
-        fullHPBarRec.Location = emptyHPBarRec.Location;
+        // Translating during preview
+        PreviewStateTranslation(mouse, buildableRec);
         
-        // Returning that the tower is down
+        // Returning that the defence is down
         if (health <= 0)
         {
             return true;
@@ -219,14 +201,27 @@ public class Defence
     }
     
 
-    // Drawing Health bar above tower, tower will be drawn in each inherited class
+    /// <summary>
+    /// Drawing Health bar above defence, defence will be drawn in each inherited class
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+    /// <param name="buildRecCenter">X center of the buildable area</param>
+    /// <param name="placedColor">Color of tower when its placed</param>
     public virtual void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         // Drawing health bars:
-        spriteBatch.Draw(Game1.pixelImg, emptyHPBarRec, Color.White);
-        spriteBatch.Draw(Game1.pixelImg, fullHPBarRec, Color.Green);
+        if (state == PLACED)
+        {
+            spriteBatch.Draw(Game1.pixelImg, emptyHPBarRec, Color.White);
+            spriteBatch.Draw(Game1.pixelImg, fullHPBarRec, Color.Green);
+        }
     }
 
+    /// <summary>
+    /// Checks if player attempts to place defence somewhere
+    /// </summary>
+    /// <param name="mouse"></param>
+    /// <param name="prevMouse"></param>
     public virtual void CheckPlacement(MouseState mouse, MouseState prevMouse)
     {
         if (state == PREVIEW)
@@ -249,6 +244,11 @@ public class Defence
                     // Taking away coins
                     Game1.Coins -= price;
                     
+                    // Translating health bar to follow defence
+                    emptyHPBarRec.X = hitbox.X;
+                    emptyHPBarRec.Y = displayRec.Y - emptyHPBarRec.Height * 2;
+                    fullHPBarRec.Location = emptyHPBarRec.Location;
+                    
                     // Playing placing sound
                     Game1.PlaySound(Game1.defencePlacedSnd, 0.5f);
 
@@ -260,7 +260,7 @@ public class Defence
                     // Sending feedback to user, invalid location
                     Game1.messageManager.DisplayMessage("INVALID PLACEMENT", Color.Red);
                 }
-                else if (Game1.Coins >= price)
+                else if (Game1.Coins < price)
                 {
                     // Sending feedback to user, not enough money
                     Game1.messageManager.DisplayMessage("NOT ENOUGH MONEY", Color.Red);
@@ -269,7 +269,38 @@ public class Defence
         }
     }
     
-    // Translate object
+    /// <summary>
+    /// Allowing player to move the archer tower around while its in preview
+    /// </summary>
+    /// <param name="mouse">Gives mouse position and if clicked or not</param>
+    /// <param name="buildableRec">Area in which player can build in</param>
+    protected virtual void PreviewStateTranslation(MouseState mouse, Rectangle buildableRec)
+    {
+        if (state == PREVIEW)
+        {
+            // Translating X position to the mouse position if its in buildable area
+            if (mouse.Position.ToVector2().X < buildableRec.Right - hitbox.Width
+                && mouse.Position.ToVector2().X > buildableRec.Left)
+            {
+                TranslateX(mouse.Position.ToVector2().X);
+            }
+            // If mouse is to the right of the buildableRec, snap to right
+            else if (mouse.Position.ToVector2().X >= buildableRec.Right - hitbox.Width)
+            {
+                TranslateX(buildableRec.Right - hitbox.Width);
+            }
+            // If mouse is to the left of the buildableRec, snap to left
+            else if (mouse.Position.ToVector2().X < buildableRec.Left)
+            {
+                TranslateX(buildableRec.Left);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Translate hitbox to chosen location
+    /// </summary>
+    /// <param name="position">Position of translation</param>
     public virtual void TranslateTo(Vector2 position)
     {
         // Translating hitbox
@@ -278,6 +309,32 @@ public class Defence
         
         // Updating display rec to match
         displayRec.X = hitbox.Center.X - displayRec.Width / 2; 
+        displayRec.Y = hitbox.Bottom - displayRec.Height; 
+    }
+
+    /// <summary>
+    /// Translating only X value
+    /// </summary>
+    /// <param name="xPos">Future X position of hitbox</param>
+    public virtual void TranslateX(float xPos)
+    {
+        // Translating hitbox
+        hitbox.X = (int)xPos;
+        
+        // Updating display rec to match
+        displayRec.X = hitbox.Center.X - displayRec.Width / 2; 
+    }
+
+    /// <summary>
+    /// Translating only Y value
+    /// </summary>
+    /// <param name="yPos">Future Y position of hitbox</param>
+    public virtual void TranslateY(float yPos)
+    {
+        // Translating hitbox
+        hitbox.X = (int)yPos;
+        
+        // Updating display rec to match
         displayRec.Y = hitbox.Bottom - displayRec.Height; 
     }
 

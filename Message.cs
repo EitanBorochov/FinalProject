@@ -2,7 +2,7 @@
 // File Name: Message.cs
 // Project Name: FinalProject
 // Creation Date: June 8th 2025
-// Modification Date: June 8th 2025
+// Modification Date: June 9th 2025
 // Description: Creates a message to be displayed on screen when an action is done
 
 using System;
@@ -51,13 +51,13 @@ public class Message
 
     #endregion
 
-    #region Getters & Setters
-    
-
-    #endregion
-
     #region Behaviours
 
+    /// <summary>
+    /// Updating message on display and making it disappear after timer is done
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between updates. Used to update timer</param>
+    /// <returns>Returns true if message disappeared</returns>
     public bool Update(GameTime gameTime)
     {
         // Updating timer
@@ -66,6 +66,7 @@ public class Message
         // Fading out message when timer is done
         FadeOut(gameTime);
         
+        // Returns true if message faded
         if (opacity == 0)
         {
             return true;
@@ -74,13 +75,17 @@ public class Message
         return false;
     }
 
+    /// <summary>
+    /// Fading out message by lowering its opacity
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between updates. Used to update timer</param>
     private void FadeOut(GameTime gameTime)
     {
         // Checking if display timer is done
         if (dispTimer.IsFinished())
         {
             // lower opacity for it to disappear in 2s
-            opacity -= gameTime.ElapsedGameTime.Milliseconds / 2;
+            opacity -= gameTime.ElapsedGameTime.Milliseconds / 3;
             
             // Clamping opacity (>0)
             if (opacity < 0)
@@ -90,11 +95,19 @@ public class Message
         }
     }
 
+    /// <summary>
+    /// Translate Y position of message
+    /// </summary>
+    /// <param name="yPos">Future Y position of message</param>
     public void TranslateY(float yPos)
     {
         position.Y = yPos;
     }
 
+    /// <summary>
+    /// Drawing message on screen
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
     public void Draw(SpriteBatch spriteBatch)
     {
         // Drawing message with drop shadow

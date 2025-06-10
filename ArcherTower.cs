@@ -2,7 +2,7 @@
 // File Name: ArcherTower.cs
 // Project Name: FinalProject
 // Creation Date: June 2nd 2025
-// Modification Date: June 8th 2025
+// Modification Date: June 9th 2025
 // Description: Inherited tower class specifically for the archer tower
 using System;
 using GameUtility;
@@ -19,16 +19,15 @@ public class ArcherTower : Defence
     // Storing parallel arrays for damage, price, shooting range, cooldown timer, and health
     // that are dependent on the current lvl (prices is static since it needs to be globally accessible)
     // Prices
-    private static int[] prices = {150, 250, 475};
+    private static readonly int[] PRICES = {150, 250, 475};
     
     // Healths
-    private int[] healths = {150, 225, 400};
-    private static readonly int[] INITIAL_HEALTHS = {150, 225, 400};
+    private static readonly int[] HEALTHS = {150, 225, 400};
     
     // Damage & Attack related
-    private static int[] damages = {2, 4, 7};
-    private static int[] ranges = { 300, 350, 425 };
-    private static int[] cooldownLengths = { 600, 550, 500 };
+    private static readonly int[] DAMAGES = {2, 4, 7};
+    private static readonly int[] RANGES = { 350, 400, 475 };
+    private static readonly int[] COOLDOWN_LENGTHS = { 600, 550, 500 };
 
     #endregion
 
@@ -37,92 +36,94 @@ public class ArcherTower : Defence
     // Basic constructor for the main Tower class attributes, with also lvl and price
     public ArcherTower(Texture2D img, Vector2 position, int width, int height, int hitboxWidth, int hitboxHeight, 
         Texture2D projectileImg, byte lvl) : 
-        base(img, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLengths[lvl])
+        base(img, position, width, height, hitboxWidth, hitboxHeight, projectileImg, COOLDOWN_LENGTHS[lvl])
     {
         // Storing array at index of level as main variable in parent class 
         this.lvl = lvl;
-        health = healths[lvl];
-        initialHealth = INITIAL_HEALTHS[lvl];
-        damage = damages[lvl];
-        price = prices[lvl];
+        health = HEALTHS[lvl];
+        initialHealth = HEALTHS[lvl];
+        damage = DAMAGES[lvl];
+        price = PRICES[lvl];
     }
 
     #endregion
 
     #region Getters & Setters
 
-    // Returns default prices
+    /// <summary>
+    /// Returns default price for any lvl of tower
+    /// </summary>
+    /// <param name="lvl">Level of tower</param>
+    /// <returns>Price of tower with level lvl</returns>
     public static int GetDefaultPrice(int lvl)
     {
-        return prices[lvl];
+        return PRICES[lvl];
     }
     
-    // Returning the default HP at each lvl
+    /// <summary>
+    /// Returns default HP for any lvl of tower
+    /// </summary>
+    /// <param name="lvl">Level of tower</param>
+    /// <returns>HP of tower with level lvl</returns>
     public static int GetDefaultHP(int lvl)
     {
-        return INITIAL_HEALTHS[lvl];
+        return HEALTHS[lvl];
     }
 
-    public static int GetDefualtDamage(int lvl)
+    /// <summary>
+    /// Returns default damage for any lvl of tower
+    /// </summary>
+    /// <param name="lvl">Level of tower</param>
+    /// <returns>damage of tower with level lvl</returns>
+    public static int GetDefaultDamage(int lvl)
     {
-        return damages[lvl];
+        return DAMAGES[lvl];
     }
 
+    /// <summary>
+    /// Returns default cooldown length for any lvl of tower
+    /// </summary>
+    /// <param name="lvl">Level of tower</param>
+    /// <returns>cooldown length of tower with level lvl, float seconds</returns>
     public static float GetDefaultCooldownLength(int lvl)
     {
-        return (float)Math.Round(cooldownLengths[lvl] / 1000f, 2);
+        return (float)Math.Round(COOLDOWN_LENGTHS[lvl] / 1000f, 2);
     }
     
-    public int Range
-    {
-        get => ranges[lvl];
-    }
-    
+    /// <summary>
+    /// Returns range of current tower instance
+    /// </summary>
+    public int Range => RANGES[lvl];
+
     #endregion
 
     #region Behaviours
     
-    // Adding to base update
+    /// <summary>
+    /// Updates cooldown timer
+    /// </summary>
+    /// <param name="gameTime">Keeps track of time between updates. Used for timer</param>
+    /// <param name="mouse">Keeps track of state of mouse. Used for translation and placing</param>
+    /// <param name="buildableRec">Area in which a tower can be placed on</param>
+    /// <param name="isValid">Can a defence be placed at that location</param>
+    /// <param name="screenWidth">Width of screen</param>
+    /// <param name="zombies">Array of current zombies</param>
+    /// <returns>Returns true if tower is dead (HP greater than 0)</returns>
     public override bool Update(GameTime gameTime, MouseState mouse, Rectangle buildableRec, 
                                 bool isValid, int screenWidth, Zombie[] zombies)
     {
-        // Storing if current location is valid for placement by collision
-        this.isValid = isValid;
-        
-        PreviewStateTranslation(mouse, buildableRec);
-        
         // Updating timer
         cooldownTimer.Update(gameTime);
 
         return base.Update(gameTime, mouse, buildableRec, isValid, screenWidth, zombies);
     }
-    
-    // Allowing player to move the wall around while its in preview
-    private void PreviewStateTranslation(MouseState mouse, Rectangle buildableRec)
-    {
-        if (state == PREVIEW)
-        {
-            // Translating X position to the mouse position if its in buildable area
-            if (mouse.Position.ToVector2().X < buildableRec.Right - hitbox.Width
-                && mouse.Position.ToVector2().X > buildableRec.Left)
-            {
-                hitbox.X = (int)mouse.Position.ToVector2().X;
-            }
-            // If mouse is to the right of the buildableRec, snap to right
-            else if (mouse.Position.ToVector2().X >= buildableRec.Right - hitbox.Width)
-            {
-                hitbox.X = buildableRec.Right - hitbox.Width;
-            }
-            // If mouse is to the left of the buildableRec, snap to left
-            else if (mouse.Position.ToVector2().X < buildableRec.Left)
-            {
-                hitbox.X = buildableRec.Left;
-            }
-            
-            displayRec.Location = hitbox.Location;
-        }
-    }
 
+    /// <summary>
+    /// Draws the archer tower in its different conditions
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+    /// <param name="buildRecCenter">X center of the buildable area</param>
+    /// <param name="placedColor">Color of tower when its placed</param>
     public override void Draw(SpriteBatch spriteBatch, int buildRecCenter, Color placedColor)
     {
         // Drawing transparent preview state
@@ -174,7 +175,11 @@ public class ArcherTower : Defence
         base.Draw(spriteBatch, buildRecCenter, placedColor);
     }
 
-    // Shooting arrows
+    /// <summary>
+    /// Shoots an arrow when the cooldown timer is done
+    /// </summary>
+    /// <param name="nearestTarget">Position of nearest target, where to shoot</param>
+    /// <returns>Returns an arrow to main class that flies towards target</returns>
     public Arrow ShootArrow(Vector2 nearestTarget)
     {
         // Firing arrows every time cooldown timer goes off
@@ -193,7 +198,7 @@ public class ArcherTower : Defence
                 // Playing arrow sound
                 Game1.PlaySound(Game1.arrowSnd, 0.1f);
                 
-                return new Arrow(projRec, nearestTarget, false, projImg, damage, ranges[lvl]);
+                return new Arrow(projRec, nearestTarget, projImg, damage, RANGES[lvl]);
             }
         }
     
