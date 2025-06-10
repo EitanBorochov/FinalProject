@@ -317,7 +317,7 @@ public class Game1 : Game
         Texture2D cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
         
         kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
-                                kingTowerImg.Height, 266, 330, cannonballImg, 1000);
+                                kingTowerImg.Height, 266, 330, cannonballImg, 750);
         
         lvl1KingPos = new Vector2(screenWidth - kingTower.DisplayRec.Width / 2f + 30, 
                                     platform.Rec.Y - kingTower.Hitbox.Height + 10);
@@ -389,7 +389,7 @@ public class Game1 : Game
         explosionAnims = new Animation[cannonballs.Length];
         for (int i = 0; i < explosionAnims.Length; i++)
         {
-            explosionAnims[i] = new Animation(explosionImg, 5, 5, 23, 0, -1, 1, 1000, new Vector2(800, 500), false);
+            explosionAnims[i] = new Animation(explosionImg, 5, 5, 23, 0, -1, 1, 1000, new Vector2(800, 500), 2, false);
         }
         
         // Storing red cross texture to show cancel placement
@@ -1362,7 +1362,7 @@ public class Game1 : Game
         
         // Adding 2 more seconds to each night that passes
         // Timer reset happens in day and night cycle
-        nightTime += 2000;
+        nightTime += 5000;
         
         // Spawning zombies when its nighttime
         SpawnZombies();
@@ -1438,6 +1438,9 @@ public class Game1 : Game
     {
         gameState = TUTORIAL;
         currentSlide = 0;
+        
+        // Shuffling music song
+        ShuffleMusic();
     }
     
     /// <summary>
