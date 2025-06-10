@@ -126,20 +126,22 @@ public class Game1 : Game
     private Vector2 lvl2KingPos;
     
     // Storing max number of zombies which will change every night
-    private const int I_MAX_ZOMBIES = 10;
-    private int maxZombies = I_MAX_ZOMBIES;
+    private const int INITIAL_MAX_ZOMBIES = 10;
+    private int maxZombies = INITIAL_MAX_ZOMBIES;
     
     // Storing zombies max hp as it increases every night
-    private int zombieMaxHP = 20;
+    private const int INITIAL_ZOMBIE_HP = 20;
+    private int zombieHP = INITIAL_ZOMBIE_HP;
     
     // Storing zombies array
     private Zombie[] zombies = new Zombie[100];
     
     // Storing nighttime length that will increase every night
-    private int nightTime = 40000;
+    private const int INITIAL_NIGHTTIME = 40000;
+    private int nightTime = INITIAL_NIGHTTIME;
     
     // Storing timer for day night cycle
-    private Timer dayNightCycle = new Timer(40000, false);
+    private Timer dayNightCycle = new Timer(INITIAL_NIGHTTIME, false);
     
     // Storing background night sky texture and rectangle
     private Texture2D nightBGImg;
@@ -177,7 +179,8 @@ public class Game1 : Game
     private Vector2 kingHPPos;
     
     // Storing coins, each zombie kill will score a few points to buy more upgrades
-    private static int coins = 200;
+    private const int INITIAL_COINS = 200;
+    private static int coins = INITIAL_COINS;
     private string dispCoins = $"${coins}";
     private Vector2 coinsPos;
     
@@ -331,7 +334,7 @@ public class Game1 : Game
         
         lvl1KingPos = new Vector2(screenWidth - kingTower.DisplayRec.Width / 2f + 30, 
                                     platform.Rec.Y - kingTower.Hitbox.Height + 10);
-        lvl2KingPos = new Vector2(WidthCenter(kingTower.Hitbox.Width),
+        lvl2KingPos = new Vector2(CenterWidth(kingTower.Hitbox.Width),
                                     platform.Rec.Y - kingTower.Hitbox.Height + 10);
 
         // Loading button images
@@ -341,9 +344,9 @@ public class Game1 : Game
         tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
         
         // Loading all menu buttons
-        level1Button = new Button(level1Img, (int)WidthCenter(level1Img.Width) - 400, screenHeight - 300, 
+        level1Button = new Button(level1Img, (int)CenterWidth(level1Img.Width) - 400, screenHeight - 300, 
                                     level1Img.Width, level1Img.Height, Level1Button);
-        level2Button = new Button(level2Img, (int)WidthCenter(level1Img.Width) + 400, screenHeight - 300, 
+        level2Button = new Button(level2Img, (int)CenterWidth(level1Img.Width) + 400, screenHeight - 300, 
                                     level2Img.Width, level2Img.Height, Level2Button);
         settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5f, settingsImg.Height / 5f, 
                             () => gameState = SETTINGS);
@@ -352,7 +355,7 @@ public class Game1 : Game
         
         // Loading title image and rectangle
         titleImg = Content.Load<Texture2D>("Images/Sprites/UI/Title");
-        titleRec = new Rectangle((int)WidthCenter(titleImg.Width * 0.75f), 10, 
+        titleRec = new Rectangle((int)CenterWidth(titleImg.Width * 0.75f), 10, 
                                 (int)(titleImg.Width * 0.75), (int)(titleImg.Height * 0.75));
         
         // Loading local zombie textures locally
@@ -390,8 +393,8 @@ public class Game1 : Game
         mobsKilledPos = new Vector2(5, dayCountPos.Y + HUDFont.MeasureString(dispDayCount).Y);
         timeLeftDispPos = new Vector2(5, mobsKilledPos.Y + HUDFont.MeasureString(dispDayCount).Y);
 
-        kingHPPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispKingHP).X), 5);
-        coinsPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispCoins).X),
+        kingHPPos = new Vector2(CenterWidth(HUDFont.MeasureString(dispKingHP).X), 5);
+        coinsPos = new Vector2(CenterWidth(HUDFont.MeasureString(dispCoins).X),
             5 + HUDFont.MeasureString(dispKingHP).Y);
         
         // Loading explosion animation and saving local image for each cannonball
@@ -436,17 +439,21 @@ public class Game1 : Game
         // Loading landmine texture and button
         Texture2D landmineImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/LandMine");
         landminePrev = new Button(landmineImg, redCrossImg, archerPrevs[2].Rec.X - 5 - PREVIEW_SIZE,
-            5 + PREVIEW_SIZE * (1 - (float)landmineImg.Height / landmineImg.Width), PREVIEW_SIZE,
-            PREVIEW_SIZE * (float)landmineImg.Height / landmineImg.Width, LandminePrev, LandminePrevDrawHover);
+                                  5 + PREVIEW_SIZE * (1 - (float)landmineImg.Height / landmineImg.Width), PREVIEW_SIZE, 
+                                  PREVIEW_SIZE * (float)landmineImg.Height / landmineImg.Width, 
+                                  LandminePrev, LandminePrevDrawHover);
         
         // Constructing demolish building button and image
         Texture2D demolishImg = Content.Load<Texture2D>("Images/Sprites/UI/TrashCan");
-        demolishBuilding = new Button(demolishImg, screenWidth - PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height), 
-            wallPrevs[0].Rec.Bottom + 5, PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height), 
-            PREVIEW_SIZE, DemolishButton);
+        demolishBuilding = new Button(demolishImg, 
+                                      screenWidth - PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height), 
+                                      wallPrevs[0].Rec.Bottom + 5, 
+                                      PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height),
+                                      PREVIEW_SIZE, DemolishButton);
             
         // Loading buildable rectangle to be on the floor as a preview of where you can build
-        buildableRec = new Rectangle((int)WidthCenter(800), platform.Rec.Y, 800, platform.Rec.Height);
+        buildableRec = new Rectangle((int)CenterWidth(screenWidth / 2), platform.Rec.Y, screenWidth / 2,
+                                     platform.Rec.Height);
         
         // Loading all sounds
         cannonSnd = Content.Load<SoundEffect>("Audio/Sounds/CannonShoot");
@@ -689,7 +696,7 @@ public class Game1 : Game
     /// </summary>
     /// <param name="spriteWidth"> The width of the thing that is centered horizontally on the screen</param>
     /// <returns>Returns an X position on screen of the rectangle/vector2 of the object</returns>
-    private float WidthCenter(float spriteWidth)
+    private float CenterWidth(float spriteWidth)
     {
         float center;
 
@@ -704,7 +711,7 @@ public class Game1 : Game
     /// </summary>
     /// <param name="spriteHeight">The width of the thing that is centered vertically on the screen</param>
     /// <returns>Returns a Y position on screen of the rectangle/vector2 of the object</returns>
-    private float HeightCenter(float spriteHeight)
+    private float CenterHeight(float spriteHeight)
     {
         float center;
 
@@ -764,10 +771,10 @@ public class Game1 : Game
             gameState = ENDGAME;
             
             // Loading positions of kill and day counts in game over screen
-            gameoverKillPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispMobsKilled).X) - 500,
-                HeightCenter(HUDFont.MeasureString(dispMobsKilled).Y));
-            gameoverDayPos = new Vector2(WidthCenter(HUDFont.MeasureString(dispDayCount).X) + 500,
-                HeightCenter(HUDFont.MeasureString(dispDayCount).Y));
+            gameoverKillPos = new Vector2(CenterWidth(HUDFont.MeasureString(dispMobsKilled).X) - 500,
+                CenterHeight(HUDFont.MeasureString(dispMobsKilled).Y));
+            gameoverDayPos = new Vector2(CenterWidth(HUDFont.MeasureString(dispDayCount).X) + 500,
+                CenterHeight(HUDFont.MeasureString(dispDayCount).Y));
         }
     }
 
@@ -864,7 +871,7 @@ public class Game1 : Game
     {
         for (int i = 0; i < zombies.Length; i++)
         {
-            zombies[i].Update(gameTime, gameState, zombieMaxHP, skyOpacity == 1f);
+            zombies[i].Update(gameTime, gameState, zombieHP, skyOpacity == 1f);
         }
     }
 
@@ -970,7 +977,7 @@ public class Game1 : Game
         
         // Updating coins display and centering it
         dispCoins = $"${coins}";
-        coinsPos.X = WidthCenter(HUDFont.MeasureString(dispCoins).X);
+        coinsPos.X = CenterWidth(HUDFont.MeasureString(dispCoins).X);
         
         // Updating demolish button and checking for demolition
         demolishBuilding.Update(mouse, prevMouse);
@@ -1382,7 +1389,7 @@ public class Game1 : Game
     private void ZombieWaves()
     {
         // Modifying max zombie count with respect to how many nights passed
-        maxZombies = 10 + Convert.ToInt32(Math.Pow(dayCount, 1.2) * 2);
+        maxZombies = INITIAL_MAX_ZOMBIES + Convert.ToInt32(Math.Pow(dayCount, 1.2) * 2);
         if (maxZombies > 100)
         {
             maxZombies = 100;
@@ -1398,7 +1405,7 @@ public class Game1 : Game
         // Adding to zombie HP every 5 nights
         if (dayCount % 5 == 0)
         {
-            zombieMaxHP += 5;
+            zombieHP += 5;
         }
     }
 
@@ -1409,7 +1416,7 @@ public class Game1 : Game
     {
         for (int i = 0; i < maxZombies; i++)
         {
-            zombies[i].Spawn(gameState, zombieMaxHP);
+            zombies[i].Spawn(gameState, zombieHP);
         }
     }
     
@@ -1457,6 +1464,25 @@ public class Game1 : Game
         }
     }
 
+    /// <summary>
+    /// Resetting anything that changed through out the night
+    /// </summary>
+    private void ResetGame()
+    {
+        // Resetting kill and day count, nighttime length, coins, and zombie HP
+        mobsKilled = 0;
+        dayCount = 0;
+        nightTime = INITIAL_NIGHTTIME;
+        coins = INITIAL_COINS;
+        zombieHP = INITIAL_ZOMBIE_HP;
+        
+        // Clearing defences list
+        defences.Clear();
+        
+        // Resetting king tower HP
+        kingTower.ResetHP();
+    }
+
     #region Button Actions
 
     /// <summary>
@@ -1486,6 +1512,9 @@ public class Game1 : Game
         buildableRec.Width = screenWidth / 3;
         buildableRec.X = screenWidth - buildableRec.Width;
         
+        // Resetting game
+        ResetGame();
+        
         // Starting day night cycle timer
         dayNightCycle.ResetTimer(true);
         
@@ -1503,6 +1532,13 @@ public class Game1 : Game
         
         // Updating king position
         kingTower.TranslateTo(lvl2KingPos);
+        
+        // Modifying buildable rec to be the right third of the screen
+        buildableRec.Width = screenWidth / 2;
+        buildableRec.X = (int)CenterWidth(screenWidth / 2f);
+        
+        // Resetting game
+        ResetGame();
         
         // Starting day night cycle timer
         dayNightCycle.ResetTimer(true);

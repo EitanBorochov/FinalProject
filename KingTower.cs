@@ -23,8 +23,8 @@ public class KingTower : Defence
                     base(towerImg, position, width, height, hitboxWidth, hitboxHeight, projectileImg, cooldownLength)
     {
         // Storing health and damage
-        health = 1000;
-        initialHealth = health;
+        initialHealth = 1000;
+        health = initialHealth;
         damage = 4;
         
         // State is placed from the start
@@ -34,6 +34,14 @@ public class KingTower : Defence
     #endregion
 
     #region Behaviours
+
+    /// <summary>
+    /// Setting health to initialHealth
+    /// </summary>
+    public void ResetHP()
+    {
+        health = initialHealth;
+    }
 
     /// <summary>
     /// Updates cooldown timer
