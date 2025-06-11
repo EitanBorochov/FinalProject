@@ -25,7 +25,7 @@ public class KingTower : Defence
         // Storing health and damage
         initialHealth = 1000;
         health = initialHealth;
-        damage = 50;
+        damage = 4;
         
         // State is placed from the start
         state = PLACED;

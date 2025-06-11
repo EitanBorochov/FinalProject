@@ -130,7 +130,7 @@ public class Game1 : Game
     private int maxZombies = INITIAL_MAX_ZOMBIES;
     
     // Storing zombies max hp as it increases every night
-    private const int INITIAL_ZOMBIE_HP = 20;
+    private const int INITIAL_ZOMBIE_HP = 15;
     private int zombieHP = INITIAL_ZOMBIE_HP;
     
     // Storing zombies array
@@ -1349,7 +1349,7 @@ public class Game1 : Game
         DrawWithShadow(HUDFont, $"{(int)dayNightCycle.GetTimeRemaining() / 1000}", timeLeftDispPos, 
             Color.White, Color.Black);
         
-        DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.Green, Color.Black);
+        DrawWithShadow(HUDFont, dispKingHP, kingHPPos, Color.LimeGreen, Color.Black);
         DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
         
         // Drawing demolish button and fast forward button

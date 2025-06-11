@@ -145,10 +145,11 @@ public class Zombie
             }
             else if (gameLvl == 2)
             {
-                if (Game1.rng.Next(1, 3) == 1)
+                if (Game1.rng.Next(1, 101) > 50)
                 {
                     // Setting position to left of screen
                     pos = leftOfScreen;
+                    dir = 1;
                     effect = SpriteEffects.None;
                 }
                 else
