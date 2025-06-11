@@ -959,6 +959,9 @@ public class Game1 : Game
     /// <param name="gameTime">Keeps track of time passed in each update. Used to update most objects</param>
     private void UpdateGame(GameTime gameTime)
     {
+        // Setting is mouse visible to true as sometimes its turned off for readability (buttons in game)
+        IsMouseVisible = true;
+        
         // Casting night sky every day night cycle
         DayNightCycle(gameTime);
         
@@ -1372,16 +1375,17 @@ public class Game1 : Game
         DrawWithPrice(landminePrev, Landmine.GetDefaultPrice());
     }
     
-    /// <summary>More actions
+    /// <summary>
     /// Meant for drawing preview buttons with prices on them
     /// </summary>
     /// <param name="button">The button that has the price drawn on it</param>
     /// <param name="price">The price of the item that the button represents. > 0</param>
     private void DrawWithPrice(Button button, int price)
     {
-        button.Draw(spriteBatch, mouse.Position);
+        // Drawing price and button
         spriteBatch.DrawString(smallFont, $"${price}", new Vector2(button.Rec.X + 2, button.Rec.Bottom + 2), Color. DarkGoldenrod);
         spriteBatch.DrawString(smallFont, $"${price}", new Vector2(button.Rec.X, button.Rec.Bottom), Color. Gold);
+        button.Draw(spriteBatch, mouse.Position);
     }
     
     /// <summary>
@@ -1740,6 +1744,9 @@ public class Game1 : Game
     /// <param name="lvl">The level of the wall that is hovered over</param>
     private void WallPrevDrawHover(byte lvl)
     {
+        // Removing mouse for better visibility
+        IsMouseVisible = false;
+        
         // Drawing background for easier text read
         spriteBatch.Draw(pixelImg, new Rectangle(mouse.Position, 
                                     smallFont.MeasureString($"HP: {Wall.GetDefaultHP(lvl)}").ToPoint()), Color.White);
@@ -1754,6 +1761,9 @@ public class Game1 : Game
     /// <param name="lvl">The lvl of the archer tower that is hovered over</param>
     private void ArcherPrevDrawHover(byte lvl)
     {
+        // Removing mouse for better visibility
+        IsMouseVisible = false;
+        
         // Drawing background for easier text read
         spriteBatch.Draw(pixelImg, new Rectangle(mouse.Position.X, mouse.Position.Y, 
             (int)smallFont.MeasureString($"Cooldown Time: {ArcherTower.GetDefaultCooldownLength(lvl)}s").X,
@@ -1772,6 +1782,9 @@ public class Game1 : Game
     /// </summary>
     private void LandminePrevDrawHover()
     {
+        // Removing mouse for better visibility
+        IsMouseVisible = false;
+        
         // Drawing background for easier readability
         spriteBatch.Draw(pixelImg, new Rectangle(mouse.Position, 
                     smallFont.MeasureString($"Damage: {Landmine.GetDefaultDamage()}").ToPoint()), Color.White);
