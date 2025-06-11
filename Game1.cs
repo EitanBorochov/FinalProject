@@ -48,9 +48,8 @@ public class Game1 : Game
     private const byte LEVEL_1 = 1;
     private const byte LEVEL_2 = 2;
     private const byte PAUSE = 3;
-    private const byte SETTINGS = 4;
-    private const byte TUTORIAL = 5;
-    private const byte ENDGAME = 6;
+    private const byte TUTORIAL = 4;
+    private const byte ENDGAME = 5;
     
     // Storing current game state
     private byte gameState = MENU;
@@ -63,12 +62,13 @@ public class Game1 : Game
     #region UI Variables
 
     // Storing sprite Fonts
-    private SpriteFont titleFont;
+    private SpriteFont messageFont;
     private SpriteFont HUDFont;
     private SpriteFont smallFont;
     
     // Storing offset constant for drop shadow texts
     private readonly Vector2 DROP_SHADOW = new Vector2(4, 4);
+    private readonly Vector2 SMALL_DROP_SHADOW = new Vector2(2, 2);
     
     // Storing background image and rec for menu
     private Texture2D bgImg;
@@ -87,7 +87,6 @@ public class Game1 : Game
     // Storing all buttons
     private Button level1Button;
     private Button level2Button;
-    private Button settingsButton;
     private Button tutorialButton;
     private Button menuButton;
     
@@ -293,7 +292,7 @@ public class Game1 : Game
         spriteBatch = new SpriteBatch(GraphicsDevice);
         
         // Loading sprite fonts
-        titleFont = Content.Load<SpriteFont>("Fonts/TitleFont");
+        messageFont = Content.Load<SpriteFont>("Fonts/MessageFont");
         HUDFont = Content.Load<SpriteFont>("Fonts/HUDFont");
         smallFont = Content.Load<SpriteFont>("Fonts/SmallFont");
         
@@ -328,7 +327,7 @@ public class Game1 : Game
         }
         
         // Loading message manager
-        messageManager = new MessageManager(smallFont, new Vector2(10, platform.Rec.Top - 150));
+        messageManager = new MessageManager(messageFont, new Vector2(10, platform.Rec.Top - 150));
         
         // Loading king tower, position, & image (defining king tower image locally as it will be used in the Tower class)
         Texture2D kingTowerImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/KingTower");
@@ -345,7 +344,6 @@ public class Game1 : Game
         // Loading button images
         Texture2D level1Img = Content.Load<Texture2D>("Images/Sprites/UI/Level1Button");
         Texture2D level2Img = Content.Load<Texture2D>("Images/Sprites/UI/Level2Button");
-        Texture2D settingsImg = Content.Load<Texture2D>("Images/Sprites/UI/SettingsButton");
         Texture2D tutorialBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/TutorialButton");
         Texture2D menuBtnImg = Content.Load<Texture2D>("Images/Sprites/UI/HomeButton");
         
@@ -354,8 +352,6 @@ public class Game1 : Game
                                     level1Img.Width, level1Img.Height, Level1Button);
         level2Button = new Button(level2Img, (int)CenterWidth(level1Img.Width) + 400, screenHeight - 300, 
                                     level2Img.Width, level2Img.Height, Level2Button);
-        settingsButton = new Button(settingsImg, 50, 50, settingsImg.Width / 5f, settingsImg.Height / 5f, 
-                            () => gameState = SETTINGS);
         tutorialButton = new Button(tutorialBtnImg, screenWidth - 50 - tutorialBtnImg.Width / 5f, 50, 
                                     tutorialBtnImg.Width / 5f, tutorialBtnImg.Height / 5f, TutorialButton);
         menuButton = new Button(menuBtnImg, screenWidth - 50 - menuBtnImg.Width / 5f, 50,
@@ -413,12 +409,18 @@ public class Game1 : Game
         // Storing red cross texture to show cancel placement
         Texture2D redCrossImg = Content.Load<Texture2D>("Images/Sprites/UI/RedCross");
         
+        // Constructing demolish building button and image
+        Texture2D demolishImg = Content.Load<Texture2D>("Images/Sprites/UI/TrashCan");
+        int demolishWidth = (int)(PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height)); // Easier calculations
+        demolishButton = new Button(demolishImg, screenWidth - demolishWidth - 5, 5, demolishWidth, 
+                                    PREVIEW_SIZE, DemolishButton);
+        
         // Loading wall textures for buttons
         Texture2D lvl1Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl1");
         Texture2D lvl2Wall = Content.Load<Texture2D>("Images/Sprites/Gameplay/Wall/WallLvl2");
         
         // Loading wall preview buttons using wall textures
-        wallPrevs[0] = new Button(lvl1Wall, redCrossImg, screenWidth - PREVIEW_SIZE - 5, 5, 
+        wallPrevs[0] = new Button(lvl1Wall, redCrossImg, demolishButton.Rec.X - PREVIEW_SIZE - 5, 5, 
             PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(0), () => WallPrevDrawHover(0));
         wallPrevs[1] = new Button(lvl2Wall, redCrossImg, wallPrevs[0].Rec.X - 5 - PREVIEW_SIZE, 5,
             PREVIEW_SIZE, PREVIEW_SIZE, () => WallPrev(1), () => WallPrevDrawHover(1));
@@ -428,18 +430,21 @@ public class Game1 : Game
         Texture2D lvl2ArcherImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl2");
         Texture2D lvl3ArcherImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Archer/ArcherTowerLvl3");
         
+        // Saving archer preview width for easier calculations
+        int archerPrevWidth = (int)(PREVIEW_SIZE * ((float)lvl1ArcherImg.Width / lvl1ArcherImg.Height));
+        
         // Loading archer tower preview buttons (couldn't do a loop because of the x offset)
-        archerPrevs[0] = new Button(lvl1ArcherImg, redCrossImg, wallPrevs[1].Rec.X - 5 - PREVIEW_SIZE, 5,
-                              PREVIEW_SIZE * ((float)lvl1ArcherImg.Width / lvl1ArcherImg.Height), PREVIEW_SIZE, 
+        archerPrevs[0] = new Button(lvl1ArcherImg, redCrossImg, wallPrevs[1].Rec.X - 5 - archerPrevWidth, 5,
+                             archerPrevWidth , PREVIEW_SIZE, 
                             () => ArchPrev(0), () => ArcherPrevDrawHover(0));
         
-        archerPrevs[1] = new Button(lvl2ArcherImg, redCrossImg, archerPrevs[0].Rec.X - 5 - archerPrevs[0].Rec.Width, 5,
-                               PREVIEW_SIZE * ((float)lvl2ArcherImg.Width / lvl2ArcherImg.Height), PREVIEW_SIZE, 
-                             () => ArchPrev(1), () => ArcherPrevDrawHover(1));
+        archerPrevs[1] = new Button(lvl2ArcherImg, redCrossImg, archerPrevs[0].Rec.X - 5 - archerPrevWidth, 5,
+                                    archerPrevWidth, PREVIEW_SIZE, 
+                                    () => ArchPrev(1), () => ArcherPrevDrawHover(1));
         
-        archerPrevs[2] = new Button(lvl3ArcherImg, redCrossImg, archerPrevs[1].Rec.X - 5 - archerPrevs[1].Rec.Width, 5,
-                               PREVIEW_SIZE * ((float)lvl3ArcherImg.Width / lvl3ArcherImg.Height), PREVIEW_SIZE, 
-                             () => ArchPrev(2), () => ArcherPrevDrawHover(2));
+        archerPrevs[2] = new Button(lvl3ArcherImg, redCrossImg, archerPrevs[1].Rec.X - 5 - archerPrevWidth, 5,
+                                    archerPrevWidth, PREVIEW_SIZE, 
+                                    () => ArchPrev(2), () => ArcherPrevDrawHover(2));
         
         // Loading landmine texture and button
         Texture2D landmineImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/LandMine");
@@ -447,14 +452,6 @@ public class Game1 : Game
                                   5 + PREVIEW_SIZE * (1 - (float)landmineImg.Height / landmineImg.Width), PREVIEW_SIZE, 
                                   PREVIEW_SIZE * (float)landmineImg.Height / landmineImg.Width, 
                                   LandminePrev, LandminePrevDrawHover);
-        
-        // Constructing demolish building button and image
-        Texture2D demolishImg = Content.Load<Texture2D>("Images/Sprites/UI/TrashCan");
-        demolishButton = new Button(demolishImg, 
-                                      screenWidth - PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height), 
-                                      wallPrevs[0].Rec.Bottom + 5, 
-                                      PREVIEW_SIZE * ((float)demolishImg.Width / demolishImg.Height),
-                                      PREVIEW_SIZE, DemolishButton);
 
         Texture2D fastForwardImg = Content.Load<Texture2D>("Images/Sprites/UI/FastForward");
         fastForwardButton = new Button(fastForwardImg, screenWidth - PREVIEW_SIZE - 5, 
@@ -508,7 +505,6 @@ public class Game1 : Game
                 // Checking for button clicks
                 level1Button.Update(mouse, prevMouse);
                 level2Button.Update(mouse, prevMouse);
-                settingsButton.Update(mouse, prevMouse);
                 tutorialButton.Update(mouse, prevMouse);
                 
                 break;
@@ -541,10 +537,6 @@ public class Game1 : Game
                     // Shuffling music
                     ShuffleMusic();
                 }
-                break;
-            
-            case SETTINGS:
-                
                 break;
             
             case TUTORIAL:
@@ -594,10 +586,9 @@ public class Game1 : Game
                 spriteBatch.Draw(titleImg, titleRec, Color.White);
                 
                 // Drawing buttons
-                level1Button.Draw(spriteBatch, mouse.Position);
-                level2Button.Draw(spriteBatch, mouse.Position);
-                settingsButton.Draw(spriteBatch, mouse.Position);
-                tutorialButton.Draw(spriteBatch, mouse.Position);
+                level1Button.Draw(spriteBatch);
+                level2Button.Draw(spriteBatch);
+                tutorialButton.Draw(spriteBatch);
                 
                 break;
             
@@ -616,17 +607,11 @@ public class Game1 : Game
                 spriteBatch.Draw(pauseImg, bgRec, Color.White);
                 
                 // Drawing button to go back to menu
-                menuButton.Draw(spriteBatch, mouse.Position);
+                menuButton.Draw(spriteBatch);
                 
                 // Drawing current stats
                 DrawWithShadow(HUDFont, dispMobsKilled, mobsKilledPos, Color.IndianRed, Color.Black);
                 DrawWithShadow(HUDFont, dispDayCount, dayCountPos, Color.Yellow, Color.Black);
-                break;
-            
-            case SETTINGS:
-                // Drawing background
-                spriteBatch.Draw(bgImg, bgRec, Color.White);
-                
                 break;
             
             case TUTORIAL:
@@ -899,7 +884,7 @@ public class Game1 : Game
     /// <param name="gameTime">Keeps track of time passed in each update</param>
     private void UpdateZombies(GameTime gameTime)
     {
-        for (int i = 0; i < zombies.Length; i++)
+        for (int i = 0; i < maxZombies; i++)
         {
             zombies[i].Update(gameTime, gameState, zombieHP, skyOpacity == 1f);
         }
@@ -1012,7 +997,7 @@ public class Game1 : Game
         Demolition();
 
         // Displaying how many zombies were killed per update
-        DisplayZombiesKilledPerUpdate();
+        DisplayKills();
         
         // Checking for game pause
         if (kb.IsKeyDown(Keys.Escape) && !prevKb.IsKeyDown(Keys.Escape))
@@ -1244,12 +1229,12 @@ public class Game1 : Game
     /// <summary>
     /// Sending a message of how many zombies killed per update, if any
     /// </summary>
-    private void DisplayZombiesKilledPerUpdate()
+    private void DisplayKills()
     {
         switch (zombiesKilledPerUpdate)
         {
             case 1:
-                messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.Green, Color.Black);
+                messageManager.DisplayMessage("1 ZOMBIE KILLED", Color.LimeGreen, Color.Black);
                 
                 // resetting zombie kill count per update
                 zombiesKilledPerUpdate = 0;
@@ -1257,7 +1242,7 @@ public class Game1 : Game
                 break;
             
             case > 1:
-                messageManager.DisplayMessage($"{zombiesKilledPerUpdate} ZOMBIES KILLED", Color.DarkGreen, Color.White);
+                messageManager.DisplayMessage($"{zombiesKilledPerUpdate} ZOMBIES KILLED", Color.LimeGreen, Color.Black);
                 
                 // resetting zombie kill count per update
                 zombiesKilledPerUpdate = 0;
@@ -1368,8 +1353,8 @@ public class Game1 : Game
         DrawWithShadow(HUDFont, dispCoins, coinsPos, Color.Gold, Color.DarkGoldenrod);
         
         // Drawing demolish button and fast forward button
-        demolishButton.Draw(spriteBatch, mouse.Position);
-        fastForwardButton.Draw(spriteBatch, mouse.Position);
+        demolishButton.Draw(spriteBatch);
+        fastForwardButton.Draw(spriteBatch);
         
         // Drawing wall tower preview options
         for (int i = 0; i < wallPrevs.Length; i++)
@@ -1395,7 +1380,8 @@ public class Game1 : Game
     private void DrawWithPrice(Button button, int price)
     {
         button.Draw(spriteBatch, mouse.Position);
-        spriteBatch.DrawString(smallFont, $"${price}", button.Rec.Location.ToVector2(), Color. Gold);
+        spriteBatch.DrawString(smallFont, $"${price}", new Vector2(button.Rec.X + 2, button.Rec.Bottom + 2), Color. DarkGoldenrod);
+        spriteBatch.DrawString(smallFont, $"${price}", new Vector2(button.Rec.X, button.Rec.Bottom), Color. Gold);
     }
     
     /// <summary>

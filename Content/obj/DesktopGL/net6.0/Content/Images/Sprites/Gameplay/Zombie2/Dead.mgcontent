@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Zombie2/Dead.png</SourceFile>
-  <SourceTime>2025-06-04T13:27:26.3199578-04:00</SourceTime>
-  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/Zombie2/Dead.xnb</DestFile>
-  <DestTime>2025-06-10T18:16:17.3789264-04:00</DestTime>
+  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Images/Sprites/Gameplay/Zombie2/Dead.png</SourceFile>
+  <SourceTime>2025-06-09T20:35:13.4222509-04:00</SourceTime>
+  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Images/Sprites/Gameplay/Zombie2/Dead.xnb</DestFile>
+  <DestTime>2025-06-11T08:31:51.2465778-04:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

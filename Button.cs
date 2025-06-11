@@ -2,7 +2,7 @@
 // File Name: Button.cs
 // Project Name: FinalProject
 // Creation Date: May 13th 2025
-// Modification Date: June 9th, 2025
+// Modification Date: June 11th, 2025
 // Description: Creates a button object that handles its interactions
 
 using System;
@@ -132,10 +132,26 @@ public class Button
             spriteBatch.Draw(cancelImg, buttonRec, Color.White);
         }
 
-        // Drawing hover action
-        if (drawOnHover != null && buttonRec.Contains(mousePos))
+        if (buttonRec.Contains(mousePos))
         {
             drawOnHover();
+        }
+    }
+
+    /// <summary>
+    /// Overloading draw for buttons without hover
+    /// </summary>
+    /// <param name="spriteBatch">Current batch of sprite draws. Each update there is a new one</param>
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        // Drawing button
+        spriteBatch.Draw(buttonImg, buttonRec, Color.White);
+
+        // Drawing cancel option if its available
+        if (cancelImg != null && selected)
+        {
+            spriteBatch.Draw(cancelImg, buttonRec, Color.White);
         }
     }
 

@@ -163,8 +163,9 @@ public class Zombie
             // Playing spawning sound
             Game1.PlaySound(Game1.zombieSpawnSnd, 0.1f);
 
-            // Starting action timer
+            // Starting action timer and respawn timer
             actionTimer.ResetTimer(true);
+            respawnTimer.ResetTimer(false);
 
             // Reseting health
             health = zombieHealth;

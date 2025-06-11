@@ -74,19 +74,19 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/HUDFont.spritefont
 
+#begin Fonts/MessageFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/MessageFont.spritefont
+
 #begin Fonts/SmallFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/SmallFont.spritefont
-
-#begin Fonts/TitleFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:Fonts/TitleFont.spritefont
 
 #begin Images/Backgrounds/GameBackground.png
 /importer:TextureImporter
