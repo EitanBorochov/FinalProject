@@ -23,7 +23,7 @@ public class Landmine : Defence
     private const int PRICE = 275;
     
     // Storing constant damage
-    private const int DAMAGE = 10;
+    private const int DAMAGE = 20;
     
     #endregion
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/Audio/Music/GameMusic.mp3</SourceFile>
-  <SourceTime>2025-06-09T20:35:13.3642219-04:00</SourceTime>
-  <DestFile>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Audio/Music/GameMusic.xnb</DestFile>
-  <DestTime>2025-06-11T08:31:37.0024471-04:00</DestTime>
+  <SourceFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/Audio/Music/GameMusic.mp3</SourceFile>
+  <SourceTime>2025-06-08T15:13:37.9452669-04:00</SourceTime>
+  <DestFile>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Audio/Music/GameMusic.xnb</DestFile>
+  <DestTime>2025-06-11T17:19:58.4706403-04:00</DestTime>
   <Importer>Mp3Importer</Importer>
   <ImporterTime>2022-07-26T07:44:56-04:00</ImporterTime>
   <Processor>SongProcessor</Processor>
@@ -15,6 +15,6 @@
   <Dependencies />
   <BuildAsset />
   <BuildOutput>
-    <string>/Users/eitanborochov/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Audio/Music/GameMusic.ogg</string>
+    <string>C:/Users/mreit/Desktop/ICS/Assignments/FinalProject/Content/bin/DesktopGL/Content/Audio/Music/GameMusic.ogg</string>
   </BuildOutput>
 </PipelineBuildEvent>

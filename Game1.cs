@@ -130,7 +130,7 @@ public class Game1 : Game
     private int maxZombies = INITIAL_MAX_ZOMBIES;
     
     // Storing zombies max hp as it increases every night
-    private const int INITIAL_ZOMBIE_HP = 15;
+    private const int INITIAL_ZOMBIE_HP = 20;
     private int zombieHP = INITIAL_ZOMBIE_HP;
     
     // Storing zombies array
@@ -334,7 +334,7 @@ public class Game1 : Game
         Texture2D cannonballImg = Content.Load<Texture2D>("Images/Sprites/Gameplay/Cannonball");
         
         kingTower = new KingTower(kingTowerImg, nightBGRec.Location.ToVector2(), kingTowerImg.Width, 
-                                kingTowerImg.Height, 266, 330, cannonballImg, 750);
+                                kingTowerImg.Height, 266, 330, cannonballImg, 800);
         
         lvl1KingPos = new Vector2(screenWidth - kingTower.DisplayRec.Width / 2f + 30, 
                                     platform.Rec.Y - kingTower.Hitbox.Height + 10);
@@ -1023,6 +1023,9 @@ public class Game1 : Game
         // Drawing king tower
         kingTower.Draw(spriteBatch, buildableRec.Center.X, Color.White);
         
+        // Drawing buildable area rectangle as just a single solid color
+        spriteBatch.Draw(pixelImg, buildableRec, Color.Green * 0.5f);
+        
         // Drawing zombies
         for (int i = 0; i < zombies.Length; i++)
         {
@@ -1070,9 +1073,6 @@ public class Game1 : Game
         
         // Drawing HUD
         DrawHud();
-        
-        // Drawing buildable area rectangle as just a single solid color
-        spriteBatch.Draw(pixelImg, buildableRec, Color.Green * 0.5f);
     }
 
     #endregion
@@ -1438,6 +1438,12 @@ public class Game1 : Game
         // Timer reset happens in day and night cycle
         nightTime += 5000;
         
+        // Increasing zombie speed by a little bit every night
+        for (int i = 0; i < zombies.Length; i++)
+        {
+            zombies[i].Speed += 0.07f;
+        }
+        
         // Spawning zombies when its nighttime
         SpawnZombies();
         
@@ -1445,6 +1451,15 @@ public class Game1 : Game
         if (dayCount % 5 == 0)
         {
             zombieHP += 5;
+        }
+        
+        // Increasing damage every 7 nights
+        if (dayCount % 7 == 0 && dayCount != 0)
+        {
+            for (int i = 0; i < zombies.Length; i++)
+            {
+                zombies[i].Damage++;
+            }
         }
     }
 

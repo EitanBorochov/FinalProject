@@ -126,6 +126,24 @@ public class Zombie
     
     #endregion
 
+    /// <summary>
+    /// Property of the zombie's speed
+    /// </summary>
+    public float Speed
+    {
+        get => speed;
+        set => speed = value;
+    }
+    
+    /// <summary>
+    /// Property of the zombie's damage
+    /// </summary>
+    public int Damage
+    {
+        get => damage;
+        set => damage = value;
+    }
+
     #region Behaviours
     
     /// <summary>
